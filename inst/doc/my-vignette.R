@@ -1,7 +1,7 @@
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 library(MultiATSM)
 
-## ----ModFea, message=FALSE, echo=FALSE-----------------------------------
+## ----ModFea, message=FALSE, echo=FALSE----------------------------------------
 ModelLabels <- c("JPS", "JPS jointP", "VAR jointQ", "GVAR sepQ", "GVAR jointQ", 
                  "JLL original", "JLL NoDomUnit", "JLL jointSigma")
 
@@ -13,16 +13,16 @@ rownames(Tab) <- ModelLabels
 EmptyCol <- c("", "", "", "", "", "", "", "") 
 Tab$EmptyCol0 <- EmptyCol
 # P-dynamics + 2 empty spaces
-Tab$PdynIndUnco <- c("x", "x", "", "", "", "", "", "")
+Tab$PdynIndUnco <- c("x", "", "", "", "", "", "", "")
 Tab$PdynIndCo <- c("", "", "", "", "", "", "", "")
-Tab$PdynJointUnco <- c("", "", "x", "", "", "", "", "")
+Tab$PdynJointUnco <- c("", "x", "x", "", "", "", "", "")
 Tab$PdynJointJLL <- c("", "", "", "", "", "x", "x", "x")
 Tab$PdynJointGVAR <- c("", "", "", "x", "x", "", "", "")
 Tab$EmptyCol1 <- EmptyCol
 Tab$EmptyCol2 <- EmptyCol
 # Q-dynamics + 2 empty spaces
-Tab$QdynInd <- c("x", "", "", "x", "", "", "", "")   
-Tab$QdynJoint <- c("", "x", "x", "", "x", "x", "x", "x") 
+Tab$QdynInd <- c("x", "x", "", "x", "", "", "", "")   
+Tab$QdynJoint <- c("", "", "x", "", "x", "x", "x", "x") 
 Tab$EmptyCol3 <- EmptyCol
 Tab$EmptyCol4 <- EmptyCol
 # Sigma + 2 empty spaces
@@ -52,19 +52,19 @@ kableExtra::pack_rows("Unrestricted VAR", 1, 3 , label_row_css = "background-col
 kableExtra::pack_rows("Restricted VAR (GVAR)", 4, 5, label_row_css = "background-color: #666; color: #fff;") %>%
 kableExtra::pack_rows("Restricted VAR (JLL)", 6, 8, label_row_css = "background-color: #666; color: #fff;")
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 data('CM_Yields')
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 data('CM_Factors')
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 data('CM_Trade')
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 data('CM_Factors_GVAR')
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 Initial_Date <- "2006-09-01" # Format "yyyy-mm-dd"
 Final_Date <- "2019-01-01" # Format "yyyy-mm-dd"
 DataFrequency <- "Monthly"
@@ -74,11 +74,11 @@ N <-  3 # Number of spanned factors per country
 Economies <- c("China", "Mexico", "Uruguay", "Brazil", "Russia")
 ModelType <- "JPS"
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 FactorLabels <- LabFac(N, DomVar, GlobalVar, Economies, ModelType)
 ZZfull <-DataForEstimation(Initial_Date, Final_Date, Economies, N, FactorLabels, ModelType, DataFrequency)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 ModelType <- "JPS"
 DataFrequency <- "Monthly"
 Economies <- c("China", "Brazil", "Mexico", "Uruguay")
@@ -90,18 +90,18 @@ FactorLabels <- LabFac(N, DomVar,GlobalVar, Economies, ModelType)
 StationarityUnderQ <- 0 # 1 = set stationarity condition under  the Q; 0 = no stationarity condition
 OutputLabel <- "Model_demo" # output label
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 GVARinputs <- list()
 GVARinputs$Economies <- Economies
 GVARinputs$GVARFactors <- FactorsGVAR
-GVARinputs$VARXtype <- "unconstrained"
+GVARinputs$VARXtype <- "constrained: Inflation"
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 t_First <- "2000" # First year of the sample
 t_Last <-  "2015" # Last year of the sample
 W_type <- 'Sample Mean' 
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
   JLLinputs <- list()
   ModelType <- "JLL original"  
   JLLinputs$Economies <- Economies
@@ -110,34 +110,34 @@ W_type <- 'Sample Mean'
   JLLinputs$SigmaNonOrtho <- NULL
   JLLinputs$JLLModelType <- ModelType
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 Horiz <- 100
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 DesiredGraphs <- c("Fit", "GIRF", "GFEVD") # Available options are: "Fit", "IRF", "FEVD", "GIRF", "GFEVD"
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 WishGraphRiskFac <- 0 #   YES: 1; No = 0.
 WishGraphYields <- 1 #    YES: 1; No = 0.
 WishOrthoJLLgraphs <- 0 # YES: 1; No = 0.
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 Bootlist <- list()
 Bootlist$methodBS <- 'block' 
 Bootlist$BlockLength <- 4 
 Bootlist$ndraws <-  3  
 Bootlist$pctg   <-  95 
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 ForecastList <- list()
 ForecastList$ForHoriz <- 12 # forecast horizon
 ForecastList$t0Sample <- 1 # initial sample date
 ForecastList$t0Forecast <- 70 # last sample date for the first forecast
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 w <- pca_weights_one_country(Yields, Economy = "Uruguay") 
 
-## ---- fig.cap = "Yield loading on the spanned factors", echo=FALSE-------
+## ---- fig.cap = "Yield loading on the spanned factors", echo=FALSE------------
 LabSpaFac <- c("Level", "Slope", "Curvature")
 N <- length(LabSpaFac)
  
@@ -158,21 +158,21 @@ g <-  ggplot2::ggplot(data = w_pca, ggplot2::aes(x=  mat)) +
 
 print(g)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 data('CM_Yields')
 Economies <- c("China", "Brazil", "Mexico", "Uruguay")
 N <- 2
 SpaFact <- Spanned_Factors(Yields, Economies, N)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 data("CM_Factors")
 PdynPara <- VAR(RiskFactors, VARtype= "unconstrained")
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 FactorsChina <- RiskFactors[1:7,]
 PdynPara <- VAR(FactorsChina, VARtype= "unconstrained")
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 data("CM_Trade")
 t_First <- "2006"
 t_Last <-  "2019"
@@ -180,7 +180,7 @@ Economies <- c("China", "Brazil", "Mexico", "Uruguay")
 type <- "Sample Mean"
 W_gvar <- Transition_Matrix(t_First, t_Last, Economies, type, DataPath = NULL, TradeFlows)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 data("CM_Factors_GVAR")
 
 GVARinputs <- list()
@@ -193,11 +193,11 @@ N <- 3
 
 GVARpara <- GVAR(GVARinputs, N)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 data('CM_Factors')
 StaFac <- StarFactors(RiskFactors, Economies, W_gvar)
 
-## ---- eval=FALSE---------------------------------------------------------
+## ---- eval=FALSE--------------------------------------------------------------
 #  data("CM_Factors")
 #  N <- 3
 #  JLLinputs <- list()
@@ -209,7 +209,7 @@ StaFac <- StarFactors(RiskFactors, Economies, W_gvar)
 #  JLLinputs$JLLModelType <- ModelType
 #  JLLpara <- JLL(RiskFactors, N, JLLinputs)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 # Inputs to be specified by the user
 data("CM_Yields")
 data("CM_Factors")
@@ -232,7 +232,7 @@ ATSMInputs <- InputsForMLEdensity(ModelType, Yields, ZZ, FactorLabels, mat, Econ
 # Log-Likelihood function
 f <- Functionf(ATSMInputs, Economies, mat, DataFrequency, FactorLabels, ModelType)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 K1XQinputs <- list(NULL, "K1XQ: Jordan" , NULL , NULL)
 SSZinputs <- list(NULL, "SSZ: psd", NULL, NULL)
 r0inputs <- list(NULL, "@r0: bounded", NULL, NULL)
@@ -240,7 +240,7 @@ seinputs <- list(NULL, "@se: bounded", 1e-6, NULL)
 K0Zinputs<- list(NULL, "@K0Z: bounded", NULL, NULL)
 K1Zinputs<- list(NULL, "@K1Z: bounded", NULL, NULL)
 
-## ---- eval=FALSE---------------------------------------------------------
+## ---- eval=FALSE--------------------------------------------------------------
 #  ###############################################################################################################
 #  #################################### USER INPUTS ##############################################################
 #  ###############################################################################################################
@@ -370,8 +370,8 @@ K1Zinputs<- list(NULL, "@K1Z: bounded", NULL, NULL)
 #  
 #    # 6) Optimization of the model
 #    if (ModelType == 'JPS' || ModelType == 'JPS jointP' || ModelType == "GVAR sepQ"){
-#      ModelParaList[[ModelType]][[Economies[i]]] <- Optimization(f, tol, varargin, FactorLabels, Economies, ModelType)$Summary
-#    }else{ ModelParaList[[ModelType]] <- Optimization(f, tol, varargin, FactorLabels, Economies, ModelType, JLLinputs)$Summary}
+#      ModelParaList[[ModelType]][[Economies[i]]] <- Optimization(f, tol, varargin, FactorLabels, Economies, ModelType, JLLinputs, GVARinputs)$Summary
+#    }else{ ModelParaList[[ModelType]] <- Optimization(f, tol, varargin, FactorLabels, Economies, ModelType, JLLinputs, GVARinputs)$Summary}
 #  
 #  }
 #  
@@ -387,7 +387,7 @@ K1Zinputs<- list(NULL, "@K1Z: bounded", NULL, NULL)
 #  Forecasts <- ForecastYields(ModelType, ModelParaList, InputsForOutputs, FactorLabels, Economies, DataFrequency, JLLinputs, GVARinputs)
 #  
 
-## ---- eval=FALSE---------------------------------------------------------
+## ---- eval=FALSE--------------------------------------------------------------
 #  ###############################################################################################################
 #  #################################### USER INPUTS ##############################################################
 #  ###############################################################################################################
@@ -461,7 +461,7 @@ K1Zinputs<- list(NULL, "@K1Z: bounded", NULL, NULL)
 #  ModelPara <- Optimization(f, tol, varargin, FactorLabels, Economies, ModelType)$Summary
 #  }
 
-## ---- echo= FALSE--------------------------------------------------------
+## ---- echo= FALSE-------------------------------------------------------------
 options(scipen = 100) # eliminate the scientific notation
 data("BR_jps_gro_R3")
 data("JPSrep")
@@ -483,7 +483,7 @@ kableExtra::kbl(TableQ, align = "c", caption = "$Q$-dynamics parameters") %>%
   kableExtra::row_spec(0, font_size = 14) %>%
   kableExtra::footnote(general = " $\\lambda$'s are the eigenvalues from the risk-neutral feedback matrix and $r0$ is the long-run mean of the short rate under Q.")
 
-## ---- echo= FALSE--------------------------------------------------------
+## ---- echo= FALSE-------------------------------------------------------------
 data("BR_jps_gro_R3")
 data("JPSrep")
 
@@ -524,7 +524,7 @@ kableExtra::kbl(TableP, align = "c", caption = "$P$-dynamics parameters") %>%
   kableExtra::pack_rows("MultiATSM", 6, 10) %>%
   kableExtra::footnote(general = " $K0Z$ is the intercept and $K1Z$ is feedback matrix from the $P$-dynamics.")
 
-## ---- echo= FALSE--------------------------------------------------------
+## ---- echo= FALSE-------------------------------------------------------------
 data("BR_jps_gro_R3")
 data("JPSrep")
 
@@ -538,7 +538,7 @@ kableExtra::kbl(se, align = "c", caption ="Portfolio of yields with errors") %>%
   kableExtra::row_spec(0, font_size = 14) %>%
   kableExtra::footnote(general = " $se$ is the standard deviation of the portfolio of yields observed with errors.")
 
-## ---- eval=FALSE---------------------------------------------------------
+## ---- eval=FALSE--------------------------------------------------------------
 #  ###############################################################################################################
 #  #################################### USER INPUTS ##############################################################
 #  ###############################################################################################################
@@ -649,7 +649,7 @@ kableExtra::kbl(se, align = "c", caption ="Portfolio of yields with errors") %>%
 #  VarLab <- ParaLabels(ModelType, StationarityUnderQ)
 #  
 #  varargin <- list()
-#  varargin$K1XQ <-list(K1XQ, VarLab[[ModelType]][["K1XQ"]] , NULL , NULL)
+#  varargin$K1XQ <-list(K1XQ, VarLab[[ModelType]][["K1XQ"]], NULL , NULL)
 #  varargin$SSZ <- list(SSZ, VarLab[[ModelType]][["SSZ"]], NULL, NULL)
 #  varargin$r0 <- list(NULL, VarLab[[ModelType]][["r0"]], NULL, NULL)
 #  varargin$se <- list(NULL, VarLab[[ModelType]][["se"]], 1e-6, NULL)
@@ -663,7 +663,7 @@ kableExtra::kbl(se, align = "c", caption ="Portfolio of yields with errors") %>%
 #  tol <- 1e-4
 #  
 #  # 6) Optimization of the model
-#  ModelParaList[[ModelType]] <- Optimization(f, tol, varargin, FactorLabels, Economies, ModelType, JLLinputs)$Summary
+#  ModelParaList[[ModelType]] <- Optimization(f, tol, varargin, FactorLabels, Economies, ModelType, JLLinputs, GVARinputs)$Summary
 #  
 #  
 #  # 7) Numerical and graphical outputs
