@@ -1,4 +1,4 @@
-364cbf34de135175c2d14f0f85e590c7 *DESCRIPTION
+9a25e56c7f8554e94a7f587b72a9ca60 *DESCRIPTION
 ef3b4dae8d6891381df4af0de1436924 *NAMESPACE
 978e85222ba635360aa97cfc8662f023 *R/A0N__computeBnAn.R
 80cdfd59bd4385d87d838b10d50ae3f1 *R/AuxiliarBootstrapFunctions.R
@@ -10,7 +10,7 @@ a49566977e9ebd82e896e530b3f8812a *R/CM_Trade.R
 62478d14eac81cb65f839d035f8b279c *R/CM_Yields.R
 30a41a78f4541eed792eb6a74d93ebb0 *R/CM_repJPS.R
 1426560c31901bf9420b8a288e737e57 *R/CholRestrictionsJLL.R
-254efa2bcb6a904f33896628596da2ee *R/ConfidenceBoundsBootstrap.R
+66c273ea35957e5e1dc855a6089123d7 *R/ConfidenceBoundsBootstrap.R
 5a84ea3a5eeb2dd4a91bf27dc1da8e5f *R/DataForEstimation.R
 d01bf2978c7885ec0457b14629d3e6e3 *R/DatabasePrep.R
 258b222fe02d90e32dc67588cd93e99c *R/EstimationSigma_Ye.R
@@ -22,7 +22,7 @@ fd48df1ecb579767d843097231b24225 *R/Folder_Creation.R
 717ceae19746939e417e05a5d3f0857e *R/GVAR.R
 e894fbf9b491bf06a90b7c5d92e99292 *R/GaussianDensity.R
 6592bb09648416e369f7c68e9cd2dc50 *R/GraphicalOutputs.R
-de489d95b70878f81d170118cb9d82d6 *R/InputsForMLEdensity.R
+43a7cb6544c37762c01b660ce45c5fec *R/InputsForMLEdensity.R
 5c762112b00f29622e22f2cd9b067e4c *R/InputsForOutputs.R
 8bf473bb3dc8211fc567138b73a88229 *R/JLL.R
 0b6e889bbd9653f6c6fbec8e57ffb283 *R/K1XQStationary.R
@@ -51,14 +51,14 @@ a71f32e010ec6474bd1a0cc59cac876b *R/logdet.R
 961b3951d0d91eeb64f7eb514d6f1c90 *R/pca_weights_one_country.R
 f63ef2fbd2c4e3a745c9676f0f766eab *build/vignette.rds
 61d21a9bb845ea0a57e4de4b81885dea *data/BR_jps_gro_R3.rda
-d6738d9a5c20177167de5056b665d19e *data/CM_Factors.rda
-5837076c1fc2f6e78eded4d8117224d3 *data/CM_Factors_GVAR.rda
+455fef8b09bd27408329d8085aa4c02c *data/CM_Factors.rda
+3c36c0d9a7ce694b66866092f0e894be *data/CM_Factors_GVAR.rda
 ba5a3c656d082b172024a46ec2d4f6be *data/CM_Trade.rda
 bffc2fd43d35c2edb5eae146884d485c *data/CM_Yields.rda
 845ec7df9982c2e17579c37850631035 *data/JPSrep.rda
-44f1e8992ceaa7b1e666217e2515bd5e *inst/doc/my-vignette.R
-a1ed150f2ca5462509317e37c35f2bba *inst/doc/my-vignette.Rmd
-d83f66cdc44dfb387e7b909754127ae0 *inst/doc/my-vignette.html
+bd8d0d8f7f46dfe374b0c90bed8cdf53 *inst/doc/my-vignette.R
+5ed22b1be5504e994ba52af9817e3096 *inst/doc/my-vignette.Rmd
+12f62009d1968b439059999f676f2b46 *inst/doc/my-vignette.html
 e099d2c58101a204aef7e45c57b41a7c *inst/extdata/MacroData.xlsx
 937bdf9e6284d4f68ac73e8d044464d4 *inst/extdata/TradeData.xlsx
 bb934f2e457b7dd52733a2524c485262 *inst/extdata/YieldsData.xlsx
@@ -207,6 +207,6 @@ b9b7174017a8a2d3be31943d4a9957c3 *man/true2aux.Rd
 48d26b7bf5b74effe264f03e86e76676 *man/update_para.Rd
 28a2e724b73510d104c3e9d208c32416 *man/x2bound.Rd
 78489b7cd427ff4b8f263eb45484ff3d *man/x2pos.Rd
-a1ed150f2ca5462509317e37c35f2bba *vignettes/my-vignette.Rmd
+5ed22b1be5504e994ba52af9817e3096 *vignettes/my-vignette.Rmd
 55cc8c89d5c928c7e98f33472a2de3ad *vignettes/my-vignette.nb.html
 48fce9140685cac5c2d50a4ba30cec68 *vignettes/references.bib

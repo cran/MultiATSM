@@ -137,7 +137,7 @@ ForecastList$t0Forecast <- 70 # last sample date for the first forecast
 ## -----------------------------------------------------------------------------
 w <- pca_weights_one_country(Yields, Economy = "Uruguay") 
 
-## ---- fig.cap = "Yield loading on the spanned factors", echo=FALSE------------
+## ---- fig.cap = "Yield loadings on the spanned factors", echo=FALSE-----------
 LabSpaFac <- c("Level", "Slope", "Curvature")
 N <- length(LabSpaFac)
  
