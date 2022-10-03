@@ -1,4 +1,4 @@
-a846e18d7f698471ff8a637ddc8f1679 *DESCRIPTION
+8adb267d42af09aa0ac2026fcd333543 *DESCRIPTION
 ef3b4dae8d6891381df4af0de1436924 *NAMESPACE
 978e85222ba635360aa97cfc8662f023 *R/A0N__computeBnAn.R
 80cdfd59bd4385d87d838b10d50ae3f1 *R/AuxiliarBootstrapFunctions.R
@@ -12,7 +12,7 @@ a49566977e9ebd82e896e530b3f8812a *R/CM_Trade.R
 1426560c31901bf9420b8a288e737e57 *R/CholRestrictionsJLL.R
 66c273ea35957e5e1dc855a6089123d7 *R/ConfidenceBoundsBootstrap.R
 5a84ea3a5eeb2dd4a91bf27dc1da8e5f *R/DataForEstimation.R
-d01bf2978c7885ec0457b14629d3e6e3 *R/DatabasePrep.R
+342b743b875e6024d84f3e3c917fac29 *R/DatabasePrep.R
 258b222fe02d90e32dc67588cd93e99c *R/EstimationSigma_Ye.R
 4c777860232edd172040d3e2114f910f *R/FMN__Rotate.R
 523f98edd720e344d401652c323b3d96 *R/FeedbackMatrixRestrictionsJLL.R
@@ -58,7 +58,7 @@ bffc2fd43d35c2edb5eae146884d485c *data/CM_Yields.rda
 845ec7df9982c2e17579c37850631035 *data/JPSrep.rda
 bd8d0d8f7f46dfe374b0c90bed8cdf53 *inst/doc/my-vignette.R
 5ed22b1be5504e994ba52af9817e3096 *inst/doc/my-vignette.Rmd
-d5efdc73acf75d726f42cc8af816ca4e *inst/doc/my-vignette.html
+17a48232ce932b9475c5ecab94030cca *inst/doc/my-vignette.html
 e099d2c58101a204aef7e45c57b41a7c *inst/extdata/MacroData.xlsx
 937bdf9e6284d4f68ac73e8d044464d4 *inst/extdata/TradeData.xlsx
 bb934f2e457b7dd52733a2524c485262 *inst/extdata/YieldsData.xlsx
