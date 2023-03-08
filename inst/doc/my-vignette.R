@@ -80,14 +80,17 @@ ZZfull <-DataForEstimation(Initial_Date, Final_Date, Economies, N, FactorLabels,
 
 ## -----------------------------------------------------------------------------
 ModelType <- "JPS"
+BiasCorrection <- 1 # 1 = estimate model with bias correction; 0 = estimate model without bias correction
 DataFrequency <- "Monthly"
+UnitMatYields <- "Month" # Available options are: "Month" or "Year".
 Economies <- c("China", "Brazil", "Mexico", "Uruguay")
 N <- 3 # number of spanned factors per country
 GlobalVar <- c("GBC", "CPI_OECD") # Global variables
 DomVar <- c("Eco_Act", "Inflation") # Domestic variables 
 mat <- c(0.25, 0.5, 1, 3, 5, 10) # vector of maturities
-FactorLabels <- LabFac(N, DomVar,GlobalVar, Economies, ModelType) 
 StationarityUnderQ <- 0 # 1 = set stationarity condition under  the Q; 0 = no stationarity condition
+WishForwardPremia <- 1 # Wish to estimate the forward premia: 1= Yes; 0= No
+FPmatLim <- c(60,120) # maturty of the loan starts in 60 months and ends in 120 months in the future
 OutputLabel <- "Model_demo" # output label
 
 ## -----------------------------------------------------------------------------
@@ -111,10 +114,20 @@ W_type <- 'Sample Mean'
   JLLinputs$JLLModelType <- ModelType
 
 ## -----------------------------------------------------------------------------
+flag_mean <- TRUE # TRUE = compute the mean; FALSE = compute the median
+gamma <- 0.2 # Adjustment parameter
+N_iter <- 500 # Number of iteration to be conserved 
+N_burn <- N_iter*0.15  # Number of iteration to be discarded 
+B <- 50 # Number of bootstrap samples 
+checkBRW <- 1 # Closeness check
+B_check <- 1000 # Number of bootstrap samples used in the closeness check
+
+## -----------------------------------------------------------------------------
 Horiz <- 100
 
 ## -----------------------------------------------------------------------------
-DesiredGraphs <- c("Fit", "GIRF", "GFEVD") # Available options are: "Fit", "IRF", "FEVD", "GIRF", "GFEVD"
+DesiredGraphs <- c("Fit", "GIRF", "GFEVD") # Available options are: "Fit", "IRF", "FEVD", "GIRF", 
+                                          # "GFEVD", "TermPremia".
 
 ## -----------------------------------------------------------------------------
 WishGraphRiskFac <- 0 #   YES: 1; No = 0.
@@ -179,6 +192,7 @@ t_Last <-  "2019"
 Economies <- c("China", "Brazil", "Mexico", "Uruguay")
 type <- "Sample Mean"
 W_gvar <- Transition_Matrix(t_First, t_Last, Economies, type, DataPath = NULL, TradeFlows)
+print(W_gvar)
 
 ## -----------------------------------------------------------------------------
 data("CM_Factors_GVAR")
@@ -241,9 +255,9 @@ K0Zinputs<- list(NULL, "@K0Z: bounded", NULL, NULL)
 K1Zinputs<- list(NULL, "@K1Z: bounded", NULL, NULL)
 
 ## ---- eval=FALSE--------------------------------------------------------------
-#  ###############################################################################################################
-#  #################################### USER INPUTS ##############################################################
-#  ###############################################################################################################
+#  ########################################################################################################
+#  #################################### USER INPUTS #######################################################
+#  ########################################################################################################
 #  # A) Load database data
 #  data("CM_Factors")
 #  data('CM_Factors_GVAR')
@@ -251,9 +265,17 @@ K1Zinputs<- list(NULL, "@K1Z: bounded", NULL, NULL)
 #  data('CM_Yields')
 #  
 #  # B) Decide on general model inputs
-#  ModelType <- "JLL original" # available options are "JPS", "JPS jointP", "GVAR sepQ", "VAR jointQ", "GVAR jointQ", "JLL original", "JLL NoDomUnit", "JLL jointSigma".
+#  ModelType <- "VAR jointQ" # available options are "JPS", "JPS jointP", "GVAR sepQ", "VAR jointQ",
+#                            #"GVAR jointQ", "JLL original", "JLL NoDomUnit", "JLL jointSigma".
 #  
-#  StationarityUnderQ <- 1 # Wish to impose stationary condition for the eigenvalues of each country: YES: 1, NO:0
+#  StationarityUnderQ <- 0 # Wish to impose stationary condition for the eigenvalues of each country:
+#                           #YES: 1,NO:0
+#  BiasCorrection <- 1 # Wish to estimate the model with the bias correction method of BRW (2012):
+#                      #YES: 1, NO:0
+#  
+#  WishForwardPremia <- 1 # Wish to estimate the forward premia: YES: 1, NO:0
+#  FPmatLim <- c(60,120) #  If the forward premia is desired, then choose the Min and max maturities of the
+#                          # forward premia. Otherwise set NA
 #  
 #  Economies <- c("China", "Brazil", "Mexico", "Uruguay") # Names of the economies from the economic system
 #  GlobalVar <- c("GBC", "CPI_OECD") # Global Variables
@@ -263,28 +285,32 @@ K1Zinputs<- list(NULL, "@K1Z: bounded", NULL, NULL)
 #  
 #  OutputLabel <- "Test" # label of the model for saving the file
 #  DataFrequency <- "Monthly" # Frequency of the data
-#  UnitMatYields <- "Month" # time-unit in which yields are expressed. Available options are "Month" or "Year"
+#  UnitMatYields <- "Month" # bond yields time-unit. Available options are "Month" or "Year"
 #  
 #  # B.1) Decide on specific model inputs
-#  #################################### GVAR-based models #########################################################
-#  if (ModelType == 'GVAR sepQ' || ModelType == 'GVAR jointQ'){
-#    # Transition matrix inputs:
-#    t_First <- "2006" # First year of the sample
-#    t_Last <-  "2019" # Last year of the sample
-#    W_type <- 'Sample Mean' # Method to compute the transition matrix
-#    # VARX input:
-#    VARXtype <- "unconstrained"
-#  }
-#  
-#  #################################### JLL-based models #########################################################
-#  if (ModelType =="JLL original" || ModelType == "JLL NoDomUnit" || ModelType == "JLL jointSigma"){
-#    DominantCountry <- "China" # (i) one of the countries of the system or (ii) "None"
-#  }
-#  ################################################################################################################
+#  #################################### GVAR-based models ##################################################
+#  t_First_Wgvar <- "2004" # First year of the sample (transition matrix)
+#  t_Last_Wgvar <-  "2019" # Last year of the sample (transition matrix)
+#  W_type <- 'Sample Mean' # Method to compute the transition matrix
+#  VARXtype <- "unconstrained" # (i) "unconstrained" or (ii) ""constrained" (VARX)
+#  #################################### JLL-based models ###################################################
+#  DomUnit <- "China"
+#  WishSigmas <- 1 # Sigma matrix is estimated within the "InputsForMLEdensity" function
+#  SigmaNonOrtho <- NULL
+#  JLLModelType <- ModelType
+#  ###################################### BRW inputs  ######################################################
+#  flag_mean <- TRUE # TRUE = compute the mean; FALSE = compute the median
+#  gamma <- 0.2 # Adjustment parameter
+#  N_iter <- 500 # Number of iteration to be conserved
+#  N_burn <- N_iter*0.15  # Number of iteration to be discarded
+#  B <- 50 # Number of bootstrap samples
+#  checkBRW <- 1
+#  B_check <- 1000 #
+#  #########################################################################################################
 #  
 #  # C) Decide on Settings for numerical outputs
 #  Horiz <- 50
-#  DesiredGraphs <- c("IRF", "FEVD") #c("Fit", "IRF", "FEVD", "GIRF", "GFEVD")
+#  DesiredGraphs <- c("Fit", "IRF", "FEVD") # "Fit", "IRF", "FEVD", "GIRF", "GFEVD", "TermPremia"
 #  WishGraphRiskFac <- 0
 #  WishGraphYields <- 1
 #  WishOrthoJLLgraphs <- 0
@@ -294,7 +320,7 @@ K1Zinputs<- list(NULL, "@K1Z: bounded", NULL, NULL)
 #  Bootlist <- list()
 #  Bootlist$methodBS <- 'bs' # (i) 'bs' ; (ii) 'wild'; (iii) 'block'
 #  Bootlist$BlockLength <- 4 # necessary input if one chooses the block bootstrap
-#  Bootlist$ndraws <-  30
+#  Bootlist$ndraws <-  5
 #  Bootlist$pctg   <-  95 # confidence level
 #  
 #  # E) Out-of-sample forecast
@@ -304,49 +330,42 @@ K1Zinputs<- list(NULL, "@K1Z: bounded", NULL, NULL)
 #  ForecastList$t0Sample <- 1 # initial sample date
 #  ForecastList$t0Forecast <- 145 # last sample date for the first forecast
 #  
-#  ###############################################################################################################
-#  ############################### NO NEED TO MAKE CHANGES FROM HERE #############################################
-#  ###############################################################################################################
+#  #########################################################################################################
+#  ############################### NO NEED TO MAKE CHANGES FROM HERE #######################################
+#  #########################################################################################################
 #  
 #  # 2) Minor preliminary work
 #  C <- length(Economies)
 #  FactorLabels <- LabFac(N, DomVar,GlobalVar, Economies, ModelType) # Generate the set of labels
-#  mat <- Maturities(Yields, Economies, UnitYields = UnitMatYields) # Vector of maturities expressed in years
-#  # (alternatively, it can be completed manually)
 #  ZZ <- RiskFactors
-#  # 2.1) Build the GVARinputs
-#  if (ModelType == 'GVAR sepQ' || ModelType == 'GVAR jointQ'){
-#    GVARinputs <- list()
-#    GVARinputs$Economies <- Economies
-#    GVARinputs$GVARFactors <- FactorsGVAR
-#    GVARinputs$VARXtype <- VARXtype
-#    GVARinputs$Wgvar <- Transition_Matrix(t_First, t_Last, Economies, W_type, DataPath = NULL, Data = TradeFlows)
-#  } else { GVARinputs <- NULL }
+#  if(any(ModelType == c("GVAR sepQ", "GVAR jointQ"))){
+#  Data <- list()
+#  Data$GVARFactors <- FactorsGVAR}
+#  mat <- Maturities(Yields, Economies, UnitYields = UnitMatYields)
 #  
-#  # 2.2) Build the JLLinputs
-#  if (ModelType =="JLL original" || ModelType == "JLL NoDomUnit" || ModelType == "JLL jointSigma"){
-#    JLLinputs <- list()
-#    JLLinputs$Economies <- Economies
-#    JLLinputs$DomUnit <- DominantCountry
-#    JLLinputs$WishSigmas <- 1 # Sigma matrix is estimated within the "InputsForMLEdensity" function
-#    JLLinputs$SigmaNonOrtho <- NULL
-#    JLLinputs$JLLModelType <- ModelType
-#  }else{
-#    JLLinputs <- NULL
-#  }
+#  
+#  # 2.1) Generate GVARinputs, JLLinputs and BRWinputs
+#  ModInputs <- ListModelInputs(ModelType, Data, Economies, VARXtype, t_First_Wgvar, t_Last_Wgvar, W_type,
+#                               DomUnit, WishSigmas, SigmaNonOrtho, BiasCorrection, flag_mean, gamma, N_iter,
+#                               N_burn, B, checkBRW, B_check)
+#  
+#  GVARinputs <- ModInputs$GVARinputs
+#  JLLinputs <- ModInputs$JLLinputs
+#  BRWinputs <- ModInputs$BRWinputs
 #  
 #  # 3) Prepare the inputs of the likelihood function
 #  ModelParaList <- list()
 #  for (i in 1:C){
-#    if (( ModelType == "GVAR jointQ" || ModelType == "VAR jointQ" || ModelType == "JLL original"
-#          || ModelType == "JLL NoDomUnit" || ModelType == "JLL jointSigma" )   & i >1 ){break} # the break avoids the models with joint estimation under the Q to be estimated C times
+#    if (( any(ModelType ==c("GVAR jointQ", "VAR jointQ","JLL original", "JLL NoDomUnit","JLL jointSigma")))
+#        & i >1 ){break}
 #  
 #    # 3.1) Compute the inputs that go directly into the log-likelihood function
-#    ATSMInputs <- InputsForMLEdensity(ModelType, Yields, ZZ, FactorLabels, mat, Economies, DataFrequency, JLLinputs,   GVARinputs)
+#    ATSMInputs <- InputsForMLEdensity(ModelType, Yields, ZZ, FactorLabels, mat, Economies, DataFrequency,
+#                                      JLLinputs, GVARinputs, BRWinputs)
 #  
 #    # 3.2) Initial guesses for Variables that will be concentrared out of from the log-likelihood function
 #    K1XQ <- ATSMInputs$K1XQ
-#    if (ModelType == "JLL original" || ModelType == "JLL NoDomUnit" ){ SSZ <- NULL} else{SSZ <- ATSMInputs$SSZ}
+#    if (any(ModelType == c("JLL original", "JLL NoDomUnit"))){ SSZ <- NULL} else{SSZ <- ATSMInputs$SSZ}
 #  
 #    # 4) Build the objective function
 #    f <- Functionf(ATSMInputs, Economies, mat, DataFrequency, FactorLabels, ModelType)
@@ -370,34 +389,45 @@ K1Zinputs<- list(NULL, "@K1Z: bounded", NULL, NULL)
 #  
 #    # 6) Optimization of the model
 #    if (ModelType == 'JPS' || ModelType == 'JPS jointP' || ModelType == "GVAR sepQ"){
-#      ModelParaList[[ModelType]][[Economies[i]]] <- Optimization(f, tol, varargin, FactorLabels, Economies, ModelType, JLLinputs, GVARinputs)$Summary
-#    }else{ ModelParaList[[ModelType]] <- Optimization(f, tol, varargin, FactorLabels, Economies, ModelType, JLLinputs, GVARinputs)$Summary}
-#  
+#  ModelParaList[[ModelType]][[Economies[i]]] <- Optimization(f, tol, varargin, FactorLabels,
+#                                                             Economies, ModelType)$Summary
+#    }else{
+#  ModelParaList[[ModelType]] <- Optimization(f, tol, varargin, FactorLabels, Economies, ModelType,
+#                                             JLLinputs, GVARinputs)$Summary}
 #  }
 #  
 #  # 7) Numerical and graphical outputs
-#  InputsForOutputs <- InputsForOutputs(ModelType, Horiz, DesiredGraphs, OutputLabel, StationarityUnderQ,                  WishGraphYields, WishGraphRiskFac, WishOrthoJLLgraphs, WishBootstrap, Bootlist, WishForecast, ForecastList)
-#  # A) Fit, IRF, FEVD, GIRF and GFEVD
+#  InputsForOutputs <- InputsForOutputs(ModelType, Horiz, DesiredGraphs, OutputLabel, StationarityUnderQ,
+#                                       UnitMatYields, WishGraphYields, WishGraphRiskFac, WishOrthoJLLgraphs,
+#                                       WishForwardPremia, FPmatLim, WishBootstrap, Bootlist, WishForecast,
+#                                       ForecastList)
+#  # A) Fit, IRF, FEVD, GIRF, GFEVD, and Term Premia
 #  NumericalOutputs <- NumOutputs(ModelType, ModelParaList, InputsForOutputs, FactorLabels, Economies)
 #  
 #  # B) Bootstrap
-#  Bootstrap <- Bootstrap(ModelType, ModelParaList, NumericalOutputs, mat, Economies, InputsForOutputs, FactorLabels, DataFrequency, varargin, JLLinputs, GVARinputs)
+#  Bootstrap <- Bootstrap(ModelType, ModelParaList, NumericalOutputs, mat, Economies, InputsForOutputs,
+#                         FactorLabels, DataFrequency, varargin, JLLinputs, GVARinputs, BRWinputs)
 #  
 #  # C) Out-of-sample forecasting
-#  Forecasts <- ForecastYields(ModelType, ModelParaList, InputsForOutputs, FactorLabels, Economies, DataFrequency, JLLinputs, GVARinputs)
+#  Forecasts <- ForecastYields(ModelType, ModelParaList, InputsForOutputs, FactorLabels, Economies,
+#                              DataFrequency, JLLinputs, GVARinputs, BRWinputs)
+#  
 #  
 
 ## ---- eval=FALSE--------------------------------------------------------------
-#  ###############################################################################################################
-#  #################################### USER INPUTS ##############################################################
-#  ###############################################################################################################
+#  #########################################################################################################
+#  #################################### USER INPUTS ########################################################
+#  #########################################################################################################
 #  # A) Load database data
 #  data("BR_jps_gro_R3")
 #  
 #  # B) Decide on general model inputs
 #  ModelType <- "JPS"
 #  
-#  StationarityUnderQ <- 0 # Wish to impose stationary condition for the eigenvalues of each country: YES: 1, NO:0
+#  StationarityUnderQ <- 0
+#  BiasCorrection <- 0
+#  WishForwardPremia <- 1
+#  
 #  
 #  Economies <- c("U.S.") # Names of the economies from the economic system
 #  GlobalVar <- c()
@@ -410,9 +440,9 @@ K1Zinputs<- list(NULL, "@K1Z: bounded", NULL, NULL)
 #  
 #  mat <- c(0.25, 0.5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10) # maturities expressed in years
 #  
-#  ###############################################################################################################
-#  ############################### NO NEED TO MAKE CHANGES FROM HERE #############################################
-#  ###############################################################################################################
+#  #########################################################################################################
+#  ############################### NO NEED TO MAKE CHANGES FROM HERE #######################################
+#  #########################################################################################################
 #  # 2) Minor preliminary work
 #  C <- length(Economies)
 #  M <- length(DomVar)
@@ -425,41 +455,41 @@ K1Zinputs<- list(NULL, "@K1Z: bounded", NULL, NULL)
 #  
 #  
 #  # 3) Prepare the inputs of the likelihood function
-#  for (i in 1:C){
-#  # 3.1) Compute the inputs that go directly into the log-likelihood function
-#  ATSMInputs <- InputsForMLEdensity(ModelType, Yields, ZZ, FactorLabels, mat, Economies, DataFrequency)
-#  # 3.2) Initial guesses for Variables that will be concentrared out of from the log-likelihood function
-#  K1XQ <- ATSMInputs$K1XQ
-#  SSZ <- ATSMInputs$SSZ
-#  # 3.3) Adjust the inputs which are funtion of the W matrix
-#  ATSMInputs$Wpca <- W
-#  ATSMInputs$We <- t(pracma::null(W))
-#  ATSMInputs$WpcaFull <- rbind(ATSMInputs$Wpca, ATSMInputs$We)
-#  ATSMInputs$PP <- SpaFac
+#  i <- length(Economies)
+#    # 3.1) Compute the inputs that go directly into the log-likelihood function
+#    ATSMInputs <- InputsForMLEdensity(ModelType, Yields, ZZ, FactorLabels, mat, Economies, DataFrequency)
+#    # 3.2) Initial guesses for Variables that will be concentrared out of from the log-likelihood function
+#    K1XQ <- ATSMInputs$K1XQ
+#    SSZ <- ATSMInputs$SSZ
+#    # 3.3) Adjust the inputs which are funtion of the W matrix
+#    ATSMInputs$Wpca <- W
+#    ATSMInputs$We <- t(pracma::null(W))
+#    ATSMInputs$WpcaFull <- rbind(ATSMInputs$Wpca, ATSMInputs$We)
+#    ATSMInputs$PP <- SpaFac
 #  
-#  # 4) Build the objective function
-#  f <- Functionf(ATSMInputs, Economies, mat, DataFrequency, FactorLabels, ModelType)
+#    # 4) Build the objective function
+#    f <- Functionf(ATSMInputs, Economies, mat, DataFrequency, FactorLabels, ModelType)
 #  
-#  # 5) Set the optimization settings
-#  VarLab <- ParaLabels(ModelType, StationarityUnderQ)
+#    # 5) Set the optimization settings
+#    VarLab <- ParaLabels(ModelType, StationarityUnderQ)
 #  
-#  varargin <- list()
-#  varargin$K1XQ <-list(K1XQ, VarLab[[ModelType]][["K1XQ"]] , NULL , NULL)
-#  varargin$SSZ <- list(SSZ, VarLab[[ModelType]][["SSZ"]], NULL, NULL)
-#  varargin$r0 <- list(NULL, VarLab[[ModelType]][["r0"]], NULL, NULL)
-#  varargin$se <- list(NULL, VarLab[[ModelType]][["se"]], 1e-6, NULL)
-#  varargin$K0Z <- list(NULL, VarLab[[ModelType]][["K0Z"]], NULL, NULL)
-#  varargin$K1Z <- list(NULL, VarLab[[ModelType]][["K1Z"]], NULL, NULL)
-#  varargin$OptRun <-  c("iter off")
+#    varargin <- list()
+#    varargin$K1XQ <-list(K1XQ, VarLab[[ModelType]][["K1XQ"]] , NULL , NULL)
+#    varargin$SSZ <- list(SSZ, VarLab[[ModelType]][["SSZ"]], NULL, NULL)
+#    varargin$r0 <- list(NULL, VarLab[[ModelType]][["r0"]], NULL, NULL)
+#    varargin$se <- list(NULL, VarLab[[ModelType]][["se"]], 1e-6, NULL)
+#    varargin$K0Z <- list(NULL, VarLab[[ModelType]][["K0Z"]], NULL, NULL)
+#    varargin$K1Z <- list(NULL, VarLab[[ModelType]][["K1Z"]], NULL, NULL)
+#    varargin$OptRun <-  c("iter off")
 #  
-#  LabelVar<- c('Value', 'Label', 'LB', 'UB') # Elements of each parameter
-#  for (d in 1:(length(varargin)-1)){ names(varargin[[d]]) <-  LabelVar}
+#    LabelVar<- c('Value', 'Label', 'LB', 'UB') # Elements of each parameter
+#    for (d in 1:(length(varargin)-1)){ names(varargin[[d]]) <-  LabelVar}
 #  
-#  tol <- 1e-4
+#    tol <- 1e-4
 #  
-#  # 6) Optimization of the model
-#  ModelPara <- Optimization(f, tol, varargin, FactorLabels, Economies, ModelType)$Summary
-#  }
+#    # 6) Optimization of the model
+#    ModelPara <- Optimization(f, tol, varargin, FactorLabels, Economies, ModelType)$Summary
+#  
 
 ## ---- echo= FALSE-------------------------------------------------------------
 options(scipen = 100) # eliminate the scientific notation
@@ -539,9 +569,9 @@ kableExtra::kbl(se, align = "c", caption ="Portfolio of yields with errors") %>%
   kableExtra::footnote(general = " $se$ is the standard deviation of the portfolio of yields observed with errors.")
 
 ## ---- eval=FALSE--------------------------------------------------------------
-#  ###############################################################################################################
-#  #################################### USER INPUTS ##############################################################
-#  ###############################################################################################################
+#  #########################################################################################################
+#  #################################### USER INPUTS ########################################################
+#  #########################################################################################################
 #  # A) Load database data
 #  data("CM_Factors")
 #  data('CM_Factors_GVAR')
@@ -549,36 +579,44 @@ kableExtra::kbl(se, align = "c", caption ="Portfolio of yields with errors") %>%
 #  data('CM_Yields')
 #  
 #  # B) Decide on general model inputs
-#  ModelType <- "GVAR jointQ" # Set "GVAR jointQ" for the GVAR-ATSM and "JLL original" for the JLL-ATSM
+#  ModelType <- "GVAR jointQ" # available options are "JPS", "JPS jointP", "GVAR sepQ", "VAR jointQ",
+#                            #"GVAR jointQ", "JLL original", "JLL NoDomUnit", "JLL jointSigma".
 #  
 #  StationarityUnderQ <- 0
+#  BiasCorrection <- 0
+#  WishForwardPremia <- 0
+#  FPmatLim <- c(47,48)
 #  
-#  Economies <- c("China", "Brazil", "Mexico", "Uruguay")
-#  GlobalVar <- c("GBC", "CPI_OECD") # Global Variables
-#  DomVar <- c("Eco_Act", "Inflation") # Country-specific variables
+#  Economies <- c("China","Brazil","Mexico", "Uruguay")
+#  GlobalVar <- c("GBC", "CPI_OECD")
+#  DomVar <- c("OECD_Det", "Inflation")
 #  
 #  N <- 3 # Number of spanned factors per country
 #  
-#  OutputLabel <- "CM_2021" # label of the model for saving the file
-#  DataFrequency <- "Monthly" # Frequency of the data
-#  UnitMatYields <- "Month" # time-unit in which yields are expressed. Available options are "Month" or "Year"
+#  OutputLabel <- "CM_2021"
+#  DataFrequency <- "Monthly"
+#  UnitMatYields <- "Month"
 #  
 #  # B.1) Decide on specific model inputs
-#  #################################### GVAR-based models #########################################################
-#  if (ModelType == 'GVAR jointQ'){
-#  # Transition matrix inputs:
-#  t_First <- "2006" # First year of the sample
-#  t_Last <-  "2019" # Last year of the sample
-#  W_type <- 'Sample Mean' # Method to compute the transition matrix
-#  # VARX input:
+#  #################################### GVAR-based models ##################################################
+#  t_First_Wgvar <- "2004"
+#  t_Last_Wgvar <-  "2019"
+#  W_type <- 'Sample Mean'
 #  VARXtype <- "unconstrained"
-#  }
-#  
-#  #################################### JLL-based models #########################################################
-#  if (ModelType =="JLL original"){
-#      DominantCountry <- "China"
-#  }
-#  ################################################################################################################
+#  #################################### JLL-based models ###################################################
+#  DomUnit <- "China"
+#  WishSigmas <- 0
+#  SigmaNonOrtho <- NULL
+#  JLLModelType <- ModelType
+#  ###################################### BRW inputs  ######################################################
+#  flag_mean <- TRUE
+#  gamma <- 0.1
+#  N_iter <- 500
+#  N_burn <- N_iter*0.15
+#  B <- 50
+#  checkBRW <- 1
+#  B_check <- 1000
+#  #########################################################################################################
 #  
 #  # C) Decide on Settings for numerical outputs
 #  Horiz <- 25
@@ -587,60 +625,57 @@ kableExtra::kbl(se, align = "c", caption ="Portfolio of yields with errors") %>%
 #  WishGraphYields <- 1
 #  WishOrthoJLLgraphs <- 1
 #  
-#  # D) Bootstrao settings
-#  WishBootstrap <- 0 #  If bootstrap outputs are desired set this variable equal to 1 (it may take several hours/days).
+#  # D) Bootstrap settings
+#  WishBootstrap <- 0
 #  Bootlist <- list()
 #  Bootlist$methodBS <- 'bs'
-#  Bootlist$BlockLength <- c()
+#  Bootlist$BlockLength <- 4
 #  Bootlist$ndraws <-  1000
 #  Bootlist$pctg   <-  95
 #  
 #  # E) Out-of-sample forecast
-#  WishForecast <- 0 #  If out-of-sample forecasts outputs are desired set this variable equal to 1
+#  WishForecast <- 0
 #  ForecastList <- list()
 #  ForecastList$ForHoriz <- 12
 #  ForecastList$t0Sample <- 1
 #  ForecastList$t0Forecast <- 90
 #  
-#  ###############################################################################################################
-#  ############################### NO NEED TO MAKE CHANGES FROM HERE #############################################
-#  ###############################################################################################################
+#  #########################################################################################################
+#  ############################### NO NEED TO MAKE CHANGES FROM HERE #######################################
+#  #########################################################################################################
 #  
 #  # 2) Minor preliminary work
 #  C <- length(Economies)
-#  FactorLabels <- LabFac(N, DomVar,GlobalVar, Economies, ModelType) # Generate the set of labels
-#  mat <- Maturities(Yields, Economies, UnitYields = UnitMatYields) # Vector of maturities expressed in years
-#  
+#  FactorLabels <- LabFac(N, DomVar,GlobalVar, Economies, ModelType)
 #  ZZ <- RiskFactors
-#  # 2.1) Build the GVARinputs
-#  if (ModelType == "GVAR jointQ"){
-#    GVARinputs <- list()
-#    GVARinputs$Economies <- Economies
-#    GVARinputs$GVARFactors <- FactorsGVAR
-#    GVARinputs$VARXtype <- VARXtype
-#    GVARinputs$Wgvar <- Transition_Matrix(t_First, t_Last, Economies, W_type, DataPath = NULL, Data = TradeFlows)
-#    } else { GVARinputs <- NULL }
 #  
-#  # 2.2) Build the JLLinputs
-#  if (ModelType =="JLL original"){
-#    JLLinputs <- list()
-#    JLLinputs$Economies <- Economies
-#    JLLinputs$DomUnit <- DominantCountry
-#    JLLinputs$WishSigmas <- 1
-#    JLLinputs$SigmaNonOrtho <- NULL
-#    JLLinputs$JLLModelType <- ModelType
-#  }else{  JLLinputs <- NULL }
+#  Data <- list()
+#  Data$GVARFactors <- FactorsGVAR
+#  mat <- Maturities(Yields, Economies, UnitYields = UnitMatYields)
+#  
+#  # 2.1) Generate GVARinputs, JLLinputs and BRWinputs
+#  ModInputs <- ListModelInputs(ModelType, Data, Economies, VARXtype, t_First_Wgvar, t_Last_Wgvar, W_type,
+#                               DomUnit, WishSigmas, SigmaNonOrtho, BiasCorrection, flag_mean, gamma, N_iter,
+#                               N_burn, B, checkBRW, B_check)
+#  
+#  GVARinputs <- ModInputs$GVARinputs
+#  JLLinputs <- ModInputs$JLLinputs
+#  BRWinputs <- ModInputs$BRWinputs
 #  
 #  # 3) Prepare the inputs of the likelihood function
 #  ModelParaList <- list()
+#  for (i in 1:C){
+#    if (( ModelType == "GVAR jointQ" || ModelType == "VAR jointQ" || ModelType == "JLL original"
+#          || ModelType == "JLL NoDomUnit" || ModelType == "JLL jointSigma" )   & i >1 ){break}
 #  
 #  # 3.1) Compute the inputs that go directly into the log-likelihood function
-#  ATSMInputs <- InputsForMLEdensity(ModelType, Yields, ZZ, FactorLabels, mat, Economies, DataFrequency, JLLinputs,
-#  GVARinputs)
+#  ATSMInputs <- InputsForMLEdensity(ModelType, Yields, ZZ, FactorLabels, mat, Economies, DataFrequency,
+#                                    JLLinputs, GVARinputs, BRWinputs)
 #  
-#    # 3.2) Initial guesses for Variables that will be concentrared out of from the log-likelihood function
+#  
+#  # 3.2) Initial guesses for Variables that will be concentrared out of from the log-likelihood function
 #  K1XQ <- ATSMInputs$K1XQ
-#  if (ModelType == "JLL original"){ SSZ <- NULL} else{SSZ <- ATSMInputs$SSZ}
+#  if (ModelType == "JLL original" || ModelType == "JLL NoDomUnit" ){ SSZ <- NULL} else{SSZ <- ATSMInputs$SSZ}
 #  
 #  # 4) Build the objective function
 #  f <- Functionf(ATSMInputs, Economies, mat, DataFrequency, FactorLabels, ModelType)
@@ -649,7 +684,7 @@ kableExtra::kbl(se, align = "c", caption ="Portfolio of yields with errors") %>%
 #  VarLab <- ParaLabels(ModelType, StationarityUnderQ)
 #  
 #  varargin <- list()
-#  varargin$K1XQ <-list(K1XQ, VarLab[[ModelType]][["K1XQ"]], NULL , NULL)
+#  varargin$K1XQ <-list(K1XQ, VarLab[[ModelType]][["K1XQ"]] , NULL , NULL)
 #  varargin$SSZ <- list(SSZ, VarLab[[ModelType]][["SSZ"]], NULL, NULL)
 #  varargin$r0 <- list(NULL, VarLab[[ModelType]][["r0"]], NULL, NULL)
 #  varargin$se <- list(NULL, VarLab[[ModelType]][["se"]], 1e-6, NULL)
@@ -661,21 +696,26 @@ kableExtra::kbl(se, align = "c", caption ="Portfolio of yields with errors") %>%
 #  for (d in 1:(length(varargin)-1)){ names(varargin[[d]]) <-  LabelVar}
 #  
 #  tol <- 1e-4
-#  
 #  # 6) Optimization of the model
-#  ModelParaList[[ModelType]] <- Optimization(f, tol, varargin, FactorLabels, Economies, ModelType, JLLinputs, GVARinputs)$Summary
+#  ModelParaList[[ModelType]] <- Optimization(f, tol, varargin, FactorLabels, Economies, ModelType,
+#                                             JLLinputs, GVARinputs)$Summary
+#  }
 #  
-#  
-#  # 7) Numerical and graphical outputs
-#  InputsForOutputs <- InputsForOutputs(ModelType, Horiz, DesiredGraphs, OutputLabel, StationarityUnderQ, WishGraphYields,  WishGraphRiskFac, WishOrthoJLLgraphs, WishBootstrap, Bootlist, WishForecast, ForecastList)
-#  
-#  # A) Fit, IRF, FEVD, GIRF and GFEVD
+#  # 7) Numerical Outputs
+#  InputsForOutputs <- InputsForOutputs(ModelType, Horiz, DesiredGraphs, OutputLabel, StationarityUnderQ,
+#                                       UnitMatYields, WishGraphYields, WishGraphRiskFac, WishOrthoJLLgraphs,
+#                                       WishForwardPremia, FPmatLim, WishBootstrap, Bootlist, WishForecast,
+#                                       ForecastList)
+#  # A) Fit, IRF, FEVD, GIRF, GFEVD and Risk premia
 #  NumericalOutputs <- NumOutputs(ModelType, ModelParaList, InputsForOutputs, FactorLabels, Economies)
 #  
 #  # B) Bootstrap
-#  Bootstrap <- Bootstrap(ModelType, ModelParaList, NumericalOutputs, mat, Economies, InputsForOutputs, FactorLabels,
-#  DataFrequency, varargin, JLLinputs, GVARinputs)
+#  Bootstrap <- Bootstrap(ModelType, ModelParaList, NumericalOutputs, mat, Economies, InputsForOutputs,
+#                         FactorLabels, DataFrequency, varargin, JLLinputs, GVARinputs, BRWinputs)
 #  
 #  # C) Out-of-sample forecasting
-#  Forecasts <- ForecastYields(ModelType, ModelParaList, InputsForOutputs, FactorLabels, Economies, DataFrequency, JLLinputs, GVARinputs)
+#  Forecasts <- ForecastYields(ModelType, ModelParaList, InputsForOutputs, FactorLabels, Economies,
+#                              DataFrequency, JLLinputs, GVARinputs, BRWinputs)
+#  
+#  
 
