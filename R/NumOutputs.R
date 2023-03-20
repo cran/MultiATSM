@@ -1965,7 +1965,6 @@ TermPremiaDecompJoint <- function(ModelPara, FactorLabels, ModelType, InputsForO
 
     FR <- list()
 
-
     # If any of the data of the specific maturity were not used in the estimation, then compute the fitted value
     if( anyNA(IDXMatBoth)){
 
@@ -2015,7 +2014,7 @@ TermPremiaDecompJoint <- function(ModelPara, FactorLabels, ModelType, InputsForO
         YieldMAX <- t(t(Y[IdxMaxCS, ]*100))
 
         FR[[Economies[i]]] <- (matMAX*YieldMAX -  matMIN*YieldMIN)/(matMAX -  matMIN) # Fitted forward rate
-        TermPremium[[Economies[i]]] <- FR[[Economies[i]]] - avexp[[Economies[i]]] # Forward Premia
+        TermPremium[[Economies[i]]] <- FR[[Economies[i]]] - avexpFP[[Economies[i]]] # Forward Premia
         colnames(TermPremium[[Economies[i]]]) <- paste("FP_", matMIN, "-", matMAX, YLab, sep="")
         colnames(FR[[Economies[i]]]) <- paste("Mat", matMIN, "-", matMAX, YLab, sep="")
       }

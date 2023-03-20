@@ -1,4 +1,4 @@
-6126a315de78ea87496e37ca3b6ff8f0 *DESCRIPTION
+6fcb3da9887cb951674a27d4b5da2b0d *DESCRIPTION
 3bb14cf727babd0270b3ee21f0a2c492 *NAMESPACE
 db0d7f6198336b52513d4260b6f7a657 *R/A0N__computeBnAn.R
 567eb618d24116a6172e6496680504df *R/AuxiliarBootstrapFunctions.R
@@ -33,7 +33,7 @@ b50133aaac9b1c986a27e59ef4542dea *R/MLEdensity.R
 63595c89c25e95edf30544f625642f01 *R/Maturities.R
 c61bbf238c0a055867db51b9b24d64b3 *R/MinorOptimizationFunctions.R
 a0514529723dc2614665fe4c1e2758f1 *R/MultiATSM.R
-2a2ad73f58ff2c85d9192c3ffa248c9e *R/NumOutputs.R
+3dcfacc07c345a1a515317ff64ad59d2 *R/NumOutputs.R
 068e43eb6ee9339e37985f1db6bc8ea9 *R/NumOutputsBootstrap.R
 50c2d65ad3a7eeb13c55c4240fe4ced5 *R/Optimization.R
 2585097770d123f2927445dc00c2f232 *R/Reg_K1Q.R
@@ -60,7 +60,7 @@ bffc2fd43d35c2edb5eae146884d485c *data/CM_Yields.rda
 845ec7df9982c2e17579c37850631035 *data/JPSrep.rda
 aa1d4354873c8f8f69578e189ce4cdb7 *inst/doc/my-vignette.R
 6664e33631dcd3c53f6e979bfdbbd2c1 *inst/doc/my-vignette.Rmd
-133f3dbfcd7325ca29f408380d15cb53 *inst/doc/my-vignette.html
+46a8f4389076b02afd4a297a69d1b56d *inst/doc/my-vignette.html
 e099d2c58101a204aef7e45c57b41a7c *inst/extdata/MacroData.xlsx
 937bdf9e6284d4f68ac73e8d044464d4 *inst/extdata/TradeData.xlsx
 bb934f2e457b7dd52733a2524c485262 *inst/extdata/YieldsData.xlsx
