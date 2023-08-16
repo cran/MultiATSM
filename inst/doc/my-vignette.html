@@ -12,7 +12,7 @@
 
 <meta name="author" content="Rubens Moura" />
 
-<meta name="date" content="2023-03-20" />
+<meta name="date" content="2023-08-16" />
 
 <title>MultiATSM package - General Guidelines</title>
 
@@ -68,9 +68,16 @@ background-color: #f5f5f5;
 }
 .lightable-classic {
 border-top: 0.16em solid #111111;
+border-bottom: 0.16em solid #111111;
 width: 100%;
 margin-bottom: 10px;
 margin: 10px 5px;
+}
+.lightable-classic tfoot tr td {
+border: 0;
+}
+.lightable-classic tfoot tr:first-child td {
+border-top: 0.14em solid #111111;
 }
 .lightable-classic caption {
 color: #222222;
@@ -89,9 +96,6 @@ color: #222222;
 .lightable-classic thead tr:last-child th {
 border-bottom: 0.10em solid #111111;
 }
-.lightable-classic tbody tr:last-child td {
-border-bottom: 0.14em solid #111111;
-}
 .lightable-classic.lightable-hover tbody tr:hover {
 background-color: #F9EEC1;
 }
@@ -100,8 +104,15 @@ background-color: #f5f5f5;
 }
 .lightable-classic-2 {
 border-top: 3px double #111111;
+border-bottom: 3px double #111111;
 width: 100%;
 margin-bottom: 10px;
+}
+.lightable-classic-2 tfoot tr td {
+border: 0;
+}
+.lightable-classic-2 tfoot tr:first-child td {
+border-top: 3px double #111111;
 }
 .lightable-classic-2 caption {
 color: #222222;
@@ -138,6 +149,12 @@ border: 1px solid #EEE;
 border-collapse: collapse;
 margin-bottom: 10px;
 }
+.lightable-material tfoot tr td {
+border: 0;
+}
+.lightable-material tfoot tr:first-child td {
+border-top: 1px solid #EEE;
+}
 .lightable-material th {
 height: 56px;
 padding-left: 16px;
@@ -171,6 +188,12 @@ border-collapse: collapse;
 margin-bottom: 10px;
 background-color: #363640;
 }
+.lightable-material-dark tfoot tr td {
+border: 0;
+}
+.lightable-material-dark tfoot tr:first-child td {
+border-top: 1px solid #FFFFFF12;
+}
 .lightable-material-dark th {
 height: 56px;
 padding-left: 16px;
@@ -200,6 +223,12 @@ border-bottom: 1px solid #FFFFFF12;
 width: 100%;
 margin-bottom: 10px;
 color: #444;
+}
+.lightable-paper tfoot tr td {
+border: 0;
+}
+.lightable-paper tfoot tr:first-child td {
+border-top: 1px solid #00000020;
 }
 .lightable-paper thead tr:last-child th {
 color: #666;
@@ -550,7 +579,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">MultiATSM package - General Guidelines</h1>
 <h4 class="author">Rubens Moura</h4>
-<h4 class="date">2023-03-20</h4>
+<h4 class="date">2023-08-16</h4>
 
 
 <div id="TOC">
@@ -574,7 +603,6 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <li><a href="#S:SectionReplication"><span class="toc-section-number">4</span> Examples of full implementation of ATSMs</a>
 <ul>
 <li><a href="#general-template"><span class="toc-section-number">4.1</span> General template</a></li>
-<li><a href="#paper-replications"><span class="toc-section-number">4.2</span> Paper replications</a></li>
 </ul></li>
 <li><a href="#references">References</a></li>
 </ul>
@@ -734,7 +762,7 @@ GVAR
 </td>
 </tr>
 <tr>
-<td style="text-align:left; padding-left:  2em;" indentlevel="1">
+<td style="text-align:left;padding-left: 2em;" indentlevel="1">
 JPS
 </td>
 <td style="text-align:center;">
@@ -776,7 +804,7 @@ x
 </td>
 </tr>
 <tr>
-<td style="text-align:left; padding-left:  2em;" indentlevel="1">
+<td style="text-align:left;padding-left: 2em;" indentlevel="1">
 JPS jointP
 </td>
 <td style="text-align:center;">
@@ -818,7 +846,7 @@ x
 </td>
 </tr>
 <tr>
-<td style="text-align:left; padding-left:  2em;" indentlevel="1">
+<td style="text-align:left;padding-left: 2em;" indentlevel="1">
 VAR jointQ
 </td>
 <td style="text-align:center;">
@@ -865,7 +893,7 @@ x
 </td>
 </tr>
 <tr>
-<td style="text-align:left; padding-left:  2em;" indentlevel="1">
+<td style="text-align:left;padding-left: 2em;" indentlevel="1">
 GVAR sepQ
 </td>
 <td style="text-align:center;">
@@ -907,7 +935,7 @@ x
 </td>
 </tr>
 <tr>
-<td style="text-align:left; padding-left:  2em;" indentlevel="1">
+<td style="text-align:left;padding-left: 2em;" indentlevel="1">
 GVAR jointQ
 </td>
 <td style="text-align:center;">
@@ -954,7 +982,7 @@ x
 </td>
 </tr>
 <tr>
-<td style="text-align:left; padding-left:  2em;" indentlevel="1">
+<td style="text-align:left;padding-left: 2em;" indentlevel="1">
 JLL original
 </td>
 <td style="text-align:center;">
@@ -997,7 +1025,7 @@ x
 </td>
 </tr>
 <tr>
-<td style="text-align:left; padding-left:  2em;" indentlevel="1">
+<td style="text-align:left;padding-left: 2em;" indentlevel="1">
 JLL NoDomUnit
 </td>
 <td style="text-align:center;">
@@ -1039,7 +1067,7 @@ x
 </td>
 </tr>
 <tr>
-<td style="text-align:left; padding-left:  2em;" indentlevel="1">
+<td style="text-align:left;padding-left: 2em;" indentlevel="1">
 JLL jointSigma
 </td>
 <td style="text-align:center;">
@@ -1084,7 +1112,7 @@ x
 </tbody>
 </table>
 <p>Some aspects of the multi-country frameworks are worth highlighting. As for the models based on the setup of JLL (2015), the version “JLL original” follows closely the seminal work of JLL (2015), i.e., it is assumed an economic cohort containing a worldwide dominant economy and a set of smaller countries, in addition to the estimation of the sigma matrix be performed exclusively under the <span class="math inline">\(P\)</span>-measure. The two other alternative versions assume the absence of a dominant country (“JLL NoDomUnit”) and the estimation of sigma under both the <span class="math inline">\(P\)</span> and <span class="math inline">\(Q\)</span> measures (“JLL jointSigma”), as in the standard JPS (2014) model. As for the remaining multi-country ATSMs, it is considered that the dynamics of the risk factors under the <span class="math inline">\(P\)</span>-measure evolves according to a GVAR model. The version labeled “GVAR jointQ” is the one presented in CM (2021).</p>
-<p>In what follows, the focus will be devoted to describe the various pieces that are necessary to implement ATSMs. Specifically, Section <a href="#S:SectionData">1</a> describes the data-set available at this package and the set of functions that are useful to retrieve data from Excel files. Section <a href="#S:SectionInputs">2</a> exposes the necessary inputs that have to be specified by the user. In Section <a href="#S:SectionEstimation">3</a> the estimation procedure is detailed. Section <a href="#S:SectionReplication">4</a> shows how to use the <em>MultiATSM</em> package to estimate ATSMs from scratch as well as to closely reproduce some empirical features of academic papers. To ease the exposition, throughout the next sections, the database used by CM (2021) is employed to illustrate the use of the various functions available in this package.</p>
+<p>In what follows, the focus will be devoted to describe the various pieces that are necessary to implement ATSMs. Specifically, Section <a href="#S:SectionData">1</a> describes the data-set available at this package and the set of functions that are useful to retrieve data from Excel files. Section <a href="#S:SectionInputs">2</a> exposes the necessary inputs that have to be specified by the user. In Section <a href="#S:SectionEstimation">3</a> the estimation procedure is detailed. Section <a href="#S:SectionReplication">4</a> shows how to use the <em>MultiATSM</em> package to estimate ATSMs from scratch. To ease the exposition, throughout the next sections, the database used by CM (2021) is employed to illustrate the use of the various functions available in this package.</p>
 <div id="S:SectionData" class="section level1" number="1">
 <h1><span class="header-section-number">1</span> Data</h1>
 <div id="S:SectionDataPackage" class="section level2" number="1.1">
@@ -1305,35 +1333,39 @@ Figure 3.1: Yield loadings on the spanned factors
 ## Brazil  0.8268799 0.0000000 0.12340661 0.049713473
 ## Mexico  0.8596078 0.1326284 0.00000000 0.007763753
 ## Uruguay 0.3811195 0.5497525 0.06912795 0.000000000</code></pre>
+<p>Starting from package version <span class="math inline">\(0.3.3\)</span>, the GVAR setups can be estimated incorporating time-varying interdependence weights. This entails that the star factors are constructed by applying trade flow weights from the specific year to adjust the risk factors of the corresponding year. To employ this feature, users need to specify the transition matrix type as <em>Full Sample</em> and select the <strong>same specific date (year)</strong> for both the initial and final years within the transition matrix. This implies that the trade weights of this year are used for solving (link matrices) the GVAR system. Taking reference from the variable names in the previous example, an illustration could be set as follows:</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>t_First <span class="ot">&lt;-</span> <span class="st">&quot;2019&quot;</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>t_Last <span class="ot">&lt;-</span>  <span class="st">&quot;2019&quot;</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>type <span class="ot">&lt;-</span> <span class="st">&quot;Full Sample&quot;</span></span></code></pre></div>
 <p>Having defined the form of the transition matrix, one can complete the <em>GVARinputs</em> variable along the lines discussed in Section <a href="#S:SectionGVARJLLinputs">2.1.1</a>.</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;CM_Factors_GVAR&quot;</span>)</span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>GVARinputs <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>GVARinputs<span class="sc">$</span>Economies <span class="ot">&lt;-</span> Economies</span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>GVARinputs<span class="sc">$</span>GVARFactors <span class="ot">&lt;-</span> FactorsGVAR</span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>GVARinputs<span class="sc">$</span>VARXtype <span class="ot">&lt;-</span> <span class="st">&quot;unconstrained&quot;</span></span>
-<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>GVARinputs<span class="sc">$</span>Wgvar <span class="ot">&lt;-</span> W_gvar</span>
-<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="dv">3</span></span>
-<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>GVARpara <span class="ot">&lt;-</span> <span class="fu">GVAR</span>(GVARinputs, N)</span></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;CM_Factors_GVAR&quot;</span>)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>GVARinputs <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>GVARinputs<span class="sc">$</span>Economies <span class="ot">&lt;-</span> Economies</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>GVARinputs<span class="sc">$</span>GVARFactors <span class="ot">&lt;-</span> FactorsGVAR</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>GVARinputs<span class="sc">$</span>VARXtype <span class="ot">&lt;-</span> <span class="st">&quot;unconstrained&quot;</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>GVARinputs<span class="sc">$</span>Wgvar <span class="ot">&lt;-</span> W_gvar</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>GVARpara <span class="ot">&lt;-</span> <span class="fu">GVAR</span>(GVARinputs, N)</span></code></pre></div>
 <p>A separate routine is provided for computing the foreign-specific factors (also commonly referred to as the star variables) used in the estimation of the VARX models.</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&#39;CM_Factors&#39;</span>)</span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>StaFac <span class="ot">&lt;-</span> <span class="fu">StarFactors</span>(RiskFactors, Economies, W_gvar)</span></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&#39;CM_Factors&#39;</span>)</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>StaFac <span class="ot">&lt;-</span> <span class="fu">StarFactors</span>(RiskFactors, Economies, W_gvar)</span></code></pre></div>
 </div>
 <div id="S:SectionJLL" class="section level3" number="3.2.3">
 <h3><span class="header-section-number">3.2.3</span> JLL</h3>
 <p>Calculating the <span class="math inline">\(P\)</span>-dynamics parameters in the form proposed by JLL (2015) requires the following inputs: <em>(i)</em> the time series of the risk factors in non-orthogonalized form; <em>(ii)</em> the number of country-specific spanned factors and <em>(iii)</em> the specification of the <em>JLLinputs</em> as presented in Section <a href="#S:SectionGVARJLLinputs">2.1.1</a>. See, for instance:</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;CM_Factors&quot;</span>)</span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="dv">3</span></span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>JLLinputs <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>ModelType <span class="ot">&lt;-</span> <span class="st">&quot;JLL original&quot;</span>  </span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>JLLinputs<span class="sc">$</span>Economies <span class="ot">&lt;-</span> Economies</span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>JLLinputs<span class="sc">$</span>DomUnit <span class="ot">&lt;-</span> <span class="st">&quot;China&quot;</span></span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>JLLinputs<span class="sc">$</span>WishSigmas <span class="ot">&lt;-</span> <span class="dv">1</span> </span>
-<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>JLLinputs<span class="sc">$</span>SigmaNonOrtho <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
-<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>JLLinputs<span class="sc">$</span>JLLModelType <span class="ot">&lt;-</span> ModelType</span>
-<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>JLLpara <span class="ot">&lt;-</span> <span class="fu">JLL</span>(RiskFactors, N, JLLinputs)</span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;CM_Factors&quot;</span>)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>JLLinputs <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>ModelType <span class="ot">&lt;-</span> <span class="st">&quot;JLL original&quot;</span>  </span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>JLLinputs<span class="sc">$</span>Economies <span class="ot">&lt;-</span> Economies</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>JLLinputs<span class="sc">$</span>DomUnit <span class="ot">&lt;-</span> <span class="st">&quot;China&quot;</span></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>JLLinputs<span class="sc">$</span>WishSigmas <span class="ot">&lt;-</span> <span class="dv">1</span> </span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>JLLinputs<span class="sc">$</span>SigmaNonOrtho <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>JLLinputs<span class="sc">$</span>JLLModelType <span class="ot">&lt;-</span> ModelType</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>JLLpara <span class="ot">&lt;-</span> <span class="fu">JLL</span>(RiskFactors, N, JLLinputs)</span></code></pre></div>
 </div>
 </div>
 <div id="atsm-estimation" class="section level2" number="3.3">
@@ -1342,27 +1374,27 @@ Figure 3.1: Yield loadings on the spanned factors
 <div id="the-log-likelihood-function" class="section level3" number="3.3.1">
 <h3><span class="header-section-number">3.3.1</span> The log-likelihood function</h3>
 <p>For the sake of simplicity, one illustrates the construction of a log-likelihood function based on a <em>VAR jointQ</em> model. For both the JLL and GVAR-based models, one must further specify the JLLinputs or GVARinputs along the lines described in the Section <a href="#S:SectionGVARJLLinputs">2.1.1</a>.</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Inputs to be specified by the user</span></span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;CM_Yields&quot;</span>)</span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;CM_Factors&quot;</span>)</span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>ModelType <span class="ot">&lt;-</span> <span class="st">&quot;VAR jointQ&quot;</span></span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>Yields <span class="ot">&lt;-</span> Yields</span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>ZZ <span class="ot">&lt;-</span> RiskFactors</span>
-<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>Economies <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;China&quot;</span>, <span class="st">&quot;Brazil&quot;</span>, <span class="st">&quot;Mexico&quot;</span>, <span class="st">&quot;Uruguay&quot;</span>) </span>
-<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>mat <span class="ot">&lt;-</span>  <span class="fu">Maturities</span>(Yields, Economies, <span class="at">UnitYields =</span> <span class="st">&quot;Month&quot;</span>)</span>
-<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>DataFrequency <span class="ot">&lt;-</span> <span class="st">&quot;Monthly&quot;</span></span>
-<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>GlobalVar <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;GBC&quot;</span>, <span class="st">&quot;CPI_OECD&quot;</span>) <span class="co"># Global variables</span></span>
-<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>DomVar <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Eco_Act&quot;</span>, <span class="st">&quot;Inflation&quot;</span>) <span class="co"># Domestic variables </span></span>
-<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="dv">3</span> <span class="co"># Number of country-specific spanned factors</span></span>
-<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate the &quot;Factor Labels&quot; list (necessary preliminarily step) </span></span>
-<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>FactorLabels <span class="ot">&lt;-</span> <span class="fu">LabFac</span>(N, DomVar, GlobalVar, Economies, ModelType) </span>
-<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Prepare the inputs for log-Likelihood function</span></span>
-<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>ATSMInputs <span class="ot">&lt;-</span> <span class="fu">InputsForMLEdensity</span>(ModelType, Yields, ZZ, FactorLabels, mat, Economies, DataFrequency)</span>
-<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Log-Likelihood function</span></span>
-<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a>f <span class="ot">&lt;-</span> <span class="fu">Functionf</span>(ATSMInputs, Economies, mat, DataFrequency, FactorLabels, ModelType)</span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Inputs to be specified by the user</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;CM_Yields&quot;</span>)</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;CM_Factors&quot;</span>)</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>ModelType <span class="ot">&lt;-</span> <span class="st">&quot;VAR jointQ&quot;</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>Yields <span class="ot">&lt;-</span> Yields</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>ZZ <span class="ot">&lt;-</span> RiskFactors</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>Economies <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;China&quot;</span>, <span class="st">&quot;Brazil&quot;</span>, <span class="st">&quot;Mexico&quot;</span>, <span class="st">&quot;Uruguay&quot;</span>) </span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>mat <span class="ot">&lt;-</span>  <span class="fu">Maturities</span>(Yields, Economies, <span class="at">UnitYields =</span> <span class="st">&quot;Month&quot;</span>)</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>DataFrequency <span class="ot">&lt;-</span> <span class="st">&quot;Monthly&quot;</span></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>GlobalVar <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;GBC&quot;</span>, <span class="st">&quot;CPI_OECD&quot;</span>) <span class="co"># Global variables</span></span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>DomVar <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Eco_Act&quot;</span>, <span class="st">&quot;Inflation&quot;</span>) <span class="co"># Domestic variables </span></span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="dv">3</span> <span class="co"># Number of country-specific spanned factors</span></span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate the &quot;Factor Labels&quot; list (necessary preliminarily step) </span></span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>FactorLabels <span class="ot">&lt;-</span> <span class="fu">LabFac</span>(N, DomVar, GlobalVar, Economies, ModelType) </span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Prepare the inputs for log-Likelihood function</span></span>
+<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a>ATSMInputs <span class="ot">&lt;-</span> <span class="fu">InputsForMLEdensity</span>(ModelType, Yields, ZZ, FactorLabels, mat, Economies, DataFrequency)</span>
+<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Log-Likelihood function</span></span>
+<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a>f <span class="ot">&lt;-</span> <span class="fu">Functionf</span>(ATSMInputs, Economies, mat, DataFrequency, FactorLabels, ModelType)</span></code></pre></div>
 </div>
 <div id="optimization-parameters" class="section level3" number="3.3.2">
 <h3><span class="header-section-number">3.3.2</span> Optimization parameters</h3>
@@ -1375,835 +1407,182 @@ long-run mean of the short rate (<em>r0</em>), the risk-neutral feedback matrix 
 <li><strong>SSZ:</strong> <em>‘psd’</em> for a positive semi-definite matrix; <em>‘diag’</em> for a diagonal matrix; <em>‘BlockDiag’</em> for a block diagonal matrix (typical from the GVAR-based models) and <em>‘JLLstructure’</em> for the models containing the restrictions along the lines of JLL (2015).</li>
 </ul>
 <p>One example for the list of parameters specification is</p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>K1XQinputs <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="cn">NULL</span>, <span class="st">&quot;K1XQ: Jordan&quot;</span> , <span class="cn">NULL</span> , <span class="cn">NULL</span>)</span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>SSZinputs <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="cn">NULL</span>, <span class="st">&quot;SSZ: psd&quot;</span>, <span class="cn">NULL</span>, <span class="cn">NULL</span>)</span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>r0inputs <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="cn">NULL</span>, <span class="st">&quot;@r0: bounded&quot;</span>, <span class="cn">NULL</span>, <span class="cn">NULL</span>)</span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>seinputs <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="cn">NULL</span>, <span class="st">&quot;@se: bounded&quot;</span>, <span class="fl">1e-6</span>, <span class="cn">NULL</span>)</span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>K0Zinputs<span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="cn">NULL</span>, <span class="st">&quot;@K0Z: bounded&quot;</span>, <span class="cn">NULL</span>, <span class="cn">NULL</span>)</span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>K1Zinputs<span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="cn">NULL</span>, <span class="st">&quot;@K1Z: bounded&quot;</span>, <span class="cn">NULL</span>, <span class="cn">NULL</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>K1XQinputs <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="cn">NULL</span>, <span class="st">&quot;K1XQ: Jordan&quot;</span> , <span class="cn">NULL</span> , <span class="cn">NULL</span>)</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>SSZinputs <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="cn">NULL</span>, <span class="st">&quot;SSZ: psd&quot;</span>, <span class="cn">NULL</span>, <span class="cn">NULL</span>)</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>r0inputs <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="cn">NULL</span>, <span class="st">&quot;@r0: bounded&quot;</span>, <span class="cn">NULL</span>, <span class="cn">NULL</span>)</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>seinputs <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="cn">NULL</span>, <span class="st">&quot;@se: bounded&quot;</span>, <span class="fl">1e-6</span>, <span class="cn">NULL</span>)</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>K0Zinputs<span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="cn">NULL</span>, <span class="st">&quot;@K0Z: bounded&quot;</span>, <span class="cn">NULL</span>, <span class="cn">NULL</span>)</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>K1Zinputs<span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="cn">NULL</span>, <span class="st">&quot;@K1Z: bounded&quot;</span>, <span class="cn">NULL</span>, <span class="cn">NULL</span>)</span></code></pre></div>
 <p>To complete the optimization setting, the user needs to specify the level of convergence tolerance (usually, 1e-4 is a reasonable value) and the vector <em>OptRun</em>. The first element of this vector must be filled by the word <em>‘iter off’</em>, if the user wishes to switch off the printouts of the numerical optimization routines, or simply by <em>‘iter’</em> otherwise. The second element of the vector concerns the algorithm that is used in the optimization: the option <em>‘fminunc only’</em> only uses fminunc, whereas <em>‘fminsearch only’</em> only applies fminsearch. If <em>OptRun</em> is formed exclusively by <em>‘iter off’</em>, then both fminunc and fminsearch are employed in the optimization.</p>
 </div>
 </div>
 </div>
 <div id="S:SectionReplication" class="section level1" number="4">
 <h1><span class="header-section-number">4</span> Examples of full implementation of ATSMs</h1>
-<p>This section presents some examples on how to use the <em>MultiATSM</em> package to fully implement ATSMs. Further on, the functions of this package are used to replicate some of the results presented in the original papers of JPS (2014) and CM (2021).</p>
+<p>This section presents some examples on how to use the <em>MultiATSM</em> package to fully implement ATSMs. Further on, the functions of this package are used to replicate some of the results presented in the original papers of JPS (2014) and CM (2021). See the <a href="Paper-Replications.html">Paper Replication Vignette</a> of this package for a detailed reproduction.</p>
 <div id="general-template" class="section level2" number="4.1">
 <h2><span class="header-section-number">4.1</span> General template</h2>
-<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="do">########################################################################################################</span></span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="do">#################################### USER INPUTS #######################################################</span></span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="do">########################################################################################################</span></span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="co"># A) Load database data</span></span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;CM_Factors&quot;</span>)</span>
-<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&#39;CM_Factors_GVAR&#39;</span>)</span>
-<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&#39;CM_Trade&#39;</span>)</span>
-<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&#39;CM_Yields&#39;</span>)</span>
-<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a><span class="co"># B) Decide on general model inputs</span></span>
-<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>ModelType <span class="ot">&lt;-</span> <span class="st">&quot;VAR jointQ&quot;</span> <span class="co"># available options are &quot;JPS&quot;, &quot;JPS jointP&quot;, &quot;GVAR sepQ&quot;, &quot;VAR jointQ&quot;, </span></span>
-<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>                          <span class="co">#&quot;GVAR jointQ&quot;, &quot;JLL original&quot;, &quot;JLL NoDomUnit&quot;, &quot;JLL jointSigma&quot;.</span></span>
-<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>StationarityUnderQ <span class="ot">&lt;-</span> <span class="dv">0</span> <span class="co"># Wish to impose stationary condition for the eigenvalues of each country: </span></span>
-<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>                         <span class="co">#YES: 1,NO:0</span></span>
-<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>BiasCorrection <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co"># Wish to estimate the model with the bias correction method of BRW (2012): </span></span>
-<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a>                    <span class="co">#YES: 1, NO:0</span></span>
-<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a>WishForwardPremia <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co"># Wish to estimate the forward premia: YES: 1, NO:0</span></span>
-<span id="cb29-20"><a href="#cb29-20" aria-hidden="true" tabindex="-1"></a>FPmatLim <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">60</span>,<span class="dv">120</span>) <span class="co">#  If the forward premia is desired, then choose the Min and max maturities of the    </span></span>
-<span id="cb29-21"><a href="#cb29-21" aria-hidden="true" tabindex="-1"></a>                        <span class="co"># forward premia. Otherwise set NA</span></span>
-<span id="cb29-22"><a href="#cb29-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-23"><a href="#cb29-23" aria-hidden="true" tabindex="-1"></a>Economies <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;China&quot;</span>, <span class="st">&quot;Brazil&quot;</span>, <span class="st">&quot;Mexico&quot;</span>, <span class="st">&quot;Uruguay&quot;</span>) <span class="co"># Names of the economies from the economic system</span></span>
-<span id="cb29-24"><a href="#cb29-24" aria-hidden="true" tabindex="-1"></a>GlobalVar <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;GBC&quot;</span>, <span class="st">&quot;CPI_OECD&quot;</span>) <span class="co"># Global Variables</span></span>
-<span id="cb29-25"><a href="#cb29-25" aria-hidden="true" tabindex="-1"></a>DomVar <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Eco_Act&quot;</span>, <span class="st">&quot;Inflation&quot;</span>) <span class="co"># Country-specific variables</span></span>
-<span id="cb29-26"><a href="#cb29-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-27"><a href="#cb29-27" aria-hidden="true" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="dv">3</span> <span class="co"># Number of spanned factors per country</span></span>
-<span id="cb29-28"><a href="#cb29-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-29"><a href="#cb29-29" aria-hidden="true" tabindex="-1"></a>OutputLabel <span class="ot">&lt;-</span> <span class="st">&quot;Test&quot;</span> <span class="co"># label of the model for saving the file</span></span>
-<span id="cb29-30"><a href="#cb29-30" aria-hidden="true" tabindex="-1"></a>DataFrequency <span class="ot">&lt;-</span> <span class="st">&quot;Monthly&quot;</span> <span class="co"># Frequency of the data</span></span>
-<span id="cb29-31"><a href="#cb29-31" aria-hidden="true" tabindex="-1"></a>UnitMatYields <span class="ot">&lt;-</span> <span class="st">&quot;Month&quot;</span> <span class="co"># bond yields time-unit. Available options are &quot;Month&quot; or &quot;Year&quot;</span></span>
-<span id="cb29-32"><a href="#cb29-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-33"><a href="#cb29-33" aria-hidden="true" tabindex="-1"></a><span class="co"># B.1) Decide on specific model inputs</span></span>
-<span id="cb29-34"><a href="#cb29-34" aria-hidden="true" tabindex="-1"></a><span class="do">#################################### GVAR-based models ##################################################</span></span>
-<span id="cb29-35"><a href="#cb29-35" aria-hidden="true" tabindex="-1"></a>t_First_Wgvar <span class="ot">&lt;-</span> <span class="st">&quot;2004&quot;</span> <span class="co"># First year of the sample (transition matrix)</span></span>
-<span id="cb29-36"><a href="#cb29-36" aria-hidden="true" tabindex="-1"></a>t_Last_Wgvar <span class="ot">&lt;-</span>  <span class="st">&quot;2019&quot;</span> <span class="co"># Last year of the sample (transition matrix)</span></span>
-<span id="cb29-37"><a href="#cb29-37" aria-hidden="true" tabindex="-1"></a>W_type <span class="ot">&lt;-</span> <span class="st">&#39;Sample Mean&#39;</span> <span class="co"># Method to compute the transition matrix</span></span>
-<span id="cb29-38"><a href="#cb29-38" aria-hidden="true" tabindex="-1"></a>VARXtype <span class="ot">&lt;-</span> <span class="st">&quot;unconstrained&quot;</span> <span class="co"># (i) &quot;unconstrained&quot; or (ii) &quot;&quot;constrained&quot; (VARX)</span></span>
-<span id="cb29-39"><a href="#cb29-39" aria-hidden="true" tabindex="-1"></a><span class="do">#################################### JLL-based models ###################################################</span></span>
-<span id="cb29-40"><a href="#cb29-40" aria-hidden="true" tabindex="-1"></a>DomUnit <span class="ot">&lt;-</span> <span class="st">&quot;China&quot;</span></span>
-<span id="cb29-41"><a href="#cb29-41" aria-hidden="true" tabindex="-1"></a>WishSigmas <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co"># Sigma matrix is estimated within the &quot;InputsForMLEdensity&quot; function</span></span>
-<span id="cb29-42"><a href="#cb29-42" aria-hidden="true" tabindex="-1"></a>SigmaNonOrtho <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
-<span id="cb29-43"><a href="#cb29-43" aria-hidden="true" tabindex="-1"></a>JLLModelType <span class="ot">&lt;-</span> ModelType</span>
-<span id="cb29-44"><a href="#cb29-44" aria-hidden="true" tabindex="-1"></a><span class="do">###################################### BRW inputs  ######################################################</span></span>
-<span id="cb29-45"><a href="#cb29-45" aria-hidden="true" tabindex="-1"></a>flag_mean <span class="ot">&lt;-</span> <span class="cn">TRUE</span> <span class="co"># TRUE = compute the mean; FALSE = compute the median</span></span>
-<span id="cb29-46"><a href="#cb29-46" aria-hidden="true" tabindex="-1"></a>gamma <span class="ot">&lt;-</span> <span class="fl">0.2</span> <span class="co"># Adjustment parameter</span></span>
-<span id="cb29-47"><a href="#cb29-47" aria-hidden="true" tabindex="-1"></a>N_iter <span class="ot">&lt;-</span> <span class="dv">500</span> <span class="co"># Number of iteration to be conserved </span></span>
-<span id="cb29-48"><a href="#cb29-48" aria-hidden="true" tabindex="-1"></a>N_burn <span class="ot">&lt;-</span> N_iter<span class="sc">*</span><span class="fl">0.15</span>  <span class="co"># Number of iteration to be discarded </span></span>
-<span id="cb29-49"><a href="#cb29-49" aria-hidden="true" tabindex="-1"></a>B <span class="ot">&lt;-</span> <span class="dv">50</span> <span class="co"># Number of bootstrap samples </span></span>
-<span id="cb29-50"><a href="#cb29-50" aria-hidden="true" tabindex="-1"></a>checkBRW <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb29-51"><a href="#cb29-51" aria-hidden="true" tabindex="-1"></a>B_check <span class="ot">&lt;-</span> <span class="dv">1000</span> <span class="co"># </span></span>
-<span id="cb29-52"><a href="#cb29-52" aria-hidden="true" tabindex="-1"></a><span class="do">#########################################################################################################</span></span>
-<span id="cb29-53"><a href="#cb29-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-54"><a href="#cb29-54" aria-hidden="true" tabindex="-1"></a><span class="co"># C) Decide on Settings for numerical outputs</span></span>
-<span id="cb29-55"><a href="#cb29-55" aria-hidden="true" tabindex="-1"></a>Horiz <span class="ot">&lt;-</span> <span class="dv">50</span></span>
-<span id="cb29-56"><a href="#cb29-56" aria-hidden="true" tabindex="-1"></a>DesiredGraphs <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Fit&quot;</span>, <span class="st">&quot;IRF&quot;</span>, <span class="st">&quot;FEVD&quot;</span>) <span class="co"># &quot;Fit&quot;, &quot;IRF&quot;, &quot;FEVD&quot;, &quot;GIRF&quot;, &quot;GFEVD&quot;, &quot;TermPremia&quot;</span></span>
-<span id="cb29-57"><a href="#cb29-57" aria-hidden="true" tabindex="-1"></a>WishGraphRiskFac <span class="ot">&lt;-</span> <span class="dv">0</span></span>
-<span id="cb29-58"><a href="#cb29-58" aria-hidden="true" tabindex="-1"></a>WishGraphYields <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb29-59"><a href="#cb29-59" aria-hidden="true" tabindex="-1"></a>WishOrthoJLLgraphs <span class="ot">&lt;-</span> <span class="dv">0</span></span>
-<span id="cb29-60"><a href="#cb29-60" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-61"><a href="#cb29-61" aria-hidden="true" tabindex="-1"></a><span class="co"># D) Bootstrao settings</span></span>
-<span id="cb29-62"><a href="#cb29-62" aria-hidden="true" tabindex="-1"></a>WishBootstrap <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co">#  YES: 1; No = 0.</span></span>
-<span id="cb29-63"><a href="#cb29-63" aria-hidden="true" tabindex="-1"></a>Bootlist <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb29-64"><a href="#cb29-64" aria-hidden="true" tabindex="-1"></a>Bootlist<span class="sc">$</span>methodBS <span class="ot">&lt;-</span> <span class="st">&#39;bs&#39;</span> <span class="co"># (i) &#39;bs&#39; ; (ii) &#39;wild&#39;; (iii) &#39;block&#39;</span></span>
-<span id="cb29-65"><a href="#cb29-65" aria-hidden="true" tabindex="-1"></a>Bootlist<span class="sc">$</span>BlockLength <span class="ot">&lt;-</span> <span class="dv">4</span> <span class="co"># necessary input if one chooses the block bootstrap</span></span>
-<span id="cb29-66"><a href="#cb29-66" aria-hidden="true" tabindex="-1"></a>Bootlist<span class="sc">$</span>ndraws <span class="ot">&lt;-</span>  <span class="dv">5</span></span>
-<span id="cb29-67"><a href="#cb29-67" aria-hidden="true" tabindex="-1"></a>Bootlist<span class="sc">$</span>pctg   <span class="ot">&lt;-</span>  <span class="dv">95</span> <span class="co"># confidence level</span></span>
-<span id="cb29-68"><a href="#cb29-68" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-69"><a href="#cb29-69" aria-hidden="true" tabindex="-1"></a><span class="co"># E) Out-of-sample forecast</span></span>
-<span id="cb29-70"><a href="#cb29-70" aria-hidden="true" tabindex="-1"></a>WishForecast <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co">#  YES: 1; No = 0.</span></span>
-<span id="cb29-71"><a href="#cb29-71" aria-hidden="true" tabindex="-1"></a>ForecastList <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb29-72"><a href="#cb29-72" aria-hidden="true" tabindex="-1"></a>ForecastList<span class="sc">$</span>ForHoriz <span class="ot">&lt;-</span> <span class="dv">12</span> <span class="co"># forecast horizon</span></span>
-<span id="cb29-73"><a href="#cb29-73" aria-hidden="true" tabindex="-1"></a>ForecastList<span class="sc">$</span>t0Sample <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co"># initial sample date</span></span>
-<span id="cb29-74"><a href="#cb29-74" aria-hidden="true" tabindex="-1"></a>ForecastList<span class="sc">$</span>t0Forecast <span class="ot">&lt;-</span> <span class="dv">145</span> <span class="co"># last sample date for the first forecast</span></span>
-<span id="cb29-75"><a href="#cb29-75" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-76"><a href="#cb29-76" aria-hidden="true" tabindex="-1"></a><span class="do">#########################################################################################################</span></span>
-<span id="cb29-77"><a href="#cb29-77" aria-hidden="true" tabindex="-1"></a><span class="do">############################### NO NEED TO MAKE CHANGES FROM HERE #######################################</span></span>
-<span id="cb29-78"><a href="#cb29-78" aria-hidden="true" tabindex="-1"></a><span class="do">#########################################################################################################</span></span>
-<span id="cb29-79"><a href="#cb29-79" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-80"><a href="#cb29-80" aria-hidden="true" tabindex="-1"></a><span class="co"># 2) Minor preliminary work</span></span>
-<span id="cb29-81"><a href="#cb29-81" aria-hidden="true" tabindex="-1"></a>C <span class="ot">&lt;-</span> <span class="fu">length</span>(Economies)</span>
-<span id="cb29-82"><a href="#cb29-82" aria-hidden="true" tabindex="-1"></a>FactorLabels <span class="ot">&lt;-</span> <span class="fu">LabFac</span>(N, DomVar,GlobalVar, Economies, ModelType) <span class="co"># Generate the set of labels</span></span>
-<span id="cb29-83"><a href="#cb29-83" aria-hidden="true" tabindex="-1"></a>ZZ <span class="ot">&lt;-</span> RiskFactors</span>
-<span id="cb29-84"><a href="#cb29-84" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="fu">any</span>(ModelType <span class="sc">==</span> <span class="fu">c</span>(<span class="st">&quot;GVAR sepQ&quot;</span>, <span class="st">&quot;GVAR jointQ&quot;</span>))){</span>
-<span id="cb29-85"><a href="#cb29-85" aria-hidden="true" tabindex="-1"></a>Data <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb29-86"><a href="#cb29-86" aria-hidden="true" tabindex="-1"></a>Data<span class="sc">$</span>GVARFactors <span class="ot">&lt;-</span> FactorsGVAR}</span>
-<span id="cb29-87"><a href="#cb29-87" aria-hidden="true" tabindex="-1"></a>mat <span class="ot">&lt;-</span> <span class="fu">Maturities</span>(Yields, Economies, <span class="at">UnitYields =</span> UnitMatYields)</span>
-<span id="cb29-88"><a href="#cb29-88" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-89"><a href="#cb29-89" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-90"><a href="#cb29-90" aria-hidden="true" tabindex="-1"></a><span class="co"># 2.1) Generate GVARinputs, JLLinputs and BRWinputs</span></span>
-<span id="cb29-91"><a href="#cb29-91" aria-hidden="true" tabindex="-1"></a>ModInputs <span class="ot">&lt;-</span> <span class="fu">ListModelInputs</span>(ModelType, Data, Economies, VARXtype, t_First_Wgvar, t_Last_Wgvar, W_type,</span>
-<span id="cb29-92"><a href="#cb29-92" aria-hidden="true" tabindex="-1"></a>                             DomUnit, WishSigmas, SigmaNonOrtho, BiasCorrection, flag_mean, gamma, N_iter,</span>
-<span id="cb29-93"><a href="#cb29-93" aria-hidden="true" tabindex="-1"></a>                             N_burn, B, checkBRW, B_check)</span>
-<span id="cb29-94"><a href="#cb29-94" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-95"><a href="#cb29-95" aria-hidden="true" tabindex="-1"></a>GVARinputs <span class="ot">&lt;-</span> ModInputs<span class="sc">$</span>GVARinputs</span>
-<span id="cb29-96"><a href="#cb29-96" aria-hidden="true" tabindex="-1"></a>JLLinputs <span class="ot">&lt;-</span> ModInputs<span class="sc">$</span>JLLinputs</span>
-<span id="cb29-97"><a href="#cb29-97" aria-hidden="true" tabindex="-1"></a>BRWinputs <span class="ot">&lt;-</span> ModInputs<span class="sc">$</span>BRWinputs</span>
-<span id="cb29-98"><a href="#cb29-98" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-99"><a href="#cb29-99" aria-hidden="true" tabindex="-1"></a><span class="co"># 3) Prepare the inputs of the likelihood function</span></span>
-<span id="cb29-100"><a href="#cb29-100" aria-hidden="true" tabindex="-1"></a>ModelParaList <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb29-101"><a href="#cb29-101" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>C){</span>
-<span id="cb29-102"><a href="#cb29-102" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (( <span class="fu">any</span>(ModelType <span class="sc">==</span><span class="fu">c</span>(<span class="st">&quot;GVAR jointQ&quot;</span>, <span class="st">&quot;VAR jointQ&quot;</span>,<span class="st">&quot;JLL original&quot;</span>, <span class="st">&quot;JLL NoDomUnit&quot;</span>,<span class="st">&quot;JLL jointSigma&quot;</span>))) </span>
-<span id="cb29-103"><a href="#cb29-103" aria-hidden="true" tabindex="-1"></a>      <span class="sc">&amp;</span> i <span class="sc">&gt;</span><span class="dv">1</span> ){<span class="cf">break</span>} </span>
-<span id="cb29-104"><a href="#cb29-104" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-105"><a href="#cb29-105" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 3.1) Compute the inputs that go directly into the log-likelihood function</span></span>
-<span id="cb29-106"><a href="#cb29-106" aria-hidden="true" tabindex="-1"></a>  ATSMInputs <span class="ot">&lt;-</span> <span class="fu">InputsForMLEdensity</span>(ModelType, Yields, ZZ, FactorLabels, mat, Economies, DataFrequency,</span>
-<span id="cb29-107"><a href="#cb29-107" aria-hidden="true" tabindex="-1"></a>                                    JLLinputs, GVARinputs, BRWinputs)</span>
-<span id="cb29-108"><a href="#cb29-108" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-109"><a href="#cb29-109" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 3.2) Initial guesses for Variables that will be concentrared out of from the log-likelihood function</span></span>
-<span id="cb29-110"><a href="#cb29-110" aria-hidden="true" tabindex="-1"></a>  K1XQ <span class="ot">&lt;-</span> ATSMInputs<span class="sc">$</span>K1XQ</span>
-<span id="cb29-111"><a href="#cb29-111" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">any</span>(ModelType <span class="sc">==</span> <span class="fu">c</span>(<span class="st">&quot;JLL original&quot;</span>, <span class="st">&quot;JLL NoDomUnit&quot;</span>))){ SSZ <span class="ot">&lt;-</span> <span class="cn">NULL</span>} <span class="cf">else</span>{SSZ <span class="ot">&lt;-</span> ATSMInputs<span class="sc">$</span>SSZ}</span>
-<span id="cb29-112"><a href="#cb29-112" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-113"><a href="#cb29-113" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 4) Build the objective function</span></span>
-<span id="cb29-114"><a href="#cb29-114" aria-hidden="true" tabindex="-1"></a>  f <span class="ot">&lt;-</span> <span class="fu">Functionf</span>(ATSMInputs, Economies, mat, DataFrequency, FactorLabels, ModelType)</span>
-<span id="cb29-115"><a href="#cb29-115" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-116"><a href="#cb29-116" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 5) Set the optimization settings</span></span>
-<span id="cb29-117"><a href="#cb29-117" aria-hidden="true" tabindex="-1"></a>  VarLab <span class="ot">&lt;-</span> <span class="fu">ParaLabels</span>(ModelType, StationarityUnderQ)</span>
-<span id="cb29-118"><a href="#cb29-118" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-119"><a href="#cb29-119" aria-hidden="true" tabindex="-1"></a>  varargin <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb29-120"><a href="#cb29-120" aria-hidden="true" tabindex="-1"></a>  varargin<span class="sc">$</span>K1XQ <span class="ot">&lt;-</span><span class="fu">list</span>(K1XQ, VarLab[[ModelType]][[<span class="st">&quot;K1XQ&quot;</span>]] , <span class="cn">NULL</span> , <span class="cn">NULL</span>)</span>
-<span id="cb29-121"><a href="#cb29-121" aria-hidden="true" tabindex="-1"></a>  varargin<span class="sc">$</span>SSZ <span class="ot">&lt;-</span> <span class="fu">list</span>(SSZ, VarLab[[ModelType]][[<span class="st">&quot;SSZ&quot;</span>]], <span class="cn">NULL</span>, <span class="cn">NULL</span>)</span>
-<span id="cb29-122"><a href="#cb29-122" aria-hidden="true" tabindex="-1"></a>  varargin<span class="sc">$</span>r0 <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="cn">NULL</span>, VarLab[[ModelType]][[<span class="st">&quot;r0&quot;</span>]], <span class="cn">NULL</span>, <span class="cn">NULL</span>)</span>
-<span id="cb29-123"><a href="#cb29-123" aria-hidden="true" tabindex="-1"></a>  varargin<span class="sc">$</span>se <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="cn">NULL</span>, VarLab[[ModelType]][[<span class="st">&quot;se&quot;</span>]], <span class="fl">1e-6</span>, <span class="cn">NULL</span>)</span>
-<span id="cb29-124"><a href="#cb29-124" aria-hidden="true" tabindex="-1"></a>  varargin<span class="sc">$</span>K0Z <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="cn">NULL</span>, VarLab[[ModelType]][[<span class="st">&quot;K0Z&quot;</span>]], <span class="cn">NULL</span>, <span class="cn">NULL</span>)</span>
-<span id="cb29-125"><a href="#cb29-125" aria-hidden="true" tabindex="-1"></a>  varargin<span class="sc">$</span>K1Z <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="cn">NULL</span>, VarLab[[ModelType]][[<span class="st">&quot;K1Z&quot;</span>]], <span class="cn">NULL</span>, <span class="cn">NULL</span>)</span>
-<span id="cb29-126"><a href="#cb29-126" aria-hidden="true" tabindex="-1"></a>  varargin<span class="sc">$</span>OptRun <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;iter off&quot;</span>)</span>
-<span id="cb29-127"><a href="#cb29-127" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-128"><a href="#cb29-128" aria-hidden="true" tabindex="-1"></a>  LabelVar<span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&#39;Value&#39;</span>, <span class="st">&#39;Label&#39;</span>, <span class="st">&#39;LB&#39;</span>, <span class="st">&#39;UB&#39;</span>) <span class="co"># Elements of each parameter</span></span>
-<span id="cb29-129"><a href="#cb29-129" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (d <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>(<span class="fu">length</span>(varargin)<span class="sc">-</span><span class="dv">1</span>)){ <span class="fu">names</span>(varargin[[d]]) <span class="ot">&lt;-</span>  LabelVar}</span>
-<span id="cb29-130"><a href="#cb29-130" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-131"><a href="#cb29-131" aria-hidden="true" tabindex="-1"></a>  tol <span class="ot">&lt;-</span> <span class="fl">1e-4</span></span>
-<span id="cb29-132"><a href="#cb29-132" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-133"><a href="#cb29-133" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 6) Optimization of the model</span></span>
-<span id="cb29-134"><a href="#cb29-134" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (ModelType <span class="sc">==</span> <span class="st">&#39;JPS&#39;</span> <span class="sc">||</span> ModelType <span class="sc">==</span> <span class="st">&#39;JPS jointP&#39;</span> <span class="sc">||</span> ModelType <span class="sc">==</span> <span class="st">&quot;GVAR sepQ&quot;</span>){</span>
-<span id="cb29-135"><a href="#cb29-135" aria-hidden="true" tabindex="-1"></a>ModelParaList[[ModelType]][[Economies[i]]] <span class="ot">&lt;-</span> <span class="fu">Optimization</span>(f, tol, varargin, FactorLabels,</span>
-<span id="cb29-136"><a href="#cb29-136" aria-hidden="true" tabindex="-1"></a>                                                           Economies, ModelType)<span class="sc">$</span>Summary</span>
-<span id="cb29-137"><a href="#cb29-137" aria-hidden="true" tabindex="-1"></a>  }<span class="cf">else</span>{</span>
-<span id="cb29-138"><a href="#cb29-138" aria-hidden="true" tabindex="-1"></a>ModelParaList[[ModelType]] <span class="ot">&lt;-</span> <span class="fu">Optimization</span>(f, tol, varargin, FactorLabels, Economies, ModelType,</span>
-<span id="cb29-139"><a href="#cb29-139" aria-hidden="true" tabindex="-1"></a>                                           JLLinputs, GVARinputs)<span class="sc">$</span>Summary}</span>
-<span id="cb29-140"><a href="#cb29-140" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb29-141"><a href="#cb29-141" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-142"><a href="#cb29-142" aria-hidden="true" tabindex="-1"></a><span class="co"># 7) Numerical and graphical outputs</span></span>
-<span id="cb29-143"><a href="#cb29-143" aria-hidden="true" tabindex="-1"></a>InputsForOutputs <span class="ot">&lt;-</span> <span class="fu">InputsForOutputs</span>(ModelType, Horiz, DesiredGraphs, OutputLabel, StationarityUnderQ,</span>
-<span id="cb29-144"><a href="#cb29-144" aria-hidden="true" tabindex="-1"></a>                                     UnitMatYields, WishGraphYields, WishGraphRiskFac, WishOrthoJLLgraphs,</span>
-<span id="cb29-145"><a href="#cb29-145" aria-hidden="true" tabindex="-1"></a>                                     WishForwardPremia, FPmatLim, WishBootstrap, Bootlist, WishForecast,</span>
-<span id="cb29-146"><a href="#cb29-146" aria-hidden="true" tabindex="-1"></a>                                     ForecastList)</span>
-<span id="cb29-147"><a href="#cb29-147" aria-hidden="true" tabindex="-1"></a><span class="co"># A) Fit, IRF, FEVD, GIRF, GFEVD, and Term Premia</span></span>
-<span id="cb29-148"><a href="#cb29-148" aria-hidden="true" tabindex="-1"></a>NumericalOutputs <span class="ot">&lt;-</span> <span class="fu">NumOutputs</span>(ModelType, ModelParaList, InputsForOutputs, FactorLabels, Economies)</span>
-<span id="cb29-149"><a href="#cb29-149" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-150"><a href="#cb29-150" aria-hidden="true" tabindex="-1"></a><span class="co"># B) Bootstrap</span></span>
-<span id="cb29-151"><a href="#cb29-151" aria-hidden="true" tabindex="-1"></a>Bootstrap <span class="ot">&lt;-</span> <span class="fu">Bootstrap</span>(ModelType, ModelParaList, NumericalOutputs, mat, Economies, InputsForOutputs,</span>
-<span id="cb29-152"><a href="#cb29-152" aria-hidden="true" tabindex="-1"></a>                       FactorLabels, DataFrequency, varargin, JLLinputs, GVARinputs, BRWinputs)</span>
-<span id="cb29-153"><a href="#cb29-153" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-154"><a href="#cb29-154" aria-hidden="true" tabindex="-1"></a><span class="co"># C) Out-of-sample forecasting</span></span>
-<span id="cb29-155"><a href="#cb29-155" aria-hidden="true" tabindex="-1"></a>Forecasts <span class="ot">&lt;-</span> <span class="fu">ForecastYields</span>(ModelType, ModelParaList, InputsForOutputs, FactorLabels, Economies,</span>
-<span id="cb29-156"><a href="#cb29-156" aria-hidden="true" tabindex="-1"></a>                            DataFrequency, JLLinputs, GVARinputs, BRWinputs)</span></code></pre></div>
-</div>
-<div id="paper-replications" class="section level2" number="4.2">
-<h2><span class="header-section-number">4.2</span> Paper replications</h2>
-<div id="joslin-priebisch-and-singleton-2014" class="section level3" number="4.2.1">
-<h3><span class="header-section-number">4.2.1</span> Joslin, Priebisch and Singleton (2014)</h3>
-<p>To the best of my knowledge, the original data-set used in <span class="citation">Joslin, Priebsch, and Singleton (2014)</span> is not publicly available. Nevertheless, there exists an alternative source of data that closely matches JPS (2014) in terms of the construction method and the sample period. This database is constructed by <span class="citation">Bauer and Rudebusch (2017)</span> (BR, 2017) and is available at <a href="https://www.michaeldbauer.com/publication/spanning-puzzle/">Bauer’s website</a>. In that paper, BR (2017) investigate whether macro-finance term structure models better suit the unspanned macro risk framework by JPS (2014) or the earlier traditional spanned settings as the one by <span class="citation">Ang and Piazzesi (2003)</span>. Accordingly, BR (2017) intend to replicate some of the empirical results reported in JPS (2014). The R-code used by BR (2017) is also available at <a href="https://www.michaeldbauer.com/publication/spanning-puzzle/">Bauer’s website</a>.</p>
-<p>Supported by BR (2017)’s data-set, the code below uses the <em>MultiATSM</em> package to estimate the key model parameters from the ATSM along the lines of JPS (2014).</p>
-<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="do">#########################################################################################################</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="do">#################################### USER INPUTS ########################################################</span></span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="do">#########################################################################################################</span></span>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="do">########################################################################################################</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="do">#################################### USER INPUTS #######################################################</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="do">########################################################################################################</span></span>
 <span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="co"># A) Load database data</span></span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;BR_jps_gro_R3&quot;</span>)</span>
-<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a><span class="co"># B) Decide on general model inputs</span></span>
-<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>ModelType <span class="ot">&lt;-</span> <span class="st">&quot;JPS&quot;</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;CM_Factors&quot;</span>)</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&#39;CM_Factors_GVAR&#39;</span>)</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&#39;CM_Trade&#39;</span>)</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&#39;CM_Yields&#39;</span>)</span>
 <span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>StationarityUnderQ <span class="ot">&lt;-</span> <span class="dv">0</span></span>
-<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>BiasCorrection <span class="ot">&lt;-</span> <span class="dv">0</span></span>
-<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>WishForwardPremia <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a><span class="co"># B) Decide on general model inputs</span></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>ModelType <span class="ot">&lt;-</span> <span class="st">&quot;VAR jointQ&quot;</span> <span class="co"># available options are &quot;JPS&quot;, &quot;JPS jointP&quot;, &quot;GVAR sepQ&quot;, &quot;VAR jointQ&quot;, </span></span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>                          <span class="co">#&quot;GVAR jointQ&quot;, &quot;JLL original&quot;, &quot;JLL NoDomUnit&quot;, &quot;JLL jointSigma&quot;.</span></span>
 <span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>Economies <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;U.S.&quot;</span>) <span class="co"># Names of the economies from the economic system</span></span>
-<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a>GlobalVar <span class="ot">&lt;-</span> <span class="fu">c</span>()</span>
-<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a>DomVar <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;GRO&quot;</span>, <span class="st">&quot;INF&quot;</span>) <span class="co"># Country-specific variables</span></span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>StationarityUnderQ <span class="ot">&lt;-</span> <span class="dv">0</span> <span class="co"># Wish to impose stationary condition for the eigenvalues of each country: </span></span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>                         <span class="co">#YES: 1,NO:0</span></span>
+<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a>BiasCorrection <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co"># Wish to estimate the model with the bias correction method of BRW (2012): </span></span>
+<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a>                    <span class="co">#YES: 1, NO:0</span></span>
 <span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="dv">3</span> <span class="co"># Number of spanned factors per country</span></span>
-<span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a>DataFrequency <span class="ot">&lt;-</span> <span class="st">&quot;Monthly&quot;</span> <span class="co"># Frequency of the data</span></span>
-<span id="cb30-22"><a href="#cb30-22" aria-hidden="true" tabindex="-1"></a>UnitMatYields <span class="ot">&lt;-</span> <span class="st">&quot;Month&quot;</span> <span class="co"># time-unit in which yields are expressed. Available options are &quot;Month&quot; or &quot;Year&quot;</span></span>
-<span id="cb30-23"><a href="#cb30-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-24"><a href="#cb30-24" aria-hidden="true" tabindex="-1"></a>mat <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.5</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">7</span>, <span class="dv">8</span>, <span class="dv">9</span>, <span class="dv">10</span>) <span class="co"># maturities expressed in years</span></span>
-<span id="cb30-25"><a href="#cb30-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-26"><a href="#cb30-26" aria-hidden="true" tabindex="-1"></a><span class="do">#########################################################################################################</span></span>
-<span id="cb30-27"><a href="#cb30-27" aria-hidden="true" tabindex="-1"></a><span class="do">############################### NO NEED TO MAKE CHANGES FROM HERE #######################################</span></span>
-<span id="cb30-28"><a href="#cb30-28" aria-hidden="true" tabindex="-1"></a><span class="do">#########################################################################################################</span></span>
-<span id="cb30-29"><a href="#cb30-29" aria-hidden="true" tabindex="-1"></a><span class="co"># 2) Minor preliminary work</span></span>
-<span id="cb30-30"><a href="#cb30-30" aria-hidden="true" tabindex="-1"></a>C <span class="ot">&lt;-</span> <span class="fu">length</span>(Economies)</span>
-<span id="cb30-31"><a href="#cb30-31" aria-hidden="true" tabindex="-1"></a>M <span class="ot">&lt;-</span> <span class="fu">length</span>(DomVar)</span>
-<span id="cb30-32"><a href="#cb30-32" aria-hidden="true" tabindex="-1"></a>FactorLabels <span class="ot">&lt;-</span> <span class="fu">LabFac</span>(N, DomVar, GlobalVar, Economies, ModelType) <span class="co"># Generate the set of labels</span></span>
-<span id="cb30-33"><a href="#cb30-33" aria-hidden="true" tabindex="-1"></a>Yields <span class="ot">&lt;-</span> <span class="fu">t</span>(BR_jps_out<span class="sc">$</span>Y)</span>
-<span id="cb30-34"><a href="#cb30-34" aria-hidden="true" tabindex="-1"></a>W <span class="ot">&lt;-</span> BR_jps_out<span class="sc">$</span>W[<span class="dv">1</span><span class="sc">:</span>N,] <span class="co"># Use the Wpca matrix from BR (2017)</span></span>
-<span id="cb30-35"><a href="#cb30-35" aria-hidden="true" tabindex="-1"></a>SpaFac <span class="ot">&lt;-</span> W<span class="sc">%*%</span>Yields</span>
-<span id="cb30-36"><a href="#cb30-36" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(SpaFac) <span class="ot">&lt;-</span> FactorLabels<span class="sc">$</span>Tables<span class="sc">$</span>U.S.[<span class="sc">-</span>(<span class="dv">1</span><span class="sc">:</span>M)]</span>
-<span id="cb30-37"><a href="#cb30-37" aria-hidden="true" tabindex="-1"></a>ZZ <span class="ot">&lt;-</span> <span class="fu">rbind</span>(<span class="fu">t</span>(BR_jps_out<span class="sc">$</span>M.o), SpaFac) <span class="co"># Complete set of risk factors</span></span>
-<span id="cb30-38"><a href="#cb30-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-39"><a href="#cb30-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-40"><a href="#cb30-40" aria-hidden="true" tabindex="-1"></a><span class="co"># 3) Prepare the inputs of the likelihood function</span></span>
-<span id="cb30-41"><a href="#cb30-41" aria-hidden="true" tabindex="-1"></a>i <span class="ot">&lt;-</span> <span class="fu">length</span>(Economies)</span>
-<span id="cb30-42"><a href="#cb30-42" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 3.1) Compute the inputs that go directly into the log-likelihood function</span></span>
-<span id="cb30-43"><a href="#cb30-43" aria-hidden="true" tabindex="-1"></a>  ATSMInputs <span class="ot">&lt;-</span> <span class="fu">InputsForMLEdensity</span>(ModelType, Yields, ZZ, FactorLabels, mat, Economies, DataFrequency)</span>
-<span id="cb30-44"><a href="#cb30-44" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 3.2) Initial guesses for Variables that will be concentrared out of from the log-likelihood function</span></span>
-<span id="cb30-45"><a href="#cb30-45" aria-hidden="true" tabindex="-1"></a>  K1XQ <span class="ot">&lt;-</span> ATSMInputs<span class="sc">$</span>K1XQ</span>
-<span id="cb30-46"><a href="#cb30-46" aria-hidden="true" tabindex="-1"></a>  SSZ <span class="ot">&lt;-</span> ATSMInputs<span class="sc">$</span>SSZ</span>
-<span id="cb30-47"><a href="#cb30-47" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 3.3) Adjust the inputs which are funtion of the W matrix</span></span>
-<span id="cb30-48"><a href="#cb30-48" aria-hidden="true" tabindex="-1"></a>  ATSMInputs<span class="sc">$</span>Wpca <span class="ot">&lt;-</span> W</span>
-<span id="cb30-49"><a href="#cb30-49" aria-hidden="true" tabindex="-1"></a>  ATSMInputs<span class="sc">$</span>We <span class="ot">&lt;-</span> <span class="fu">t</span>(pracma<span class="sc">::</span><span class="fu">null</span>(W))</span>
-<span id="cb30-50"><a href="#cb30-50" aria-hidden="true" tabindex="-1"></a>  ATSMInputs<span class="sc">$</span>WpcaFull <span class="ot">&lt;-</span> <span class="fu">rbind</span>(ATSMInputs<span class="sc">$</span>Wpca, ATSMInputs<span class="sc">$</span>We)</span>
-<span id="cb30-51"><a href="#cb30-51" aria-hidden="true" tabindex="-1"></a>  ATSMInputs<span class="sc">$</span>PP <span class="ot">&lt;-</span> SpaFac</span>
-<span id="cb30-52"><a href="#cb30-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-53"><a href="#cb30-53" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 4) Build the objective function</span></span>
-<span id="cb30-54"><a href="#cb30-54" aria-hidden="true" tabindex="-1"></a>  f <span class="ot">&lt;-</span> <span class="fu">Functionf</span>(ATSMInputs, Economies, mat, DataFrequency, FactorLabels, ModelType)</span>
-<span id="cb30-55"><a href="#cb30-55" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-56"><a href="#cb30-56" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 5) Set the optimization settings</span></span>
-<span id="cb30-57"><a href="#cb30-57" aria-hidden="true" tabindex="-1"></a>  VarLab <span class="ot">&lt;-</span> <span class="fu">ParaLabels</span>(ModelType, StationarityUnderQ)</span>
-<span id="cb30-58"><a href="#cb30-58" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-59"><a href="#cb30-59" aria-hidden="true" tabindex="-1"></a>  varargin <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb30-60"><a href="#cb30-60" aria-hidden="true" tabindex="-1"></a>  varargin<span class="sc">$</span>K1XQ <span class="ot">&lt;-</span><span class="fu">list</span>(K1XQ, VarLab[[ModelType]][[<span class="st">&quot;K1XQ&quot;</span>]] , <span class="cn">NULL</span> , <span class="cn">NULL</span>)</span>
-<span id="cb30-61"><a href="#cb30-61" aria-hidden="true" tabindex="-1"></a>  varargin<span class="sc">$</span>SSZ <span class="ot">&lt;-</span> <span class="fu">list</span>(SSZ, VarLab[[ModelType]][[<span class="st">&quot;SSZ&quot;</span>]], <span class="cn">NULL</span>, <span class="cn">NULL</span>)</span>
-<span id="cb30-62"><a href="#cb30-62" aria-hidden="true" tabindex="-1"></a>  varargin<span class="sc">$</span>r0 <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="cn">NULL</span>, VarLab[[ModelType]][[<span class="st">&quot;r0&quot;</span>]], <span class="cn">NULL</span>, <span class="cn">NULL</span>)</span>
-<span id="cb30-63"><a href="#cb30-63" aria-hidden="true" tabindex="-1"></a>  varargin<span class="sc">$</span>se <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="cn">NULL</span>, VarLab[[ModelType]][[<span class="st">&quot;se&quot;</span>]], <span class="fl">1e-6</span>, <span class="cn">NULL</span>)</span>
-<span id="cb30-64"><a href="#cb30-64" aria-hidden="true" tabindex="-1"></a>  varargin<span class="sc">$</span>K0Z <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="cn">NULL</span>, VarLab[[ModelType]][[<span class="st">&quot;K0Z&quot;</span>]], <span class="cn">NULL</span>, <span class="cn">NULL</span>)</span>
-<span id="cb30-65"><a href="#cb30-65" aria-hidden="true" tabindex="-1"></a>  varargin<span class="sc">$</span>K1Z <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="cn">NULL</span>, VarLab[[ModelType]][[<span class="st">&quot;K1Z&quot;</span>]], <span class="cn">NULL</span>, <span class="cn">NULL</span>)</span>
-<span id="cb30-66"><a href="#cb30-66" aria-hidden="true" tabindex="-1"></a>  varargin<span class="sc">$</span>OptRun <span class="ot">&lt;-</span>  <span class="fu">c</span>(<span class="st">&quot;iter off&quot;</span>)</span>
-<span id="cb30-67"><a href="#cb30-67" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-68"><a href="#cb30-68" aria-hidden="true" tabindex="-1"></a>  LabelVar<span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&#39;Value&#39;</span>, <span class="st">&#39;Label&#39;</span>, <span class="st">&#39;LB&#39;</span>, <span class="st">&#39;UB&#39;</span>) <span class="co"># Elements of each parameter</span></span>
-<span id="cb30-69"><a href="#cb30-69" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (d <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>(<span class="fu">length</span>(varargin)<span class="sc">-</span><span class="dv">1</span>)){ <span class="fu">names</span>(varargin[[d]]) <span class="ot">&lt;-</span>  LabelVar}</span>
-<span id="cb30-70"><a href="#cb30-70" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-71"><a href="#cb30-71" aria-hidden="true" tabindex="-1"></a>  tol <span class="ot">&lt;-</span> <span class="fl">1e-4</span></span>
-<span id="cb30-72"><a href="#cb30-72" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-73"><a href="#cb30-73" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 6) Optimization of the model</span></span>
-<span id="cb30-74"><a href="#cb30-74" aria-hidden="true" tabindex="-1"></a>  ModelPara <span class="ot">&lt;-</span> <span class="fu">Optimization</span>(f, tol, varargin, FactorLabels, Economies, ModelType)<span class="sc">$</span>Summary</span></code></pre></div>
-<p>The tables below compare the ATSM parameter estimates generated from BR (2017) and the <em>MultiATSM</em>. Overall, one can note that the differences in the estimates are economically modest.</p>
-<table class=" lightable-classic lightable-striped" style="font-family: &quot;Arial Narrow&quot;, &quot;Source Sans Pro&quot;, sans-serif; width: auto !important; margin-left: auto; margin-right: auto;">
-<caption>
-<span id="tab:unnamed-chunk-31">Table 4.1: </span><span class="math inline">\(Q\)</span>-dynamics parameters
-</caption>
-<thead>
-<tr>
-<th style="text-align:left;font-size: 14px;">
-</th>
-<th style="text-align:center;font-size: 14px;">
-MultiATSM
-</th>
-<th style="text-align:center;font-size: 14px;">
-BR (2017)
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-<span class="math inline">\(r0\)</span>
-</td>
-<td style="text-align:center;">
-0.00055
-</td>
-<td style="text-align:center;">
--0.00016
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-<span class="math inline">\(\lambda_1\)</span>
-</td>
-<td style="text-align:center;">
-0.99670
-</td>
-<td style="text-align:center;">
-0.99682
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-<span class="math inline">\(\lambda_2\)</span>
-</td>
-<td style="text-align:center;">
-0.91488
-</td>
-<td style="text-align:center;">
-0.95945
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-<span class="math inline">\(\lambda_3\)</span>
-</td>
-<td style="text-align:center;">
-0.91488
-</td>
-<td style="text-align:center;">
-0.87174
-</td>
-</tr>
-</tbody>
-<tfoot>
-<tr>
-<td style="padding: 0; border: 0;" colspan="100%">
-<span style="font-style: italic;">Note: </span>
-</td>
-</tr>
-<tr>
-<td style="padding: 0; border: 0;" colspan="100%">
-<sup></sup> <span class="math inline">\(\lambda\)</span>’s are the eigenvalues from the risk-neutral feedback matrix and <span class="math inline">\(r0\)</span> is the long-run mean of the short rate under Q.
-</td>
-</tr>
-</tfoot>
-</table>
-<table class=" lightable-classic lightable-striped" style="font-family: &quot;Arial Narrow&quot;, &quot;Source Sans Pro&quot;, sans-serif; width: auto !important; margin-left: auto; margin-right: auto;">
-<caption>
-<span id="tab:unnamed-chunk-32">Table 4.2: </span><span class="math inline">\(P\)</span>-dynamics parameters
-</caption>
-<thead>
-<tr>
-<th style="empty-cells: hide;" colspan="1">
-</th>
-<th style="padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; font-weight: bold; " colspan="1">
-<div style="TRUE">
-K0Z
-</div>
-</th>
-<th style="padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; font-weight: bold; " colspan="5">
-<div style="TRUE">
-K1Z
-</div>
-</th>
-</tr>
-<tr>
-<th style="text-align:left;font-size: 14px;">
-</th>
-<th style="text-align:center;font-size: 14px;">
-</th>
-<th style="text-align:center;font-size: 14px;">
-PC1
-</th>
-<th style="text-align:center;font-size: 14px;">
-PC2
-</th>
-<th style="text-align:center;font-size: 14px;">
-PC3
-</th>
-<th style="text-align:center;font-size: 14px;">
-GRO
-</th>
-<th style="text-align:center;font-size: 14px;">
-INF
-</th>
-</tr>
-</thead>
-<tbody>
-<tr grouplength="5">
-<td colspan="7" style="border-bottom: 1px solid;">
-<strong>BR (2017)</strong>
-</td>
-</tr>
-<tr>
-<td style="text-align:left; padding-left:  2em;" indentlevel="1">
-PC1
-</td>
-<td style="text-align:center;">
-0.07811
-</td>
-<td style="text-align:center;">
-0.93691
-</td>
-<td style="text-align:center;">
--0.01307
-</td>
-<td style="text-align:center;">
--0.02181
-</td>
-<td style="text-align:center;">
-0.10457
-</td>
-<td style="text-align:center;">
-0.10033
-</td>
-</tr>
-<tr>
-<td style="text-align:left; padding-left:  2em;" indentlevel="1">
-PC2
-</td>
-<td style="text-align:center;">
-0.02100
-</td>
-<td style="text-align:center;">
-0.00582
-</td>
-<td style="text-align:center;">
-0.97814
-</td>
-<td style="text-align:center;">
-0.17031
-</td>
-<td style="text-align:center;">
--0.16719
-</td>
-<td style="text-align:center;">
--0.04016
-</td>
-</tr>
-<tr>
-<td style="text-align:left; padding-left:  2em;" indentlevel="1">
-PC3
-</td>
-<td style="text-align:center;">
-0.10047
-</td>
-<td style="text-align:center;">
--0.01037
-</td>
-<td style="text-align:center;">
--0.00625
-</td>
-<td style="text-align:center;">
-0.78346
-</td>
-<td style="text-align:center;">
--0.03987
-</td>
-<td style="text-align:center;">
-0.04369
-</td>
-</tr>
-<tr>
-<td style="text-align:left; padding-left:  2em;" indentlevel="1">
-GRO
-</td>
-<td style="text-align:center;">
-0.06904
-</td>
-<td style="text-align:center;">
--0.00483
-</td>
-<td style="text-align:center;">
-0.01801
-</td>
-<td style="text-align:center;">
--0.11117
-</td>
-<td style="text-align:center;">
-0.88177
-</td>
-<td style="text-align:center;">
--0.00247
-</td>
-</tr>
-<tr>
-<td style="text-align:left; padding-left:  2em;" indentlevel="1">
-INF
-</td>
-<td style="text-align:center;">
-0.04996
-</td>
-<td style="text-align:center;">
-0.00185
-</td>
-<td style="text-align:center;">
-0.00642
-</td>
-<td style="text-align:center;">
--0.05920
-</td>
-<td style="text-align:center;">
-0.02767
-</td>
-<td style="text-align:center;">
-0.98593
-</td>
-</tr>
-<tr grouplength="5">
-<td colspan="7" style="border-bottom: 1px solid;">
-<strong>MultiATSM</strong>
-</td>
-</tr>
-<tr>
-<td style="text-align:left; padding-left:  2em;" indentlevel="1">
-PC1
-</td>
-<td style="text-align:center;">
-0.07811
-</td>
-<td style="text-align:center;">
-0.93691
-</td>
-<td style="text-align:center;">
--0.01307
-</td>
-<td style="text-align:center;">
--0.02181
-</td>
-<td style="text-align:center;">
-0.10457
-</td>
-<td style="text-align:center;">
-0.10033
-</td>
-</tr>
-<tr>
-<td style="text-align:left; padding-left:  2em;" indentlevel="1">
-PC2
-</td>
-<td style="text-align:center;">
-0.02100
-</td>
-<td style="text-align:center;">
-0.00582
-</td>
-<td style="text-align:center;">
-0.97814
-</td>
-<td style="text-align:center;">
-0.17031
-</td>
-<td style="text-align:center;">
--0.16719
-</td>
-<td style="text-align:center;">
--0.04016
-</td>
-</tr>
-<tr>
-<td style="text-align:left; padding-left:  2em;" indentlevel="1">
-PC3
-</td>
-<td style="text-align:center;">
-0.10047
-</td>
-<td style="text-align:center;">
--0.01037
-</td>
-<td style="text-align:center;">
--0.00625
-</td>
-<td style="text-align:center;">
-0.78346
-</td>
-<td style="text-align:center;">
--0.03987
-</td>
-<td style="text-align:center;">
-0.04369
-</td>
-</tr>
-<tr>
-<td style="text-align:left; padding-left:  2em;" indentlevel="1">
-GRO
-</td>
-<td style="text-align:center;">
-0.06904
-</td>
-<td style="text-align:center;">
--0.00483
-</td>
-<td style="text-align:center;">
-0.01801
-</td>
-<td style="text-align:center;">
--0.11117
-</td>
-<td style="text-align:center;">
-0.88177
-</td>
-<td style="text-align:center;">
--0.00247
-</td>
-</tr>
-<tr>
-<td style="text-align:left; padding-left:  2em;" indentlevel="1">
-INF
-</td>
-<td style="text-align:center;">
-0.04996
-</td>
-<td style="text-align:center;">
-0.00185
-</td>
-<td style="text-align:center;">
-0.00642
-</td>
-<td style="text-align:center;">
--0.05920
-</td>
-<td style="text-align:center;">
-0.02767
-</td>
-<td style="text-align:center;">
-0.98593
-</td>
-</tr>
-</tbody>
-<tfoot>
-<tr>
-<td style="padding: 0; border: 0;" colspan="100%">
-<span style="font-style: italic;">Note: </span>
-</td>
-</tr>
-<tr>
-<td style="padding: 0; border: 0;" colspan="100%">
-<sup></sup> <span class="math inline">\(K0Z\)</span> is the intercept and <span class="math inline">\(K1Z\)</span> is feedback matrix from the <span class="math inline">\(P\)</span>-dynamics.
-</td>
-</tr>
-</tfoot>
-</table>
-<table class=" lightable-classic lightable-striped" style="font-family: &quot;Arial Narrow&quot;, &quot;Source Sans Pro&quot;, sans-serif; width: auto !important; margin-left: auto; margin-right: auto;">
-<caption>
-<span id="tab:unnamed-chunk-33">Table 4.3: </span>Portfolio of yields with errors
-</caption>
-<thead>
-<tr>
-<th style="text-align:left;font-size: 14px;">
-</th>
-<th style="text-align:center;font-size: 14px;">
-MultiATSM
-</th>
-<th style="text-align:center;font-size: 14px;">
-BR (2017)
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-se
-</td>
-<td style="text-align:center;">
-0.0000546
-</td>
-<td style="text-align:center;">
-0.000055
-</td>
-</tr>
-</tbody>
-<tfoot>
-<tr>
-<td style="padding: 0; border: 0;" colspan="100%">
-<span style="font-style: italic;">Note: </span>
-</td>
-</tr>
-<tr>
-<td style="padding: 0; border: 0;" colspan="100%">
-<sup></sup> <span class="math inline">\(se\)</span> is the standard deviation of the portfolio of yields observed with errors.
-</td>
-</tr>
-</tfoot>
-</table>
-<p>It is relevant to highlight that the script above makes use of the principal component weights provided by BR (2017). Such a matrix is simply a scaled-up version of the one provided by the function <em>pca_weights_one_country</em> of this package. Accordingly, despite the numerical differences on the weight matrices, both methods generate time series of spanned factors which are perfectly correlated. Another difference between the two approaches relates to the construction form of the log-likelihood function (llk): while in the BR (2017) code the llk is expressed in terms of a portfolio of yields, the <em>MultiATSM</em> package generates this same input directly as a function of observed yields (i.e. both procedures lead to equivalent llk up to the Jacobian term).</p>
-</div>
-<div id="candelon-and-moura-2021" class="section level3" number="4.2.2">
-<h3><span class="header-section-number">4.2.2</span> Candelon and Moura (2021)</h3>
-<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="do">#########################################################################################################</span></span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="do">#################################### USER INPUTS ########################################################</span></span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="do">#########################################################################################################</span></span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="co"># A) Load database data</span></span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;CM_Factors&quot;</span>)</span>
-<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&#39;CM_Factors_GVAR&#39;</span>)</span>
-<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&#39;CM_Trade&#39;</span>)</span>
-<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&#39;CM_Yields&#39;</span>)</span>
-<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a><span class="co"># B) Decide on general model inputs</span></span>
-<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>ModelType <span class="ot">&lt;-</span> <span class="st">&quot;GVAR jointQ&quot;</span> <span class="co"># available options are &quot;JPS&quot;, &quot;JPS jointP&quot;, &quot;GVAR sepQ&quot;, &quot;VAR jointQ&quot;, </span></span>
-<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>                          <span class="co">#&quot;GVAR jointQ&quot;, &quot;JLL original&quot;, &quot;JLL NoDomUnit&quot;, &quot;JLL jointSigma&quot;.</span></span>
-<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>StationarityUnderQ <span class="ot">&lt;-</span> <span class="dv">0</span>  </span>
-<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a>BiasCorrection <span class="ot">&lt;-</span> <span class="dv">0</span> </span>
-<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a>WishForwardPremia <span class="ot">&lt;-</span> <span class="dv">0</span> </span>
-<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a>FPmatLim <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">47</span>,<span class="dv">48</span>) </span>
-<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a>Economies <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;China&quot;</span>,<span class="st">&quot;Brazil&quot;</span>,<span class="st">&quot;Mexico&quot;</span>, <span class="st">&quot;Uruguay&quot;</span>) </span>
-<span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a>GlobalVar <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;GBC&quot;</span>, <span class="st">&quot;CPI_OECD&quot;</span>) </span>
-<span id="cb31-21"><a href="#cb31-21" aria-hidden="true" tabindex="-1"></a>DomVar <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;OECD_Det&quot;</span>, <span class="st">&quot;Inflation&quot;</span>) </span>
-<span id="cb31-22"><a href="#cb31-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-23"><a href="#cb31-23" aria-hidden="true" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="dv">3</span> <span class="co"># Number of spanned factors per country</span></span>
-<span id="cb31-24"><a href="#cb31-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-25"><a href="#cb31-25" aria-hidden="true" tabindex="-1"></a>OutputLabel <span class="ot">&lt;-</span> <span class="st">&quot;CM_2021&quot;</span></span>
-<span id="cb31-26"><a href="#cb31-26" aria-hidden="true" tabindex="-1"></a>DataFrequency <span class="ot">&lt;-</span> <span class="st">&quot;Monthly&quot;</span></span>
-<span id="cb31-27"><a href="#cb31-27" aria-hidden="true" tabindex="-1"></a>UnitMatYields <span class="ot">&lt;-</span> <span class="st">&quot;Month&quot;</span></span>
-<span id="cb31-28"><a href="#cb31-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-29"><a href="#cb31-29" aria-hidden="true" tabindex="-1"></a><span class="co"># B.1) Decide on specific model inputs</span></span>
-<span id="cb31-30"><a href="#cb31-30" aria-hidden="true" tabindex="-1"></a><span class="do">#################################### GVAR-based models ##################################################</span></span>
-<span id="cb31-31"><a href="#cb31-31" aria-hidden="true" tabindex="-1"></a>t_First_Wgvar <span class="ot">&lt;-</span> <span class="st">&quot;2004&quot;</span></span>
-<span id="cb31-32"><a href="#cb31-32" aria-hidden="true" tabindex="-1"></a>t_Last_Wgvar <span class="ot">&lt;-</span>  <span class="st">&quot;2019&quot;</span></span>
-<span id="cb31-33"><a href="#cb31-33" aria-hidden="true" tabindex="-1"></a>W_type <span class="ot">&lt;-</span> <span class="st">&#39;Sample Mean&#39;</span></span>
-<span id="cb31-34"><a href="#cb31-34" aria-hidden="true" tabindex="-1"></a>VARXtype <span class="ot">&lt;-</span> <span class="st">&quot;unconstrained&quot;</span></span>
-<span id="cb31-35"><a href="#cb31-35" aria-hidden="true" tabindex="-1"></a><span class="do">#################################### JLL-based models ###################################################</span></span>
-<span id="cb31-36"><a href="#cb31-36" aria-hidden="true" tabindex="-1"></a>DomUnit <span class="ot">&lt;-</span> <span class="st">&quot;China&quot;</span></span>
-<span id="cb31-37"><a href="#cb31-37" aria-hidden="true" tabindex="-1"></a>WishSigmas <span class="ot">&lt;-</span> <span class="dv">0</span></span>
-<span id="cb31-38"><a href="#cb31-38" aria-hidden="true" tabindex="-1"></a>SigmaNonOrtho <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
-<span id="cb31-39"><a href="#cb31-39" aria-hidden="true" tabindex="-1"></a>JLLModelType <span class="ot">&lt;-</span> ModelType</span>
-<span id="cb31-40"><a href="#cb31-40" aria-hidden="true" tabindex="-1"></a><span class="do">###################################### BRW inputs  ######################################################</span></span>
-<span id="cb31-41"><a href="#cb31-41" aria-hidden="true" tabindex="-1"></a>flag_mean <span class="ot">&lt;-</span> <span class="cn">TRUE</span></span>
-<span id="cb31-42"><a href="#cb31-42" aria-hidden="true" tabindex="-1"></a>gamma <span class="ot">&lt;-</span> <span class="fl">0.1</span></span>
-<span id="cb31-43"><a href="#cb31-43" aria-hidden="true" tabindex="-1"></a>N_iter <span class="ot">&lt;-</span> <span class="dv">500</span></span>
-<span id="cb31-44"><a href="#cb31-44" aria-hidden="true" tabindex="-1"></a>N_burn <span class="ot">&lt;-</span> N_iter<span class="sc">*</span><span class="fl">0.15</span></span>
-<span id="cb31-45"><a href="#cb31-45" aria-hidden="true" tabindex="-1"></a>B <span class="ot">&lt;-</span> <span class="dv">50</span></span>
-<span id="cb31-46"><a href="#cb31-46" aria-hidden="true" tabindex="-1"></a>checkBRW <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb31-47"><a href="#cb31-47" aria-hidden="true" tabindex="-1"></a>B_check <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
-<span id="cb31-48"><a href="#cb31-48" aria-hidden="true" tabindex="-1"></a><span class="do">#########################################################################################################</span></span>
-<span id="cb31-49"><a href="#cb31-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-50"><a href="#cb31-50" aria-hidden="true" tabindex="-1"></a><span class="co"># C) Decide on Settings for numerical outputs</span></span>
-<span id="cb31-51"><a href="#cb31-51" aria-hidden="true" tabindex="-1"></a>Horiz <span class="ot">&lt;-</span> <span class="dv">25</span></span>
-<span id="cb31-52"><a href="#cb31-52" aria-hidden="true" tabindex="-1"></a>DesiredGraphs <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Fit&quot;</span>, <span class="st">&quot;GIRF&quot;</span>, <span class="st">&quot;GFEVD&quot;</span>)</span>
-<span id="cb31-53"><a href="#cb31-53" aria-hidden="true" tabindex="-1"></a>WishGraphRiskFac <span class="ot">&lt;-</span> <span class="dv">0</span></span>
-<span id="cb31-54"><a href="#cb31-54" aria-hidden="true" tabindex="-1"></a>WishGraphYields <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb31-55"><a href="#cb31-55" aria-hidden="true" tabindex="-1"></a>WishOrthoJLLgraphs <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb31-56"><a href="#cb31-56" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-57"><a href="#cb31-57" aria-hidden="true" tabindex="-1"></a><span class="co"># D) Bootstrap settings</span></span>
-<span id="cb31-58"><a href="#cb31-58" aria-hidden="true" tabindex="-1"></a>WishBootstrap <span class="ot">&lt;-</span> <span class="dv">0</span> </span>
-<span id="cb31-59"><a href="#cb31-59" aria-hidden="true" tabindex="-1"></a>Bootlist <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb31-60"><a href="#cb31-60" aria-hidden="true" tabindex="-1"></a>Bootlist<span class="sc">$</span>methodBS <span class="ot">&lt;-</span> <span class="st">&#39;bs&#39;</span> </span>
-<span id="cb31-61"><a href="#cb31-61" aria-hidden="true" tabindex="-1"></a>Bootlist<span class="sc">$</span>BlockLength <span class="ot">&lt;-</span> <span class="dv">4</span> </span>
-<span id="cb31-62"><a href="#cb31-62" aria-hidden="true" tabindex="-1"></a>Bootlist<span class="sc">$</span>ndraws <span class="ot">&lt;-</span>  <span class="dv">1000</span></span>
-<span id="cb31-63"><a href="#cb31-63" aria-hidden="true" tabindex="-1"></a>Bootlist<span class="sc">$</span>pctg   <span class="ot">&lt;-</span>  <span class="dv">95</span> </span>
-<span id="cb31-64"><a href="#cb31-64" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-65"><a href="#cb31-65" aria-hidden="true" tabindex="-1"></a><span class="co"># E) Out-of-sample forecast</span></span>
-<span id="cb31-66"><a href="#cb31-66" aria-hidden="true" tabindex="-1"></a>WishForecast <span class="ot">&lt;-</span> <span class="dv">0</span> </span>
-<span id="cb31-67"><a href="#cb31-67" aria-hidden="true" tabindex="-1"></a>ForecastList <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb31-68"><a href="#cb31-68" aria-hidden="true" tabindex="-1"></a>ForecastList<span class="sc">$</span>ForHoriz <span class="ot">&lt;-</span> <span class="dv">12</span> </span>
-<span id="cb31-69"><a href="#cb31-69" aria-hidden="true" tabindex="-1"></a>ForecastList<span class="sc">$</span>t0Sample <span class="ot">&lt;-</span> <span class="dv">1</span> </span>
-<span id="cb31-70"><a href="#cb31-70" aria-hidden="true" tabindex="-1"></a>ForecastList<span class="sc">$</span>t0Forecast <span class="ot">&lt;-</span> <span class="dv">90</span> </span>
-<span id="cb31-71"><a href="#cb31-71" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-72"><a href="#cb31-72" aria-hidden="true" tabindex="-1"></a><span class="do">#########################################################################################################</span></span>
-<span id="cb31-73"><a href="#cb31-73" aria-hidden="true" tabindex="-1"></a><span class="do">############################### NO NEED TO MAKE CHANGES FROM HERE #######################################</span></span>
-<span id="cb31-74"><a href="#cb31-74" aria-hidden="true" tabindex="-1"></a><span class="do">#########################################################################################################</span></span>
-<span id="cb31-75"><a href="#cb31-75" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-76"><a href="#cb31-76" aria-hidden="true" tabindex="-1"></a><span class="co"># 2) Minor preliminary work</span></span>
-<span id="cb31-77"><a href="#cb31-77" aria-hidden="true" tabindex="-1"></a>C <span class="ot">&lt;-</span> <span class="fu">length</span>(Economies)</span>
-<span id="cb31-78"><a href="#cb31-78" aria-hidden="true" tabindex="-1"></a>FactorLabels <span class="ot">&lt;-</span> <span class="fu">LabFac</span>(N, DomVar,GlobalVar, Economies, ModelType)</span>
-<span id="cb31-79"><a href="#cb31-79" aria-hidden="true" tabindex="-1"></a>ZZ <span class="ot">&lt;-</span> RiskFactors</span>
-<span id="cb31-80"><a href="#cb31-80" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-81"><a href="#cb31-81" aria-hidden="true" tabindex="-1"></a>Data <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb31-82"><a href="#cb31-82" aria-hidden="true" tabindex="-1"></a>Data<span class="sc">$</span>GVARFactors <span class="ot">&lt;-</span> FactorsGVAR</span>
-<span id="cb31-83"><a href="#cb31-83" aria-hidden="true" tabindex="-1"></a>mat <span class="ot">&lt;-</span> <span class="fu">Maturities</span>(Yields, Economies, <span class="at">UnitYields =</span> UnitMatYields)</span>
-<span id="cb31-84"><a href="#cb31-84" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-85"><a href="#cb31-85" aria-hidden="true" tabindex="-1"></a><span class="co"># 2.1) Generate GVARinputs, JLLinputs and BRWinputs</span></span>
-<span id="cb31-86"><a href="#cb31-86" aria-hidden="true" tabindex="-1"></a>ModInputs <span class="ot">&lt;-</span> <span class="fu">ListModelInputs</span>(ModelType, Data, Economies, VARXtype, t_First_Wgvar, t_Last_Wgvar, W_type,</span>
-<span id="cb31-87"><a href="#cb31-87" aria-hidden="true" tabindex="-1"></a>                             DomUnit, WishSigmas, SigmaNonOrtho, BiasCorrection, flag_mean, gamma, N_iter,</span>
-<span id="cb31-88"><a href="#cb31-88" aria-hidden="true" tabindex="-1"></a>                             N_burn, B, checkBRW, B_check)</span>
-<span id="cb31-89"><a href="#cb31-89" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-90"><a href="#cb31-90" aria-hidden="true" tabindex="-1"></a>GVARinputs <span class="ot">&lt;-</span> ModInputs<span class="sc">$</span>GVARinputs</span>
-<span id="cb31-91"><a href="#cb31-91" aria-hidden="true" tabindex="-1"></a>JLLinputs <span class="ot">&lt;-</span> ModInputs<span class="sc">$</span>JLLinputs</span>
-<span id="cb31-92"><a href="#cb31-92" aria-hidden="true" tabindex="-1"></a>BRWinputs <span class="ot">&lt;-</span> ModInputs<span class="sc">$</span>BRWinputs</span>
-<span id="cb31-93"><a href="#cb31-93" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-94"><a href="#cb31-94" aria-hidden="true" tabindex="-1"></a><span class="co"># 3) Prepare the inputs of the likelihood function</span></span>
-<span id="cb31-95"><a href="#cb31-95" aria-hidden="true" tabindex="-1"></a>ModelParaList <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb31-96"><a href="#cb31-96" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>C){</span>
-<span id="cb31-97"><a href="#cb31-97" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (( ModelType <span class="sc">==</span> <span class="st">&quot;GVAR jointQ&quot;</span> <span class="sc">||</span> ModelType <span class="sc">==</span> <span class="st">&quot;VAR jointQ&quot;</span> <span class="sc">||</span> ModelType <span class="sc">==</span> <span class="st">&quot;JLL original&quot;</span></span>
-<span id="cb31-98"><a href="#cb31-98" aria-hidden="true" tabindex="-1"></a>        <span class="sc">||</span> ModelType <span class="sc">==</span> <span class="st">&quot;JLL NoDomUnit&quot;</span> <span class="sc">||</span> ModelType <span class="sc">==</span> <span class="st">&quot;JLL jointSigma&quot;</span> )   <span class="sc">&amp;</span> i <span class="sc">&gt;</span><span class="dv">1</span> ){<span class="cf">break</span>} </span>
-<span id="cb31-99"><a href="#cb31-99" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-100"><a href="#cb31-100" aria-hidden="true" tabindex="-1"></a><span class="co"># 3.1) Compute the inputs that go directly into the log-likelihood function</span></span>
-<span id="cb31-101"><a href="#cb31-101" aria-hidden="true" tabindex="-1"></a>ATSMInputs <span class="ot">&lt;-</span> <span class="fu">InputsForMLEdensity</span>(ModelType, Yields, ZZ, FactorLabels, mat, Economies, DataFrequency, </span>
-<span id="cb31-102"><a href="#cb31-102" aria-hidden="true" tabindex="-1"></a>                                  JLLinputs, GVARinputs, BRWinputs)</span>
-<span id="cb31-103"><a href="#cb31-103" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-104"><a href="#cb31-104" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-105"><a href="#cb31-105" aria-hidden="true" tabindex="-1"></a><span class="co"># 3.2) Initial guesses for Variables that will be concentrared out of from the log-likelihood function</span></span>
-<span id="cb31-106"><a href="#cb31-106" aria-hidden="true" tabindex="-1"></a>K1XQ <span class="ot">&lt;-</span> ATSMInputs<span class="sc">$</span>K1XQ</span>
-<span id="cb31-107"><a href="#cb31-107" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (ModelType <span class="sc">==</span> <span class="st">&quot;JLL original&quot;</span> <span class="sc">||</span> ModelType <span class="sc">==</span> <span class="st">&quot;JLL NoDomUnit&quot;</span> ){ SSZ <span class="ot">&lt;-</span> <span class="cn">NULL</span>} <span class="cf">else</span>{SSZ <span class="ot">&lt;-</span> ATSMInputs<span class="sc">$</span>SSZ}</span>
-<span id="cb31-108"><a href="#cb31-108" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-109"><a href="#cb31-109" aria-hidden="true" tabindex="-1"></a><span class="co"># 4) Build the objective function</span></span>
-<span id="cb31-110"><a href="#cb31-110" aria-hidden="true" tabindex="-1"></a>f <span class="ot">&lt;-</span> <span class="fu">Functionf</span>(ATSMInputs, Economies, mat, DataFrequency, FactorLabels, ModelType)</span>
-<span id="cb31-111"><a href="#cb31-111" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-112"><a href="#cb31-112" aria-hidden="true" tabindex="-1"></a><span class="co"># 5) Set the optimization settings</span></span>
-<span id="cb31-113"><a href="#cb31-113" aria-hidden="true" tabindex="-1"></a>VarLab <span class="ot">&lt;-</span> <span class="fu">ParaLabels</span>(ModelType, StationarityUnderQ)</span>
-<span id="cb31-114"><a href="#cb31-114" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-115"><a href="#cb31-115" aria-hidden="true" tabindex="-1"></a>varargin <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb31-116"><a href="#cb31-116" aria-hidden="true" tabindex="-1"></a>varargin<span class="sc">$</span>K1XQ <span class="ot">&lt;-</span><span class="fu">list</span>(K1XQ, VarLab[[ModelType]][[<span class="st">&quot;K1XQ&quot;</span>]] , <span class="cn">NULL</span> , <span class="cn">NULL</span>)</span>
-<span id="cb31-117"><a href="#cb31-117" aria-hidden="true" tabindex="-1"></a>varargin<span class="sc">$</span>SSZ <span class="ot">&lt;-</span> <span class="fu">list</span>(SSZ, VarLab[[ModelType]][[<span class="st">&quot;SSZ&quot;</span>]], <span class="cn">NULL</span>, <span class="cn">NULL</span>)</span>
-<span id="cb31-118"><a href="#cb31-118" aria-hidden="true" tabindex="-1"></a>varargin<span class="sc">$</span>r0 <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="cn">NULL</span>, VarLab[[ModelType]][[<span class="st">&quot;r0&quot;</span>]], <span class="cn">NULL</span>, <span class="cn">NULL</span>)</span>
-<span id="cb31-119"><a href="#cb31-119" aria-hidden="true" tabindex="-1"></a>varargin<span class="sc">$</span>se <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="cn">NULL</span>, VarLab[[ModelType]][[<span class="st">&quot;se&quot;</span>]], <span class="fl">1e-6</span>, <span class="cn">NULL</span>)</span>
-<span id="cb31-120"><a href="#cb31-120" aria-hidden="true" tabindex="-1"></a>varargin<span class="sc">$</span>K0Z <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="cn">NULL</span>, VarLab[[ModelType]][[<span class="st">&quot;K0Z&quot;</span>]], <span class="cn">NULL</span>, <span class="cn">NULL</span>)</span>
-<span id="cb31-121"><a href="#cb31-121" aria-hidden="true" tabindex="-1"></a>varargin<span class="sc">$</span>K1Z <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="cn">NULL</span>, VarLab[[ModelType]][[<span class="st">&quot;K1Z&quot;</span>]], <span class="cn">NULL</span>, <span class="cn">NULL</span>)</span>
-<span id="cb31-122"><a href="#cb31-122" aria-hidden="true" tabindex="-1"></a>varargin<span class="sc">$</span>OptRun <span class="ot">&lt;-</span>  <span class="fu">c</span>(<span class="st">&quot;iter off&quot;</span>)</span>
-<span id="cb31-123"><a href="#cb31-123" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-124"><a href="#cb31-124" aria-hidden="true" tabindex="-1"></a>LabelVar<span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&#39;Value&#39;</span>, <span class="st">&#39;Label&#39;</span>, <span class="st">&#39;LB&#39;</span>, <span class="st">&#39;UB&#39;</span>) </span>
-<span id="cb31-125"><a href="#cb31-125" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (d <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>(<span class="fu">length</span>(varargin)<span class="sc">-</span><span class="dv">1</span>)){ <span class="fu">names</span>(varargin[[d]]) <span class="ot">&lt;-</span>  LabelVar}</span>
-<span id="cb31-126"><a href="#cb31-126" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-127"><a href="#cb31-127" aria-hidden="true" tabindex="-1"></a>tol <span class="ot">&lt;-</span> <span class="fl">1e-4</span></span>
-<span id="cb31-128"><a href="#cb31-128" aria-hidden="true" tabindex="-1"></a><span class="co"># 6) Optimization of the model</span></span>
-<span id="cb31-129"><a href="#cb31-129" aria-hidden="true" tabindex="-1"></a>ModelParaList[[ModelType]] <span class="ot">&lt;-</span> <span class="fu">Optimization</span>(f, tol, varargin, FactorLabels, Economies, ModelType,</span>
-<span id="cb31-130"><a href="#cb31-130" aria-hidden="true" tabindex="-1"></a>                                           JLLinputs, GVARinputs)<span class="sc">$</span>Summary</span>
-<span id="cb31-131"><a href="#cb31-131" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb31-132"><a href="#cb31-132" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-133"><a href="#cb31-133" aria-hidden="true" tabindex="-1"></a><span class="co"># 7) Numerical Outputs</span></span>
-<span id="cb31-134"><a href="#cb31-134" aria-hidden="true" tabindex="-1"></a>InputsForOutputs <span class="ot">&lt;-</span> <span class="fu">InputsForOutputs</span>(ModelType, Horiz, DesiredGraphs, OutputLabel, StationarityUnderQ,</span>
-<span id="cb31-135"><a href="#cb31-135" aria-hidden="true" tabindex="-1"></a>                                     UnitMatYields, WishGraphYields, WishGraphRiskFac, WishOrthoJLLgraphs, </span>
-<span id="cb31-136"><a href="#cb31-136" aria-hidden="true" tabindex="-1"></a>                                     WishForwardPremia, FPmatLim, WishBootstrap, Bootlist, WishForecast,</span>
-<span id="cb31-137"><a href="#cb31-137" aria-hidden="true" tabindex="-1"></a>                                     ForecastList)</span>
-<span id="cb31-138"><a href="#cb31-138" aria-hidden="true" tabindex="-1"></a><span class="co"># A) Fit, IRF, FEVD, GIRF, GFEVD and Risk premia</span></span>
-<span id="cb31-139"><a href="#cb31-139" aria-hidden="true" tabindex="-1"></a>NumericalOutputs <span class="ot">&lt;-</span> <span class="fu">NumOutputs</span>(ModelType, ModelParaList, InputsForOutputs, FactorLabels, Economies)</span>
-<span id="cb31-140"><a href="#cb31-140" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-141"><a href="#cb31-141" aria-hidden="true" tabindex="-1"></a><span class="co"># B) Bootstrap</span></span>
-<span id="cb31-142"><a href="#cb31-142" aria-hidden="true" tabindex="-1"></a>Bootstrap <span class="ot">&lt;-</span> <span class="fu">Bootstrap</span>(ModelType, ModelParaList, NumericalOutputs, mat, Economies, InputsForOutputs,</span>
-<span id="cb31-143"><a href="#cb31-143" aria-hidden="true" tabindex="-1"></a>                       FactorLabels, DataFrequency, varargin, JLLinputs, GVARinputs, BRWinputs)</span>
-<span id="cb31-144"><a href="#cb31-144" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-145"><a href="#cb31-145" aria-hidden="true" tabindex="-1"></a><span class="co"># C) Out-of-sample forecasting</span></span>
-<span id="cb31-146"><a href="#cb31-146" aria-hidden="true" tabindex="-1"></a>Forecasts <span class="ot">&lt;-</span> <span class="fu">ForecastYields</span>(ModelType, ModelParaList, InputsForOutputs, FactorLabels, Economies,</span>
-<span id="cb31-147"><a href="#cb31-147" aria-hidden="true" tabindex="-1"></a>                            DataFrequency, JLLinputs, GVARinputs, BRWinputs)</span></code></pre></div>
-</div>
+<span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a>WishForwardPremia <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co"># Wish to estimate the forward premia: YES: 1, NO:0</span></span>
+<span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a>FPmatLim <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">60</span>,<span class="dv">120</span>) <span class="co">#  If the forward premia is desired, then choose the Min and max maturities of the    </span></span>
+<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a>                        <span class="co"># forward premia. Otherwise set NA</span></span>
+<span id="cb30-22"><a href="#cb30-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-23"><a href="#cb30-23" aria-hidden="true" tabindex="-1"></a>Economies <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;China&quot;</span>, <span class="st">&quot;Brazil&quot;</span>, <span class="st">&quot;Mexico&quot;</span>, <span class="st">&quot;Uruguay&quot;</span>) <span class="co"># Names of the economies from the economic system</span></span>
+<span id="cb30-24"><a href="#cb30-24" aria-hidden="true" tabindex="-1"></a>GlobalVar <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;GBC&quot;</span>, <span class="st">&quot;CPI_OECD&quot;</span>) <span class="co"># Global Variables</span></span>
+<span id="cb30-25"><a href="#cb30-25" aria-hidden="true" tabindex="-1"></a>DomVar <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Eco_Act&quot;</span>, <span class="st">&quot;Inflation&quot;</span>) <span class="co"># Country-specific variables</span></span>
+<span id="cb30-26"><a href="#cb30-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-27"><a href="#cb30-27" aria-hidden="true" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="dv">3</span> <span class="co"># Number of spanned factors per country</span></span>
+<span id="cb30-28"><a href="#cb30-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-29"><a href="#cb30-29" aria-hidden="true" tabindex="-1"></a>OutputLabel <span class="ot">&lt;-</span> <span class="st">&quot;Test&quot;</span> <span class="co"># label of the model for saving the file</span></span>
+<span id="cb30-30"><a href="#cb30-30" aria-hidden="true" tabindex="-1"></a>DataFrequency <span class="ot">&lt;-</span> <span class="st">&quot;Monthly&quot;</span> <span class="co"># Frequency of the data</span></span>
+<span id="cb30-31"><a href="#cb30-31" aria-hidden="true" tabindex="-1"></a>UnitMatYields <span class="ot">&lt;-</span> <span class="st">&quot;Month&quot;</span> <span class="co"># bond yields time-unit. Available options are &quot;Month&quot; or &quot;Year&quot;</span></span>
+<span id="cb30-32"><a href="#cb30-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-33"><a href="#cb30-33" aria-hidden="true" tabindex="-1"></a><span class="co"># B.1) Decide on specific model inputs</span></span>
+<span id="cb30-34"><a href="#cb30-34" aria-hidden="true" tabindex="-1"></a><span class="do">#################################### GVAR-based models ##################################################</span></span>
+<span id="cb30-35"><a href="#cb30-35" aria-hidden="true" tabindex="-1"></a>t_First_Wgvar <span class="ot">&lt;-</span> <span class="st">&quot;2004&quot;</span> <span class="co"># First year of the sample (transition matrix)</span></span>
+<span id="cb30-36"><a href="#cb30-36" aria-hidden="true" tabindex="-1"></a>t_Last_Wgvar <span class="ot">&lt;-</span>  <span class="st">&quot;2019&quot;</span> <span class="co"># Last year of the sample (transition matrix)</span></span>
+<span id="cb30-37"><a href="#cb30-37" aria-hidden="true" tabindex="-1"></a>W_type <span class="ot">&lt;-</span> <span class="st">&#39;Sample Mean&#39;</span> <span class="co"># Method to compute the transition matrix</span></span>
+<span id="cb30-38"><a href="#cb30-38" aria-hidden="true" tabindex="-1"></a>VARXtype <span class="ot">&lt;-</span> <span class="st">&quot;unconstrained&quot;</span> <span class="co"># (i) &quot;unconstrained&quot; or (ii) &quot;&quot;constrained&quot; (VARX)</span></span>
+<span id="cb30-39"><a href="#cb30-39" aria-hidden="true" tabindex="-1"></a><span class="do">#################################### JLL-based models ###################################################</span></span>
+<span id="cb30-40"><a href="#cb30-40" aria-hidden="true" tabindex="-1"></a>DomUnit <span class="ot">&lt;-</span> <span class="st">&quot;China&quot;</span></span>
+<span id="cb30-41"><a href="#cb30-41" aria-hidden="true" tabindex="-1"></a>WishSigmas <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co"># Sigma matrix is estimated within the &quot;InputsForMLEdensity&quot; function</span></span>
+<span id="cb30-42"><a href="#cb30-42" aria-hidden="true" tabindex="-1"></a>SigmaNonOrtho <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb30-43"><a href="#cb30-43" aria-hidden="true" tabindex="-1"></a>JLLModelType <span class="ot">&lt;-</span> ModelType</span>
+<span id="cb30-44"><a href="#cb30-44" aria-hidden="true" tabindex="-1"></a><span class="do">###################################### BRW inputs  ######################################################</span></span>
+<span id="cb30-45"><a href="#cb30-45" aria-hidden="true" tabindex="-1"></a>flag_mean <span class="ot">&lt;-</span> <span class="cn">TRUE</span> <span class="co"># TRUE = compute the mean; FALSE = compute the median</span></span>
+<span id="cb30-46"><a href="#cb30-46" aria-hidden="true" tabindex="-1"></a>gamma <span class="ot">&lt;-</span> <span class="fl">0.2</span> <span class="co"># Adjustment parameter</span></span>
+<span id="cb30-47"><a href="#cb30-47" aria-hidden="true" tabindex="-1"></a>N_iter <span class="ot">&lt;-</span> <span class="dv">500</span> <span class="co"># Number of iteration to be conserved </span></span>
+<span id="cb30-48"><a href="#cb30-48" aria-hidden="true" tabindex="-1"></a>N_burn <span class="ot">&lt;-</span> N_iter<span class="sc">*</span><span class="fl">0.15</span>  <span class="co"># Number of iteration to be discarded </span></span>
+<span id="cb30-49"><a href="#cb30-49" aria-hidden="true" tabindex="-1"></a>B <span class="ot">&lt;-</span> <span class="dv">50</span> <span class="co"># Number of bootstrap samples </span></span>
+<span id="cb30-50"><a href="#cb30-50" aria-hidden="true" tabindex="-1"></a>checkBRW <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb30-51"><a href="#cb30-51" aria-hidden="true" tabindex="-1"></a>B_check <span class="ot">&lt;-</span> <span class="dv">1000</span> <span class="co"># </span></span>
+<span id="cb30-52"><a href="#cb30-52" aria-hidden="true" tabindex="-1"></a><span class="do">#########################################################################################################</span></span>
+<span id="cb30-53"><a href="#cb30-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-54"><a href="#cb30-54" aria-hidden="true" tabindex="-1"></a><span class="co"># C) Decide on Settings for numerical outputs</span></span>
+<span id="cb30-55"><a href="#cb30-55" aria-hidden="true" tabindex="-1"></a>Horiz <span class="ot">&lt;-</span> <span class="dv">50</span></span>
+<span id="cb30-56"><a href="#cb30-56" aria-hidden="true" tabindex="-1"></a>DesiredGraphs <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Fit&quot;</span>, <span class="st">&quot;IRF&quot;</span>, <span class="st">&quot;FEVD&quot;</span>) <span class="co"># &quot;Fit&quot;, &quot;IRF&quot;, &quot;FEVD&quot;, &quot;GIRF&quot;, &quot;GFEVD&quot;, &quot;TermPremia&quot;</span></span>
+<span id="cb30-57"><a href="#cb30-57" aria-hidden="true" tabindex="-1"></a>WishGraphRiskFac <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb30-58"><a href="#cb30-58" aria-hidden="true" tabindex="-1"></a>WishGraphYields <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb30-59"><a href="#cb30-59" aria-hidden="true" tabindex="-1"></a>WishOrthoJLLgraphs <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb30-60"><a href="#cb30-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-61"><a href="#cb30-61" aria-hidden="true" tabindex="-1"></a><span class="co"># D) Bootstrao settings</span></span>
+<span id="cb30-62"><a href="#cb30-62" aria-hidden="true" tabindex="-1"></a>WishBootstrap <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co">#  YES: 1; No = 0.</span></span>
+<span id="cb30-63"><a href="#cb30-63" aria-hidden="true" tabindex="-1"></a>Bootlist <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb30-64"><a href="#cb30-64" aria-hidden="true" tabindex="-1"></a>Bootlist<span class="sc">$</span>methodBS <span class="ot">&lt;-</span> <span class="st">&#39;bs&#39;</span> <span class="co"># (i) &#39;bs&#39; ; (ii) &#39;wild&#39;; (iii) &#39;block&#39;</span></span>
+<span id="cb30-65"><a href="#cb30-65" aria-hidden="true" tabindex="-1"></a>Bootlist<span class="sc">$</span>BlockLength <span class="ot">&lt;-</span> <span class="dv">4</span> <span class="co"># necessary input if one chooses the block bootstrap</span></span>
+<span id="cb30-66"><a href="#cb30-66" aria-hidden="true" tabindex="-1"></a>Bootlist<span class="sc">$</span>ndraws <span class="ot">&lt;-</span>  <span class="dv">5</span></span>
+<span id="cb30-67"><a href="#cb30-67" aria-hidden="true" tabindex="-1"></a>Bootlist<span class="sc">$</span>pctg   <span class="ot">&lt;-</span>  <span class="dv">95</span> <span class="co"># confidence level</span></span>
+<span id="cb30-68"><a href="#cb30-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-69"><a href="#cb30-69" aria-hidden="true" tabindex="-1"></a><span class="co"># E) Out-of-sample forecast</span></span>
+<span id="cb30-70"><a href="#cb30-70" aria-hidden="true" tabindex="-1"></a>WishForecast <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co">#  YES: 1; No = 0.</span></span>
+<span id="cb30-71"><a href="#cb30-71" aria-hidden="true" tabindex="-1"></a>ForecastList <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb30-72"><a href="#cb30-72" aria-hidden="true" tabindex="-1"></a>ForecastList<span class="sc">$</span>ForHoriz <span class="ot">&lt;-</span> <span class="dv">12</span> <span class="co"># forecast horizon</span></span>
+<span id="cb30-73"><a href="#cb30-73" aria-hidden="true" tabindex="-1"></a>ForecastList<span class="sc">$</span>t0Sample <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co"># initial sample date</span></span>
+<span id="cb30-74"><a href="#cb30-74" aria-hidden="true" tabindex="-1"></a>ForecastList<span class="sc">$</span>t0Forecast <span class="ot">&lt;-</span> <span class="dv">145</span> <span class="co"># last sample date for the first forecast</span></span>
+<span id="cb30-75"><a href="#cb30-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-76"><a href="#cb30-76" aria-hidden="true" tabindex="-1"></a><span class="do">#########################################################################################################</span></span>
+<span id="cb30-77"><a href="#cb30-77" aria-hidden="true" tabindex="-1"></a><span class="do">############################### NO NEED TO MAKE CHANGES FROM HERE #######################################</span></span>
+<span id="cb30-78"><a href="#cb30-78" aria-hidden="true" tabindex="-1"></a><span class="do">#########################################################################################################</span></span>
+<span id="cb30-79"><a href="#cb30-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-80"><a href="#cb30-80" aria-hidden="true" tabindex="-1"></a><span class="co"># 2) Minor preliminary work</span></span>
+<span id="cb30-81"><a href="#cb30-81" aria-hidden="true" tabindex="-1"></a>C <span class="ot">&lt;-</span> <span class="fu">length</span>(Economies)</span>
+<span id="cb30-82"><a href="#cb30-82" aria-hidden="true" tabindex="-1"></a>FactorLabels <span class="ot">&lt;-</span> <span class="fu">LabFac</span>(N, DomVar,GlobalVar, Economies, ModelType) <span class="co"># Generate the set of labels</span></span>
+<span id="cb30-83"><a href="#cb30-83" aria-hidden="true" tabindex="-1"></a>ZZ <span class="ot">&lt;-</span> RiskFactors</span>
+<span id="cb30-84"><a href="#cb30-84" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="fu">any</span>(ModelType <span class="sc">==</span> <span class="fu">c</span>(<span class="st">&quot;GVAR sepQ&quot;</span>, <span class="st">&quot;GVAR jointQ&quot;</span>))){</span>
+<span id="cb30-85"><a href="#cb30-85" aria-hidden="true" tabindex="-1"></a>Data <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb30-86"><a href="#cb30-86" aria-hidden="true" tabindex="-1"></a>Data<span class="sc">$</span>GVARFactors <span class="ot">&lt;-</span> FactorsGVAR}</span>
+<span id="cb30-87"><a href="#cb30-87" aria-hidden="true" tabindex="-1"></a>mat <span class="ot">&lt;-</span> <span class="fu">Maturities</span>(Yields, Economies, <span class="at">UnitYields =</span> UnitMatYields)</span>
+<span id="cb30-88"><a href="#cb30-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-89"><a href="#cb30-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-90"><a href="#cb30-90" aria-hidden="true" tabindex="-1"></a><span class="co"># 2.1) Generate GVARinputs, JLLinputs and BRWinputs</span></span>
+<span id="cb30-91"><a href="#cb30-91" aria-hidden="true" tabindex="-1"></a>ModInputs <span class="ot">&lt;-</span> <span class="fu">ListModelInputs</span>(ModelType, Data, Economies, VARXtype, t_First_Wgvar, t_Last_Wgvar, W_type,</span>
+<span id="cb30-92"><a href="#cb30-92" aria-hidden="true" tabindex="-1"></a>                             DomUnit, WishSigmas, SigmaNonOrtho, BiasCorrection, flag_mean, gamma, N_iter,</span>
+<span id="cb30-93"><a href="#cb30-93" aria-hidden="true" tabindex="-1"></a>                             N_burn, B, checkBRW, B_check)</span>
+<span id="cb30-94"><a href="#cb30-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-95"><a href="#cb30-95" aria-hidden="true" tabindex="-1"></a>GVARinputs <span class="ot">&lt;-</span> ModInputs<span class="sc">$</span>GVARinputs</span>
+<span id="cb30-96"><a href="#cb30-96" aria-hidden="true" tabindex="-1"></a>JLLinputs <span class="ot">&lt;-</span> ModInputs<span class="sc">$</span>JLLinputs</span>
+<span id="cb30-97"><a href="#cb30-97" aria-hidden="true" tabindex="-1"></a>BRWinputs <span class="ot">&lt;-</span> ModInputs<span class="sc">$</span>BRWinputs</span>
+<span id="cb30-98"><a href="#cb30-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-99"><a href="#cb30-99" aria-hidden="true" tabindex="-1"></a><span class="co"># 3) Prepare the inputs of the likelihood function</span></span>
+<span id="cb30-100"><a href="#cb30-100" aria-hidden="true" tabindex="-1"></a>ModelParaList <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb30-101"><a href="#cb30-101" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>C){</span>
+<span id="cb30-102"><a href="#cb30-102" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (( <span class="fu">any</span>(ModelType <span class="sc">==</span><span class="fu">c</span>(<span class="st">&quot;GVAR jointQ&quot;</span>, <span class="st">&quot;VAR jointQ&quot;</span>,<span class="st">&quot;JLL original&quot;</span>, <span class="st">&quot;JLL NoDomUnit&quot;</span>,<span class="st">&quot;JLL jointSigma&quot;</span>))) </span>
+<span id="cb30-103"><a href="#cb30-103" aria-hidden="true" tabindex="-1"></a>      <span class="sc">&amp;</span> i <span class="sc">&gt;</span><span class="dv">1</span> ){<span class="cf">break</span>} </span>
+<span id="cb30-104"><a href="#cb30-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-105"><a href="#cb30-105" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 3.1) Compute the inputs that go directly into the log-likelihood function</span></span>
+<span id="cb30-106"><a href="#cb30-106" aria-hidden="true" tabindex="-1"></a>  ATSMInputs <span class="ot">&lt;-</span> <span class="fu">InputsForMLEdensity</span>(ModelType, Yields, ZZ, FactorLabels, mat, Economies, DataFrequency,</span>
+<span id="cb30-107"><a href="#cb30-107" aria-hidden="true" tabindex="-1"></a>                                    JLLinputs, GVARinputs, BRWinputs)</span>
+<span id="cb30-108"><a href="#cb30-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-109"><a href="#cb30-109" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 3.2) Initial guesses for Variables that will be concentrared out of from the log-likelihood function</span></span>
+<span id="cb30-110"><a href="#cb30-110" aria-hidden="true" tabindex="-1"></a>  K1XQ <span class="ot">&lt;-</span> ATSMInputs<span class="sc">$</span>K1XQ</span>
+<span id="cb30-111"><a href="#cb30-111" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">any</span>(ModelType <span class="sc">==</span> <span class="fu">c</span>(<span class="st">&quot;JLL original&quot;</span>, <span class="st">&quot;JLL NoDomUnit&quot;</span>))){ SSZ <span class="ot">&lt;-</span> <span class="cn">NULL</span>} <span class="cf">else</span>{SSZ <span class="ot">&lt;-</span> ATSMInputs<span class="sc">$</span>SSZ}</span>
+<span id="cb30-112"><a href="#cb30-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-113"><a href="#cb30-113" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 4) Build the objective function</span></span>
+<span id="cb30-114"><a href="#cb30-114" aria-hidden="true" tabindex="-1"></a>  f <span class="ot">&lt;-</span> <span class="fu">Functionf</span>(ATSMInputs, Economies, mat, DataFrequency, FactorLabels, ModelType)</span>
+<span id="cb30-115"><a href="#cb30-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-116"><a href="#cb30-116" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 5) Set the optimization settings</span></span>
+<span id="cb30-117"><a href="#cb30-117" aria-hidden="true" tabindex="-1"></a>  VarLab <span class="ot">&lt;-</span> <span class="fu">ParaLabels</span>(ModelType, StationarityUnderQ)</span>
+<span id="cb30-118"><a href="#cb30-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-119"><a href="#cb30-119" aria-hidden="true" tabindex="-1"></a>  varargin <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb30-120"><a href="#cb30-120" aria-hidden="true" tabindex="-1"></a>  varargin<span class="sc">$</span>K1XQ <span class="ot">&lt;-</span><span class="fu">list</span>(K1XQ, VarLab[[ModelType]][[<span class="st">&quot;K1XQ&quot;</span>]] , <span class="cn">NULL</span> , <span class="cn">NULL</span>)</span>
+<span id="cb30-121"><a href="#cb30-121" aria-hidden="true" tabindex="-1"></a>  varargin<span class="sc">$</span>SSZ <span class="ot">&lt;-</span> <span class="fu">list</span>(SSZ, VarLab[[ModelType]][[<span class="st">&quot;SSZ&quot;</span>]], <span class="cn">NULL</span>, <span class="cn">NULL</span>)</span>
+<span id="cb30-122"><a href="#cb30-122" aria-hidden="true" tabindex="-1"></a>  varargin<span class="sc">$</span>r0 <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="cn">NULL</span>, VarLab[[ModelType]][[<span class="st">&quot;r0&quot;</span>]], <span class="cn">NULL</span>, <span class="cn">NULL</span>)</span>
+<span id="cb30-123"><a href="#cb30-123" aria-hidden="true" tabindex="-1"></a>  varargin<span class="sc">$</span>se <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="cn">NULL</span>, VarLab[[ModelType]][[<span class="st">&quot;se&quot;</span>]], <span class="fl">1e-6</span>, <span class="cn">NULL</span>)</span>
+<span id="cb30-124"><a href="#cb30-124" aria-hidden="true" tabindex="-1"></a>  varargin<span class="sc">$</span>K0Z <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="cn">NULL</span>, VarLab[[ModelType]][[<span class="st">&quot;K0Z&quot;</span>]], <span class="cn">NULL</span>, <span class="cn">NULL</span>)</span>
+<span id="cb30-125"><a href="#cb30-125" aria-hidden="true" tabindex="-1"></a>  varargin<span class="sc">$</span>K1Z <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="cn">NULL</span>, VarLab[[ModelType]][[<span class="st">&quot;K1Z&quot;</span>]], <span class="cn">NULL</span>, <span class="cn">NULL</span>)</span>
+<span id="cb30-126"><a href="#cb30-126" aria-hidden="true" tabindex="-1"></a>  varargin<span class="sc">$</span>OptRun <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;iter off&quot;</span>)</span>
+<span id="cb30-127"><a href="#cb30-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-128"><a href="#cb30-128" aria-hidden="true" tabindex="-1"></a>  LabelVar<span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&#39;Value&#39;</span>, <span class="st">&#39;Label&#39;</span>, <span class="st">&#39;LB&#39;</span>, <span class="st">&#39;UB&#39;</span>) <span class="co"># Elements of each parameter</span></span>
+<span id="cb30-129"><a href="#cb30-129" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (d <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>(<span class="fu">length</span>(varargin)<span class="sc">-</span><span class="dv">1</span>)){ <span class="fu">names</span>(varargin[[d]]) <span class="ot">&lt;-</span>  LabelVar}</span>
+<span id="cb30-130"><a href="#cb30-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-131"><a href="#cb30-131" aria-hidden="true" tabindex="-1"></a>  tol <span class="ot">&lt;-</span> <span class="fl">1e-4</span></span>
+<span id="cb30-132"><a href="#cb30-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-133"><a href="#cb30-133" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 6) Optimization of the model</span></span>
+<span id="cb30-134"><a href="#cb30-134" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (ModelType <span class="sc">==</span> <span class="st">&#39;JPS&#39;</span> <span class="sc">||</span> ModelType <span class="sc">==</span> <span class="st">&#39;JPS jointP&#39;</span> <span class="sc">||</span> ModelType <span class="sc">==</span> <span class="st">&quot;GVAR sepQ&quot;</span>){</span>
+<span id="cb30-135"><a href="#cb30-135" aria-hidden="true" tabindex="-1"></a>ModelParaList[[ModelType]][[Economies[i]]] <span class="ot">&lt;-</span> <span class="fu">Optimization</span>(f, tol, varargin, FactorLabels,</span>
+<span id="cb30-136"><a href="#cb30-136" aria-hidden="true" tabindex="-1"></a>                                                           Economies, ModelType)<span class="sc">$</span>Summary</span>
+<span id="cb30-137"><a href="#cb30-137" aria-hidden="true" tabindex="-1"></a>  }<span class="cf">else</span>{</span>
+<span id="cb30-138"><a href="#cb30-138" aria-hidden="true" tabindex="-1"></a>ModelParaList[[ModelType]] <span class="ot">&lt;-</span> <span class="fu">Optimization</span>(f, tol, varargin, FactorLabels, Economies, ModelType,</span>
+<span id="cb30-139"><a href="#cb30-139" aria-hidden="true" tabindex="-1"></a>                                           JLLinputs, GVARinputs)<span class="sc">$</span>Summary}</span>
+<span id="cb30-140"><a href="#cb30-140" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb30-141"><a href="#cb30-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-142"><a href="#cb30-142" aria-hidden="true" tabindex="-1"></a><span class="co"># 7) Numerical and graphical outputs</span></span>
+<span id="cb30-143"><a href="#cb30-143" aria-hidden="true" tabindex="-1"></a>InputsForOutputs <span class="ot">&lt;-</span> <span class="fu">InputsForOutputs</span>(ModelType, Horiz, DesiredGraphs, OutputLabel, StationarityUnderQ,</span>
+<span id="cb30-144"><a href="#cb30-144" aria-hidden="true" tabindex="-1"></a>                                     UnitMatYields, WishGraphYields, WishGraphRiskFac, WishOrthoJLLgraphs,</span>
+<span id="cb30-145"><a href="#cb30-145" aria-hidden="true" tabindex="-1"></a>                                     WishForwardPremia, FPmatLim, WishBootstrap, Bootlist, WishForecast,</span>
+<span id="cb30-146"><a href="#cb30-146" aria-hidden="true" tabindex="-1"></a>                                     ForecastList)</span>
+<span id="cb30-147"><a href="#cb30-147" aria-hidden="true" tabindex="-1"></a><span class="co"># A) Fit, IRF, FEVD, GIRF, GFEVD, and Term Premia</span></span>
+<span id="cb30-148"><a href="#cb30-148" aria-hidden="true" tabindex="-1"></a>NumericalOutputs <span class="ot">&lt;-</span> <span class="fu">NumOutputs</span>(ModelType, ModelParaList, InputsForOutputs, FactorLabels, Economies)</span>
+<span id="cb30-149"><a href="#cb30-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-150"><a href="#cb30-150" aria-hidden="true" tabindex="-1"></a><span class="co"># B) Bootstrap</span></span>
+<span id="cb30-151"><a href="#cb30-151" aria-hidden="true" tabindex="-1"></a>Bootstrap <span class="ot">&lt;-</span> <span class="fu">Bootstrap</span>(ModelType, ModelParaList, NumericalOutputs, mat, Economies, InputsForOutputs,</span>
+<span id="cb30-152"><a href="#cb30-152" aria-hidden="true" tabindex="-1"></a>                       FactorLabels, DataFrequency, varargin, JLLinputs, GVARinputs, BRWinputs)</span>
+<span id="cb30-153"><a href="#cb30-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-154"><a href="#cb30-154" aria-hidden="true" tabindex="-1"></a><span class="co"># C) Out-of-sample forecasting</span></span>
+<span id="cb30-155"><a href="#cb30-155" aria-hidden="true" tabindex="-1"></a>Forecasts <span class="ot">&lt;-</span> <span class="fu">ForecastYields</span>(ModelType, ModelParaList, InputsForOutputs, FactorLabels, Economies,</span>
+<span id="cb30-156"><a href="#cb30-156" aria-hidden="true" tabindex="-1"></a>                            DataFrequency, JLLinputs, GVARinputs, BRWinputs)</span></code></pre></div>
 </div>
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1>References</h1>
 <div id="refs" class="references csl-bib-body hanging-indent">
-<div id="ref-AngPiazzesi2003JME" class="csl-entry">
-Ang, Andrew, and Monika Piazzesi. 2003. <span>“A No-Arbitrage Vector Autoregression of Term Structure Dynamics with Macroeconomic and Latent Variables.”</span> <em>Journal of Monetary Economics</em> 50 (4): 745–87.
-</div>
-<div id="ref-BauerRudebusch2017" class="csl-entry">
-Bauer, Michael D, and Glenn D Rudebusch. 2017. <span>“Resolving the Spanning Puzzle in Macro-Finance Term Structure Models.”</span> <em>Review of Finance</em> 21 (2): 511–53.
-</div>
 <div id="ref-BauerRudebuschWu2012" class="csl-entry">
 Bauer, Michael D, Glenn D Rudebusch, and Jing Cynthia Wu. 2012. <span>“Correcting Estimation Bias in Dynamic Term Structure Models.”</span> <em>Journal of Business &amp; Economic Statistics</em> 30 (3): 454–67.
 </div>
