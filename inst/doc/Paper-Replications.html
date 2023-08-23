@@ -12,9 +12,9 @@
 
 <meta name="author" content="Rubens Moura" />
 
-<meta name="date" content="2023-08-16" />
+<meta name="date" content="2023-08-23" />
 
-<title>Paper Replication</title>
+<title>Paper Replications</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -577,19 +577,16 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 
-<h1 class="title toc-ignore">Paper Replication</h1>
+<h1 class="title toc-ignore">Paper Replications</h1>
 <h4 class="author">Rubens Moura</h4>
-<h4 class="date">2023-08-16</h4>
+<h4 class="date">2023-08-23</h4>
 
 
 <div id="TOC">
 <ul>
-<li><a href="#paper-replications"><span class="toc-section-number">1</span> Paper replications</a>
-<ul>
-<li><a href="#joslin-priebisch-and-singleton-2014"><span class="toc-section-number">1.1</span> Joslin, Priebisch and Singleton (2014)</a></li>
-<li><a href="#candelon-and-moura-2021"><span class="toc-section-number">1.2</span> Candelon and Moura (2021)</a></li>
-<li><a href="#candelon-and-moura-2023"><span class="toc-section-number">1.3</span> Candelon and Moura (2023)</a></li>
-</ul></li>
+<li><a href="#joslin-priebisch-and-singleton-2014"><span class="toc-section-number">1</span> Joslin, Priebisch and Singleton (2014)</a></li>
+<li><a href="#candelon-and-moura-2021"><span class="toc-section-number">2</span> Candelon and Moura (2021)</a></li>
+<li><a href="#candelon-and-moura-2023"><span class="toc-section-number">3</span> Candelon and Moura (2023)</a></li>
 <li><a href="#references">References</a></li>
 </ul>
 </div>
@@ -597,10 +594,8 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <p>This vignette leverages the <em>MultiATSM</em> package to reproduce some empirical findings from three academic papers centered around the unspanned macroeconomic risk framework. The first segment focuses on replicating the outcomes of <span class="citation">Joslin, Priebsch, and Singleton (2014)</span>, which laid the foundation for the unspanned risk ATSM literature through a single-country analysis of the U.S. economy. Subsequently, I present the multi-country model extension proposed by <span class="citation">Candelon and Moura (2021)</span>, employing a GVAR approach to capture risk factor dynamics. Lastly, I introduce the program designed to replicate results detailed in <span class="citation">Candelon and Moura (2023)</span>, an extension of the previous framework to investigate the term structure behavior of major emerging markets during the unprecedented COVID<span class="math inline">\(-19\)</span> pandemic.</p>
 <p>A thorough explanation on the usage of the additional functionalities of the <em>MultiATSM</em> package is available at the <a href="my-vignette.html">package vignette</a>.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(MultiATSM)</span></code></pre></div>
-<div id="paper-replications" class="section level1" number="1">
-<h1><span class="header-section-number">1</span> Paper replications</h1>
-<div id="joslin-priebisch-and-singleton-2014" class="section level2" number="1.1">
-<h2><span class="header-section-number">1.1</span> Joslin, Priebisch and Singleton (2014)</h2>
+<div id="joslin-priebisch-and-singleton-2014" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> Joslin, Priebisch and Singleton (2014)</h1>
 <p>To the best of my knowledge, the original data-set used in <span class="citation">Joslin, Priebsch, and Singleton (2014)</span> is not publicly available. Nevertheless, there exists an alternative source of data that closely matches JPS (2014) in terms of the construction method and the sample period. This database is constructed by <span class="citation">Bauer and Rudebusch (2017)</span> (BR, 2017) and is available at <a href="https://www.michaeldbauer.com/publication/spanning-puzzle/">Bauer’s website</a>. In that paper, BR (2017) investigate whether macro-finance term structure models better suit the unspanned macro risk framework by JPS (2014) or the earlier traditional spanned settings as the one by <span class="citation">Ang and Piazzesi (2003)</span>. Accordingly, BR (2017) intend to replicate some of the empirical results reported in JPS (2014). The R-code used by BR (2017) is also available at <a href="https://www.michaeldbauer.com/publication/spanning-puzzle/">Bauer’s website</a>.</p>
 <p>Supported by BR (2017)’s data-set, the code below uses the <em>MultiATSM</em> package to estimate the key model parameters from the ATSM along the lines of JPS (2014). The model estimation is performed using the <em>JPS</em> modeling setup.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="do">#########################################################################################################</span></span>
@@ -1093,8 +1088,8 @@ se
 </table>
 <p>It is relevant to highlight that the script above makes use of the principal component weights provided by BR (2017). Such a matrix is simply a scaled-up version of the one provided by the function <em>pca_weights_one_country</em> of this package. Accordingly, despite the numerical differences on the weight matrices, both methods generate time series of spanned factors which are perfectly correlated. Another difference between the two approaches relates to the construction form of the log-likelihood function (llk): while in the BR (2017) code the llk is expressed in terms of a portfolio of yields, the <em>MultiATSM</em> package generates this same input directly as a function of observed yields (i.e. both procedures lead to equivalent llk up to the Jacobian term).</p>
 </div>
-<div id="candelon-and-moura-2021" class="section level2" number="1.2">
-<h2><span class="header-section-number">1.2</span> Candelon and Moura (2021)</h2>
+<div id="candelon-and-moura-2021" class="section level1" number="2">
+<h1><span class="header-section-number">2</span> Candelon and Moura (2021)</h1>
 <p>The multi-country framework introduced in <span class="citation">Candelon and Moura (2021)</span> was meticulously designed to enhance the tractability of large-scale ATSMs, providing a deeper understanding of the intricate global economic mechanisms that underlie yield curve fluctuations. This framework also reinforces the statistical validity of inference and enhances the predictive capabilities of these models. This novel setup, embodied by the <em>GVAR jointQ</em> model class, is benchmarked against the findings of <span class="citation">Jotikasthira, Le, and Lundblad (2015)</span>, which are captured by the <em>JLL original</em> model class. The paper showcases an empirical illustration involving China, Brazil, Mexico, and Uruguay.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="do">#########################################################################################################</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="do">#################################### USER INPUTS ########################################################</span></span>
@@ -1243,8 +1238,8 @@ se
 <span id="cb3-145"><a href="#cb3-145" aria-hidden="true" tabindex="-1"></a>Forecasts <span class="ot">&lt;-</span> <span class="fu">ForecastYields</span>(ModelType, ModelParaList, InputsForOutputs, FactorLabels, Economies,</span>
 <span id="cb3-146"><a href="#cb3-146" aria-hidden="true" tabindex="-1"></a>                            DataFrequency, JLLinputs, GVARinputs, BRWinputs)</span></code></pre></div>
 </div>
-<div id="candelon-and-moura-2023" class="section level2" number="1.3">
-<h2><span class="header-section-number">1.3</span> Candelon and Moura (2023)</h2>
+<div id="candelon-and-moura-2023" class="section level1" number="3">
+<h1><span class="header-section-number">3</span> Candelon and Moura (2023)</h1>
 <p>In this paper, <span class="citation">Candelon and Moura (2023)</span> delve into an exploration of the underlying factors that shape the sovereign yield curves of Brazil, India, Mexico, and Russia in the midst of the COVID<span class="math inline">\(-19\)</span> pandemic crisis. To comprehensively address the intricate web of global macro-financial and particularly health-related interdependencies, the study employs a modeling approach based on a <em>GVAR jointQ</em> type framework. By delving into these aspects, the authors aim to provide a nuanced understanding of the dynamics influencing sovereign yield curves in these countries during the challenging circumstances of the pandemic.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># A) Load database data</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;CM_Factors_2023&quot;</span>)</span>
@@ -1364,7 +1359,6 @@ se
 <span id="cb4-116"><a href="#cb4-116" aria-hidden="true" tabindex="-1"></a><span class="co"># B) Bootstrap</span></span>
 <span id="cb4-117"><a href="#cb4-117" aria-hidden="true" tabindex="-1"></a>Bootstrap <span class="ot">&lt;-</span> <span class="fu">Bootstrap</span>(ModelType, ModelParaList, NumericalOutputs, mat, Economies, InputsForOutputs,</span>
 <span id="cb4-118"><a href="#cb4-118" aria-hidden="true" tabindex="-1"></a>                       FactorLabels, DataFrequency, varargin, JLLinputs, GVARinputs)</span></code></pre></div>
-</div>
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1>References</h1>
