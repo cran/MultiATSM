@@ -176,7 +176,7 @@ kableExtra::kbl(se, align = "c", caption ="Portfolio of yields with errors") %>%
 #  
 #  Economies <- c("China","Brazil","Mexico", "Uruguay")
 #  GlobalVar <- c("GBC", "CPI_OECD")
-#  DomVar <- c("OECD_Det", "Inflation")
+#  DomVar <- c("Eco_Act", "Inflation")
 #  
 #  N <- 3 # Number of spanned factors per country
 #  
@@ -221,7 +221,7 @@ kableExtra::kbl(se, align = "c", caption ="Portfolio of yields with errors") %>%
 #  Bootlist$pctg   <-  95
 #  
 #  # E) Out-of-sample forecast
-#  WishForecast <- 0
+#  WishForecast <- 1
 #  ForecastList <- list()
 #  ForecastList$ForHoriz <- 12
 #  ForecastList$t0Sample <- 1
@@ -251,42 +251,38 @@ kableExtra::kbl(se, align = "c", caption ="Portfolio of yields with errors") %>%
 #  
 #  # 3) Prepare the inputs of the likelihood function
 #  ModelParaList <- list()
-#  for (i in 1:C){
-#    if (( ModelType == "GVAR jointQ" || ModelType == "VAR jointQ" || ModelType == "JLL original"
-#          || ModelType == "JLL NoDomUnit" || ModelType == "JLL jointSigma" )   & i >1 ){break}
 #  
-#  # 3.1) Compute the inputs that go directly into the log-likelihood function
-#  ATSMInputs <- InputsForMLEdensity(ModelType, Yields, ZZ, FactorLabels, mat, Economies, DataFrequency,
-#                                    JLLinputs, GVARinputs, BRWinputs)
+#    # 3.1) Compute the inputs that go directly into the log-likelihood function
+#    ATSMInputs <- InputsForMLEdensity(ModelType, Yields, ZZ, FactorLabels, mat, Economies, DataFrequency,
+#                                      JLLinputs, GVARinputs, BRWinputs)
 #  
 #  
-#  # 3.2) Initial guesses for Variables that will be concentrared out of from the log-likelihood function
-#  K1XQ <- ATSMInputs$K1XQ
-#  if (ModelType == "JLL original" || ModelType == "JLL NoDomUnit"){ SSZ <- NULL}else{SSZ <- ATSMInputs$SSZ}
+#    # 3.2) Initial guesses for Variables that will be concentrared out of from the log-likelihood function
+#    K1XQ <- ATSMInputs$K1XQ
+#    if (ModelType == "JLL original"){ SSZ <- NULL}else{SSZ <- ATSMInputs$SSZ}
 #  
-#  # 4) Build the objective function
-#  f <- Functionf(ATSMInputs, Economies, mat, DataFrequency, FactorLabels, ModelType)
+#    # 4) Build the objective function
+#    f <- Functionf(ATSMInputs, Economies, mat, DataFrequency, FactorLabels, ModelType)
 #  
-#  # 5) Set the optimization settings
-#  VarLab <- ParaLabels(ModelType, StationarityUnderQ)
+#    # 5) Set the optimization settings
+#    VarLab <- ParaLabels(ModelType, StationarityUnderQ)
 #  
-#  varargin <- list()
-#  varargin$K1XQ <-list(K1XQ, VarLab[[ModelType]][["K1XQ"]] , NULL , NULL)
-#  varargin$SSZ <- list(SSZ, VarLab[[ModelType]][["SSZ"]], NULL, NULL)
-#  varargin$r0 <- list(NULL, VarLab[[ModelType]][["r0"]], NULL, NULL)
-#  varargin$se <- list(NULL, VarLab[[ModelType]][["se"]], 1e-6, NULL)
-#  varargin$K0Z <- list(NULL, VarLab[[ModelType]][["K0Z"]], NULL, NULL)
-#  varargin$K1Z <- list(NULL, VarLab[[ModelType]][["K1Z"]], NULL, NULL)
-#  varargin$OptRun <-  c("iter off")
+#    varargin <- list()
+#    varargin$K1XQ <-list(K1XQ, VarLab[[ModelType]][["K1XQ"]] , NULL , NULL)
+#    varargin$SSZ <- list(SSZ, VarLab[[ModelType]][["SSZ"]], NULL, NULL)
+#    varargin$r0 <- list(NULL, VarLab[[ModelType]][["r0"]], NULL, NULL)
+#    varargin$se <- list(NULL, VarLab[[ModelType]][["se"]], 1e-6, NULL)
+#    varargin$K0Z <- list(NULL, VarLab[[ModelType]][["K0Z"]], NULL, NULL)
+#    varargin$K1Z <- list(NULL, VarLab[[ModelType]][["K1Z"]], NULL, NULL)
+#    varargin$OptRun <-  c("iter off")
 #  
-#  LabelVar<- c('Value', 'Label', 'LB', 'UB')
-#  for (d in 1:(length(varargin)-1)){ names(varargin[[d]]) <-  LabelVar}
+#    LabelVar<- c('Value', 'Label', 'LB', 'UB')
+#    for (d in 1:(length(varargin)-1)){ names(varargin[[d]]) <-  LabelVar}
 #  
-#  tol <- 1e-4
-#  # 6) Optimization of the model
-#  ModelParaList[[ModelType]] <- Optimization(f, tol, varargin, FactorLabels, Economies, ModelType,
-#                                             JLLinputs, GVARinputs)$Summary
-#  }
+#    tol <- 1e-4
+#    # 6) Optimization of the model
+#    ModelParaList[[ModelType]] <- Optimization(f, tol, varargin, FactorLabels, Economies, ModelType,
+#                                               JLLinputs, GVARinputs)$Summary
 #  
 #  # 7) Numerical Outputs
 #  InputsForOutputs <- InputsForOutputs(ModelType, Horiz, DesiredGraphs, OutputLabel, StationarityUnderQ,
@@ -303,6 +299,7 @@ kableExtra::kbl(se, align = "c", caption ="Portfolio of yields with errors") %>%
 #  # C) Out-of-sample forecasting
 #  Forecasts <- ForecastYields(ModelType, ModelParaList, InputsForOutputs, FactorLabels, Economies,
 #                              DataFrequency, JLLinputs, GVARinputs, BRWinputs)
+#  
 #  
 #  
 
