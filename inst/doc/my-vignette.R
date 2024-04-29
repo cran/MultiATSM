@@ -146,11 +146,12 @@ ForecastList <- list()
 ForecastList$ForHoriz <- 12 # forecast horizon
 ForecastList$t0Sample <- 1 # initial sample date
 ForecastList$t0Forecast <- 70 # last sample date for the first forecast
+ForecastList$ForType <- "Rolling" # forecasting will be performed using rolling windows 
 
 ## -----------------------------------------------------------------------------
 w <- pca_weights_one_country(Yields, Economy = "Uruguay") 
 
-## ---- fig.cap = "Yield loadings on the spanned factors", echo=FALSE-----------
+## ----fig.cap = "Yield loadings on the spanned factors", echo=FALSE------------
 LabSpaFac <- c("Level", "Slope", "Curvature")
 N <- length(LabSpaFac)
  
@@ -216,7 +217,7 @@ GVARpara <- GVAR(GVARinputs, N)
 data('CM_Factors')
 StaFac <- StarFactors(RiskFactors, Economies, W_gvar)
 
-## ---- eval=FALSE--------------------------------------------------------------
+## ----eval=FALSE---------------------------------------------------------------
 #  data("CM_Factors")
 #  N <- 3
 #  JLLinputs <- list()
@@ -259,7 +260,7 @@ seinputs <- list(NULL, "@se: bounded", 1e-6, NULL)
 K0Zinputs<- list(NULL, "@K0Z: bounded", NULL, NULL)
 K1Zinputs<- list(NULL, "@K1Z: bounded", NULL, NULL)
 
-## ---- eval=FALSE--------------------------------------------------------------
+## ----eval=FALSE---------------------------------------------------------------
 #  ########################################################################################################
 #  #################################### USER INPUTS #######################################################
 #  ########################################################################################################
@@ -334,6 +335,7 @@ K1Zinputs<- list(NULL, "@K1Z: bounded", NULL, NULL)
 #  ForecastList$ForHoriz <- 12 # forecast horizon
 #  ForecastList$t0Sample <- 1 # initial sample date
 #  ForecastList$t0Forecast <- 145 # last sample date for the first forecast
+#  ForecastList$ForType <- c()
 #  
 #  #########################################################################################################
 #  ############################### NO NEED TO MAKE CHANGES FROM HERE #######################################

@@ -1,7 +1,7 @@
 ## -----------------------------------------------------------------------------
 library(MultiATSM)
 
-## ---- eval=FALSE--------------------------------------------------------------
+## ----eval=FALSE---------------------------------------------------------------
 #  #########################################################################################################
 #  #################################### USER INPUTS ########################################################
 #  #########################################################################################################
@@ -78,7 +78,7 @@ library(MultiATSM)
 #    ModelPara <- Optimization(f, tol, varargin, FactorLabels, Economies, ModelType)$Summary
 #  
 
-## ---- echo= FALSE-------------------------------------------------------------
+## ----echo= FALSE--------------------------------------------------------------
 options(scipen = 100) # eliminate the scientific notation
 data("BR_jps_gro_R3")
 data("JPSrep")
@@ -101,7 +101,7 @@ kableExtra::kbl(TableQ, align = "c", caption = "$Q$-dynamics parameters") %>%
   kableExtra::row_spec(0, font_size = 14) %>%
   kableExtra::footnote(general = " $\\lambda$'s are the eigenvalues from the risk-neutral feedback matrix and $r0$ is the long-run mean of the short rate under Q.")
 
-## ---- echo= FALSE-------------------------------------------------------------
+## ----echo= FALSE--------------------------------------------------------------
 data("BR_jps_gro_R3")
 data("JPSrep")
 
@@ -142,7 +142,7 @@ kableExtra::kbl(TableP, align = "c", caption = "$P$-dynamics parameters") %>%
   kableExtra::pack_rows("MultiATSM", 6, 10) %>%
   kableExtra::footnote(general = " $K0Z$ is the intercept and $K1Z$ is feedback matrix from the $P$-dynamics.")
 
-## ---- echo= FALSE-------------------------------------------------------------
+## ----echo= FALSE--------------------------------------------------------------
 data("BR_jps_gro_R3")
 data("JPSrep")
 
@@ -156,7 +156,7 @@ kableExtra::kbl(se, align = "c", caption ="Portfolio of yields with errors") %>%
   kableExtra::row_spec(0, font_size = 14) %>%
   kableExtra::footnote(general = " $se$ is the standard deviation of the portfolio of yields observed with errors.")
 
-## ---- eval=FALSE--------------------------------------------------------------
+## ----eval=FALSE---------------------------------------------------------------
 #  #########################################################################################################
 #  #################################### USER INPUTS ########################################################
 #  #########################################################################################################
@@ -167,12 +167,12 @@ kableExtra::kbl(se, align = "c", caption ="Portfolio of yields with errors") %>%
 #  data('CM_Yields')
 #  
 #  # B) Decide on general model inputs
-#  ModelType <- "GVAR jointQ" # Options: "GVAR jointQ", "JLL original"
+#  ModelType <- "GVAR jointQ"  # Options: "GVAR jointQ", "JLL original"
 #  
 #  StationarityUnderQ <- 0
-#  BiasCorrection <- 0
+#  BiasCorrection <- 1
 #  WishForwardPremia <- 0
-#  FPmatLim <- c(47,48)
+#  FPmatLim <- c(24,36)
 #  
 #  Economies <- c("China","Brazil","Mexico", "Uruguay")
 #  GlobalVar <- c("GBC", "CPI_OECD")
@@ -180,7 +180,7 @@ kableExtra::kbl(se, align = "c", caption ="Portfolio of yields with errors") %>%
 #  
 #  N <- 3 # Number of spanned factors per country
 #  
-#  OutputLabel <- "CM_2021"
+#  OutputLabel <- "CM_2024"
 #  DataFrequency <- "Monthly"
 #  UnitMatYields <- "Month"
 #  
@@ -197,8 +197,8 @@ kableExtra::kbl(se, align = "c", caption ="Portfolio of yields with errors") %>%
 #  JLLModelType <- ModelType
 #  ###################################### BRW inputs  ######################################################
 #  flag_mean <- TRUE
-#  gamma <- 0.1
-#  N_iter <- 500
+#  gamma <- 0.001
+#  N_iter <- 200
 #  N_burn <- N_iter*0.15
 #  B <- 50
 #  checkBRW <- 1
@@ -223,9 +223,10 @@ kableExtra::kbl(se, align = "c", caption ="Portfolio of yields with errors") %>%
 #  # E) Out-of-sample forecast
 #  WishForecast <- 1
 #  ForecastList <- list()
+#  ForecastList$ForType <- "Rolling"
 #  ForecastList$ForHoriz <- 12
 #  ForecastList$t0Sample <- 1
-#  ForecastList$t0Forecast <- 90
+#  ForecastList$t0Forecast <- 100
 #  
 #  #########################################################################################################
 #  ############################### NO NEED TO MAKE CHANGES FROM HERE #######################################
@@ -252,37 +253,37 @@ kableExtra::kbl(se, align = "c", caption ="Portfolio of yields with errors") %>%
 #  # 3) Prepare the inputs of the likelihood function
 #  ModelParaList <- list()
 #  
-#    # 3.1) Compute the inputs that go directly into the log-likelihood function
-#    ATSMInputs <- InputsForMLEdensity(ModelType, Yields, ZZ, FactorLabels, mat, Economies, DataFrequency,
-#                                      JLLinputs, GVARinputs, BRWinputs)
+#  # 3.1) Compute the inputs that go directly into the log-likelihood function
+#  ATSMInputs <- InputsForMLEdensity(ModelType, Yields, ZZ, FactorLabels, mat, Economies, DataFrequency,
+#                                    JLLinputs, GVARinputs, BRWinputs)
 #  
 #  
-#    # 3.2) Initial guesses for Variables that will be concentrared out of from the log-likelihood function
-#    K1XQ <- ATSMInputs$K1XQ
-#    if (ModelType == "JLL original"){ SSZ <- NULL}else{SSZ <- ATSMInputs$SSZ}
+#  # 3.2) Initial guesses for Variables that will be concentrared out of from the log-likelihood function
+#  K1XQ <- ATSMInputs$K1XQ
+#  if (ModelType == "JLL original"){ SSZ <- NULL}else{SSZ <- ATSMInputs$SSZ}
 #  
-#    # 4) Build the objective function
-#    f <- Functionf(ATSMInputs, Economies, mat, DataFrequency, FactorLabels, ModelType)
+#  # 4) Build the objective function
+#  f <- Functionf(ATSMInputs, Economies, mat, DataFrequency, FactorLabels, ModelType)
 #  
-#    # 5) Set the optimization settings
-#    VarLab <- ParaLabels(ModelType, StationarityUnderQ)
+#  # 5) Set the optimization settings
+#  VarLab <- ParaLabels(ModelType, StationarityUnderQ)
 #  
-#    varargin <- list()
-#    varargin$K1XQ <-list(K1XQ, VarLab[[ModelType]][["K1XQ"]] , NULL , NULL)
-#    varargin$SSZ <- list(SSZ, VarLab[[ModelType]][["SSZ"]], NULL, NULL)
-#    varargin$r0 <- list(NULL, VarLab[[ModelType]][["r0"]], NULL, NULL)
-#    varargin$se <- list(NULL, VarLab[[ModelType]][["se"]], 1e-6, NULL)
-#    varargin$K0Z <- list(NULL, VarLab[[ModelType]][["K0Z"]], NULL, NULL)
-#    varargin$K1Z <- list(NULL, VarLab[[ModelType]][["K1Z"]], NULL, NULL)
-#    varargin$OptRun <-  c("iter off")
+#  varargin <- list()
+#  varargin$K1XQ <-list(K1XQ, VarLab[[ModelType]][["K1XQ"]] , NULL , NULL)
+#  varargin$SSZ <- list(SSZ, VarLab[[ModelType]][["SSZ"]], NULL, NULL)
+#  varargin$r0 <- list(NULL, VarLab[[ModelType]][["r0"]], NULL, NULL)
+#  varargin$se <- list(NULL, VarLab[[ModelType]][["se"]], 1e-6, NULL)
+#  varargin$K0Z <- list(NULL, VarLab[[ModelType]][["K0Z"]], NULL, NULL)
+#  varargin$K1Z <- list(NULL, VarLab[[ModelType]][["K1Z"]], NULL, NULL)
+#  varargin$OptRun <-  c("iter off")
 #  
-#    LabelVar<- c('Value', 'Label', 'LB', 'UB')
-#    for (d in 1:(length(varargin)-1)){ names(varargin[[d]]) <-  LabelVar}
+#  LabelVar<- c('Value', 'Label', 'LB', 'UB')
+#  for (d in 1:(length(varargin)-1)){ names(varargin[[d]]) <-  LabelVar}
 #  
-#    tol <- 1e-4
-#    # 6) Optimization of the model
-#    ModelParaList[[ModelType]] <- Optimization(f, tol, varargin, FactorLabels, Economies, ModelType,
-#                                               JLLinputs, GVARinputs)$Summary
+#  tol <- 1e-4
+#  # 6) Optimization of the model
+#  ModelParaList[[ModelType]] <- Optimization(f, tol, varargin, FactorLabels, Economies, ModelType,
+#                                             JLLinputs, GVARinputs)$Summary
 #  
 #  # 7) Numerical Outputs
 #  InputsForOutputs <- InputsForOutputs(ModelType, Horiz, DesiredGraphs, OutputLabel, StationarityUnderQ,
@@ -303,7 +304,7 @@ kableExtra::kbl(se, align = "c", caption ="Portfolio of yields with errors") %>%
 #  
 #  
 
-## ---- eval=FALSE--------------------------------------------------------------
+## ----eval=FALSE---------------------------------------------------------------
 #  # A) Load database data
 #  data("CM_Factors_2023")
 #  data('CM_Factors_GVAR_2023')
@@ -358,6 +359,7 @@ kableExtra::kbl(se, align = "c", caption ="Portfolio of yields with errors") %>%
 #  ForecastList$ForHoriz <- 12 # forecast horizon
 #  ForecastList$t0Sample <- 1 # initial sample date
 #  ForecastList$t0Forecast <- 50 # last sample date for the first forecast
+#  ForecastList$ForType <- c()
 #  
 #  ##########################################################################################################
 #  ############################### NO NEED TO MAKE CHANGES FROM HERE ########################################
