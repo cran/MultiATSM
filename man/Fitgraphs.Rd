@@ -2,7 +2,7 @@
 % Please edit documentation in R/GraphicalOutputs.R
 \name{Fitgraphs}
 \alias{Fitgraphs}
-\title{Model fit graphs for ("sep Q" models)}
+\title{Model fit graphs for all models}
 \usage{
 Fitgraphs(ModelType, WishFitgraphs, ModelPara, NumOut, Economies, PathsGraphs)
 }
@@ -20,6 +20,6 @@ Fitgraphs(ModelType, WishFitgraphs, ModelPara, NumOut, Economies, PathsGraphs)
 \item{PathsGraphs}{Path of the folder in which the graphs will be saved}
 }
 \description{
-Model fit graphs for ("sep Q" models)
+Model fit graphs for all models
 }
 \keyword{internal}

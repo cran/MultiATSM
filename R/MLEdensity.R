@@ -228,7 +228,6 @@ Get_Bs <- function(mat, dt, K1XQ, SSZ, Wpca, FactorLabels, Economy, ModelType){
 
     } else{
     BnP <- mrdivide(BnX,Wpca%*%BnX)
-
       }
 
     # 2) Covariance matrix of latent states X:

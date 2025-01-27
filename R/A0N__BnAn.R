@@ -67,14 +67,10 @@ A0N__BnAn <- function(mat, K1XQ, ModelType, dX = NULL, r0 = NULL, SSX = NULL, Ec
   # 2) Compute BnX and AnX
   LoadX <- Compute_BnX_AnX(mat, N, K1XQ, r0, dX, SSX, Economies, ModelType, Lab_SingleQ)
 
-
   # 3) Compute betan
   # For models estimate separetely
   if (any(ModelType == Lab_SingleQ)){
-  if (is.null(r0) ){    betan <- c()} else {
-    AnX <- LoadX$AnX[mat+1]/mat # Adjust the loading for the maturity
-    betan <- AnX - r0
-  }
+  if (is.null(r0) ){    betan <- c()} else {  betan <- LoadX$AnX - rep(r0, times = J)  }
     # For models estimated jointly
 }else{
   idx0 <- 0
@@ -127,12 +123,12 @@ Compute_BnX_AnX <-function(mat, N, K1XQ, r0, dX, SSX, Economies, ModelType, Lab_
       }
     }
 
-    BnX <- BnX[mat+1,]/mat # Adjust the loading for the maturity
-
+    # Adjust the loading for the maturity
+    BnX <- BnX[mat+1,]/mat
+    AnX <- AnX[mat+1]/mat
 
     # For models estimated jointly
   } else{
-
 
     C <- length(Economies)
     idx0 <- 0

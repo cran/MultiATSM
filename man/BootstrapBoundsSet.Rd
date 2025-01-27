@@ -19,7 +19,7 @@ BootstrapBoundsSet(
 
 \item{NumOutPE}{point estimate from the numerical outputs (see the outputs of the "NumOutputs" function)}
 
-\item{InputsForOutputs}{list conataining the desired inputs for the construction of IRFs, GIRFs, FEVDs, and GFEVDs}
+\item{InputsForOutputs}{list containing the desired inputs for the construction of IRFs, GIRFs, FEVDs, and GFEVDs}
 
 \item{Economies}{string-vector containing the names of the economies which are part of the economic system}
 }

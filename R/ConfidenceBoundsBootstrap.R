@@ -3,83 +3,29 @@
 #'@param ModelType string-vector containing the label of the model to be estimated
 #'@param ModelBootstrap list containing the complete set of model parameters after the bootstrap estimation procedure
 #'@param NumOutPE      point estimate from the numerical outputs (see the outputs of the "NumOutputs" function)
-#'@param InputsForOutputs list conataining the desired inputs for the construction of IRFs, GIRFs, FEVDs, and GFEVDs
+#'@param InputsForOutputs list containing the desired inputs for the construction of IRFs, GIRFs, FEVDs, and GFEVDs
 #'@param Economies string-vector containing the names of the economies which are part of the economic system
 #'
 #'
 #'@keywords internal
 
-
 BootstrapBoundsSet <- function(ModelType, ModelBootstrap, NumOutPE, InputsForOutputs, Economies){
 
   # Generate the graph paths and the graph folders
   dir.create(paste(tempdir(), "/Outputs/", ModelType, "/Bootstrap", sep=""))
-  PathsGraphs <- FolderCreationBoot(ModelType, Economies)
-
-
-  # If one chooseS models in which the estimation is done country-by-country
   if ( any(ModelType ==c("JPS original", "JPS global", "GVAR single"))){
-
     for (i in 1:length(Economies)){dir.create( paste(tempdir(), "/Outputs/", ModelType, "/Bootstrap/Model ", Economies[i], sep=""))}
-
-
-    IRFandGIRFsep <- IRFandGIRFbs_sepQ(ModelType, ModelBootstrap, NumOutPE, InputsForOutputs, Economies, PathsGraphs)
-    FEVDandGFEVDsep <- FEVDandGFEVDbs_sepQ(ModelType, ModelBootstrap, NumOutPE, InputsForOutputs, Economies, PathsGraphs)
-
-
-    NumOutSep <- append(IRFandGIRFsep, FEVDandGFEVDsep)
   }
 
-  # If one chooseS models in which the estimation is done jointly for all countries
-  else {
-
-
-    IRFandGIRFjoint <- IRFandGIRFbs_jointQ(ModelType, ModelBootstrap, NumOutPE, InputsForOutputs,
-                                           Economies, PathsGraphs)
-    FEVDandGFEVDjoint <- FEVDandGFEVDbs_jointQ(ModelType, ModelBootstrap, NumOutPE, InputsForOutputs,
-                                               Economies, PathsGraphs)
-
-    # Orthogonalized Outputs for JLL
-    if ( any(ModelType ==c("JLL original", "JLL No DomUnit", "JLL joint Sigma"))){
-
-      IRFandGIRFjoint_Ortho <- IRFandGIRFbs_jointQ_Ortho(ModelType, ModelBootstrap, NumOutPE, InputsForOutputs,
-                                                         Economies, PathsGraphs)
-
-      FEVDandGFEVDjoint_Ortho <- FEVDandGFEVDbs_jointQ_Ortho(ModelType, ModelBootstrap, NumOutPE, InputsForOutputs,
-                                                             Economies, PathsGraphs)
-
-
-        # Merge the lists of orthogonalized and non-orthogonalized factors
-        for ( d in 1:length(IRFandGIRFjoint_Ortho)){ # IRFs abd GIRFs
-          IRFandGIRFjoint[[d]][[ModelType]]$Factors <- list(IRFandGIRFjoint[[d]][[ModelType]]$Factors, IRFandGIRFjoint_Ortho[[d]][[ModelType]]$Factors)
-         IRFandGIRFjoint[[d]][[ModelType]]$Yields <- list(IRFandGIRFjoint[[d]][[ModelType]]$Yields, IRFandGIRFjoint_Ortho[[d]][[ModelType]]$Yields)
-          names(IRFandGIRFjoint[[d]][[ModelType]]$Factors) <- c("NonOrtho", "Ortho")
-          names(IRFandGIRFjoint[[d]][[ModelType]]$Yields) <- c("NonOrtho", "Ortho")
-        }
-
-        for ( d in 1:length(FEVDandGFEVDjoint_Ortho)){ # FEVDs abd GFEVDs
-          FEVDandGFEVDjoint[[d]][[ModelType]]$Factors <- list(FEVDandGFEVDjoint[[d]][[ModelType]]$Factors, FEVDandGFEVDjoint_Ortho[[d]][[ModelType]]$Factors)
-          FEVDandGFEVDjoint[[d]][[ModelType]]$Yields <- list(FEVDandGFEVDjoint[[d]][[ModelType]]$Yields, FEVDandGFEVDjoint_Ortho[[d]][[ModelType]]$Yields)
-          names(FEVDandGFEVDjoint[[d]][[ModelType]]$Factors) <- c("NonOrtho", "Ortho")
-          names(FEVDandGFEVDjoint[[d]][[ModelType]]$Yields) <- c("NonOrtho", "Ortho")
-        }
-
-    }
-
-    NumOutJoint <- append(IRFandGIRFjoint, FEVDandGFEVDjoint)
-
-  }
+  PathsGraphs <- FolderCreationBoot(ModelType, Economies)
 
   AllNumOutputs <- list()
 
-  # Prepare final list of outputs
-  if (!exists("NumOutJoint")){ AllNumOutputs <- NumOutSep}
-  if (!exists("NumOutSep")){ AllNumOutputs <- NumOutJoint}
-  if ( exists("NumOutSep") & exists("NumOutJoint")){
+  IRFandGIRF <- IRFandGIRFbs(ModelType, ModelBootstrap, NumOutPE, InputsForOutputs, Economies, PathsGraphs)
+  FEVDandGFEVD <- FEVDandGFEVDbs(ModelType, ModelBootstrap, NumOutPE, InputsForOutputs, Economies, PathsGraphs)
 
-    for (i in 1:length(NumOutSep)){AllNumOutputs[[i]] <- append(NumOutSep[[i]], NumOutJoint[[i]]) }
-    names(AllNumOutputs) <- names(NumOutSep)
- }
+  AllNumOutputs$Factors <- append(IRFandGIRF$Factors, FEVDandGFEVD$Factors)
+  AllNumOutputs$Yields <- append(IRFandGIRF$Yields, FEVDandGFEVD$Yields)
 
   cat(paste("Desired graphs are saved in your temporary directory. Please, check:",tempdir(), "\n\n"))
   return(AllNumOutputs)
@@ -88,1417 +34,1096 @@ BootstrapBoundsSet <- function(ModelType, ModelBootstrap, NumOutPE, InputsForOut
 
 ######################################################################################################
 ######################################################################################################
-####################### OUTPUTS FOR MODELS IN WHICH THE ESTIMATION ###################################
-########################       IS DONE COUNTRY-BY-COUNTRY      #######################################
-######################################################################################################
-######################################################################################################
-#' Creates the confidence bounds and the graphs of IRFs and GIRFs after bootstrap ("sep Q" models)
+#' Creates the confidence bounds and the graphs of IRFs and GIRFs after bootstrap
 #'
 #'@param ModelType string-vector containing the label of the model to be estimated
 #'@param ModelBootstrap list containing the complete set of model parameters after bootstrap estimation procedure
 #'@param NumOutPE  list of model parameter point estimates
-#'@param InputsForOutputs list conataining the desired inputs for the construction of the outputs of interest
+#'@param InputsForOutputs list containing the desired inputs for the construction of the outputs of interest
 #'@param Economies string-vector containing the names of the economies which are part of the economic system
 #'@param PathsGraphs path of the folder in which the graphs will be saved
 #'
 #'@keywords internal
 
-
-IRFandGIRFbs_sepQ <- function(ModelType, ModelBootstrap, NumOutPE, InputsForOutputs, Economies, PathsGraphs){
+IRFandGIRFbs <- function(ModelType, ModelBootstrap, NumOutPE, InputsForOutputs, Economies, PathsGraphs){
 
   ndraws <- InputsForOutputs[[ModelType]]$Bootstrap$ndraws
   pctg <-   InputsForOutputs[[ModelType]]$Bootstrap$pctg
 
-  #Define the percentiles
+  # 1) Define the percentiles
   pctg_inf <- (100-pctg)/2
   pctg_sup <- 100 - (100-pctg)/2
   quants <- c(pctg_inf, 50, pctg_sup)/100 # Desired quantiles
 
-  # initializarion
-  LabIRF <- c("IRF","GIRF")
-  OutNames <- names(ModelBootstrap$NumOutDraws)
-  C <- length(Economies)
+  # 2) Define some elements of interest
   J <- length(ModelBootstrap$GeneralInputs$mat)
+  C <- length(Economies)
+  Horiz <- InputsForOutputs[[ModelType]]$IRF$horiz
 
-  HorizNumOut <- c(InputsForOutputs[[ModelType]]$IRF$horiz, InputsForOutputs[[ModelType]]$FEVD$horiz,
-                   InputsForOutputs[[ModelType]]$GIRF$horiz, InputsForOutputs[[ModelType]]$GFEVD$horiz)
-
-  NumOutBounds <- list()
-
-
-    for (nn in match(LabIRF, OutNames) ){
-      for (i in 1:C){
-
-        K <- nrow(ModelBootstrap$ParaDraws[[ModelType]][[Economies[i]]][[1]]$ests$K1Z)
-
-        ############################################# Factors ######################################################################
-
-        INFfacs <- array(NA, c(HorizNumOut[[nn]], K,K)) # lower bound
-        MEDfacs <- array(NA, c(HorizNumOut[[nn]], K,K)) # Median
-        SUPfacs <- array(NA, c(HorizNumOut[[nn]], K,K)) # upper bound
-
-        DimLabelsFac <- dimnames(ModelBootstrap$NumOutDraws[[OutNames[nn]]][[ModelType]][[Economies[i]]][[1]]$Factors)
-        dimnames(INFfacs) <- DimLabelsFac
-        dimnames(MEDfacs) <- DimLabelsFac
-        dimnames(SUPfacs) <- DimLabelsFac
-
-
-        # Allocation
-        AllShocksOnePeriodFacs <- array(NA, c(ndraws, K, K))
-        Facs <- matrix(NA, nrow = ndraws, ncol = K)
-
-        for (thor in 1:HorizNumOut[[nn]]){
-          for (h in 1:K){ # loop through the shocks
-            for (g in 1:ndraws){ # # loop through the draws
-              Facs[g,] <- ModelBootstrap$NumOutDraws[[OutNames[nn]]][[ModelType]][[Economies[i]]][[g]]$Factors[thor,,h] # All responses to one shock in one horizon
-            }
-
-            AllShocksOnePeriodFacs[,,h]  <- apply(Facs,2, sort) # Ensures that each column is in ascending order
-
-            INFfacs[thor, ,h] <- apply(AllShocksOnePeriodFacs[ , ,h], 2, stats::quantile, probs = quants[1])
-            MEDfacs[thor, ,h] <- apply(AllShocksOnePeriodFacs[ , ,h], 2, stats::quantile, probs = quants[2])
-            SUPfacs[thor, ,h] <- apply(AllShocksOnePeriodFacs[ , ,h], 2, stats::quantile, probs = quants[3])
-          }
-        }
-
-        NumOutBounds[[OutNames[nn]]][[ModelType]][[Economies[i]]]$Factors$INF <- INFfacs
-        NumOutBounds[[OutNames[nn]]][[ModelType]][[Economies[i]]]$Factors$MED <- MEDfacs
-        NumOutBounds[[OutNames[nn]]][[ModelType]][[Economies[i]]]$Factors$SUP <- SUPfacs
-
-
-
-
-        ############################################# Yields ######################################################################
-        INFyies <- array(NA, c(HorizNumOut[[nn]], J, K)) # lower bound
-        MEDyies <- array(NA, c(HorizNumOut[[nn]], J, K)) # Median
-        SUPyies <- array(NA, c(HorizNumOut[[nn]], J, K)) # upper bound
-
-
-        DimLabelsYies <- dimnames(ModelBootstrap$NumOutDraws[[OutNames[nn]]][[ModelType]][[Economies[i]]][[1]]$Yields)
-        dimnames(INFyies) <- DimLabelsYies
-        dimnames(MEDyies) <- DimLabelsYies
-        dimnames(SUPyies) <- DimLabelsYies
-
-
-        #Allocation
-        AllShocksOnePeriodyies <- array(NA, c(ndraws, J, K))
-        yies <- matrix(NA, nrow = ndraws, ncol = J)
-
-        for (thor in 1:HorizNumOut[[nn]] ){
-          for (h in 1:K){
-            for (g in 1:ndraws){
-              yies[g,] <- ModelBootstrap$NumOutDraws[[OutNames[nn]]][[ModelType]][[Economies[i]]][[g]]$Yields[thor, ,h] # All responses to one shock in one horizon
-            }
-            AllShocksOnePeriodyies[,,h]  <- apply(yies,2, sort) # Ensures that each column is in ascending order
-
-            INFyies[thor, ,h] <- apply(AllShocksOnePeriodyies[,,h], 2, stats::quantile, probs = quants[1])
-            MEDyies[thor, ,h] <- apply(AllShocksOnePeriodyies[,,h], 2, stats::quantile, probs = quants[2])
-            SUPyies[thor, ,h] <- apply(AllShocksOnePeriodyies[,,h], 2, stats::quantile, probs = quants[3])
-          }
-        }
-
-
-        NumOutBounds[[OutNames[nn]]][[ModelType]][[Economies[i]]]$Yields$INF <- INFyies
-        NumOutBounds[[OutNames[nn]]][[ModelType]][[Economies[i]]]$Yields$MED <- MEDyies
-        NumOutBounds[[OutNames[nn]]][[ModelType]][[Economies[i]]]$Yields$SUP <- SUPyies
-
-
-
-      }
+  # 3) Compute confidence bounds
+  if ( any(ModelType ==c("JPS original", "JPS global", "GVAR single"))){
+    K <- nrow(ModelBootstrap$ParaDraws[[ModelType]][[Economies[1]]][[1]]$ests$K1Z)
+    NumOutBounds <- ComputeBounds_IRFandGIRF(ModelBootstrap, quants, K, J, ModelType, Economies, ndraws, Horiz)
+  } else{
+    K <- nrow(ModelBootstrap$ParaDraws[[ModelType]][[1]]$ests$K1Z)
+    NumOutBounds <- ComputeBounds_IRFandGIRF(ModelBootstrap, quants, K, C*J, ModelType, Economies, ndraws, Horiz)
     }
 
+  # 4) PLOTS
+  WG <- WishGraphs_IRFandGIRF_Boot(InputsForOutputs, ModelType)
 
+  if(any(c(WG$Fac, WG$Yields) == 1)){ cat(' ** IRFs/GIRFs (Bootstrap) \n' )
 
-  #################################################################################################################
-  ###################################### PLOTS ####################################################################
-  #################################################################################################################
+  # a) Factors
+  if (any(WG$Fac == 1)){
+    Boot_Fac_Graphs(NumOutBounds, NumOutPE, ModelType, K, Horiz, Economies, PathsGraphs, "IRF", WG$Fac, WG$Fac_Ortho)}
 
-  ########################################  Factors ###############################################################
-
-  GraphsBinaryFactors <- c(InputsForOutputs[[ModelType]]$IRF$WishGraphs$RiskFactorsBootstrap,
-                           InputsForOutputs[[ModelType]]$GIRF$WishGraphs$RiskFactorsBootstrap)
-
-  IdxFacGraphs <- which(GraphsBinaryFactors == 1)
-
-
-
-   if (any(GraphsBinaryFactors==1)){
-
-cat(' ** IRFs/GIRFs (Bootstrap) \n' )
-
-    plot_list <- list()
-
-      for (f in 1:C){
-        for (d in IdxFacGraphs){
-  # Folder Creation
-  dir.create( paste(tempdir(), "/Outputs/", ModelType, "/Bootstrap/Model ", Economies[f], "/", LabIRF[d], sep=""))
-  dir.create( paste(tempdir(), "/Outputs/", ModelType, "/Bootstrap/Model ", Economies[f], "/", LabIRF[d], "/Factors", sep=""))
-
-          for (b in 1:K){
-            for (i in 1:K){
-              LL <- NumOutBounds[[d]][[ModelType]][[Economies[f]]]$Factors$INF[,i,b]
-              UU <- NumOutBounds[[d]][[ModelType]][[Economies[f]]]$Factors$SUP[,i,b]
-              MM <- NumOutBounds[[d]][[ModelType]][[Economies[f]]]$Factors$MED[,i,b]
-              PP <- NumOutPE[[LabIRF[d]]][[ModelType]][[Economies[f]]]$Factors[,i,b ] # Point estimate
-
-              ALL <- data.frame(cbind(LL,MM,PP, UU))
-              TimeSpan <- 1:InputsForOutputs[[ModelType]][[LabIRF[d]]]$horiz
-              ALL$TimeSpan <- TimeSpan
-
-              nmResponse <- dimnames(NumOutPE[[LabIRF[d]]][[ModelType]][[Economies[f]]]$Factors)[[2]] # names of the "response" factor
-              nmShock <- dimnames(NumOutPE[[LabIRF[d]]][[ModelType]][[Economies[f]]]$Factors)[[3]] # names of the shock
-
-              p <- ggplot(data = ALL, aes(x= TimeSpan )) +  geom_line(aes(y = LL), color = 'blue') + geom_line(aes(y = MM), color = 'green') +
-                geom_line(aes(y = UU), color = 'red') +  geom_line(aes(y = PP)) + theme_classic() +
-                theme(plot.title = element_text(size = 6, face = "bold", hjust = 0.5),
-                      axis.title.x=element_blank(), axis.title.y=element_blank() ) +
-                      ggtitle( nmResponse[i]) + geom_hline(yintercept=0)
-
-              plot_list[[i]] <- p
-            }
-            subplots <- cowplot::plot_grid(plotlist= plot_list, ncol=3)
-            suppressMessages(ggplot2::ggsave(subplots, file=paste0(LabIRF[d],"Factors_shock_to_", nmShock[b], ".png"),
-                            path= PathsGraphs[[ModelType]][[LabIRF[d]]][[Economies[f]]][["Factors"]]))
-          }
-        }
-      }
-
-
+  # b) Yields
+  if (any(WG$Yields == 1)){
+    Boot_Yields_Graphs(NumOutBounds, NumOutPE, ModelType, K, J, Horiz, Economies, PathsGraphs, "IRF", WG$Yields,
+                       WG$Yields_Ortho)}
   }
-
-  ########################################  Yields ###############################################################
-
-  GraphsBinaryYields <- c(InputsForOutputs[[ModelType]]$IRF$WishGraphs$YieldsBootstrap,
-                           InputsForOutputs[[ModelType]]$GIRF$WishGraphs$YieldsBootstrap)
-
-  IdxYieldsGraphs <- which(GraphsBinaryYields == 1)
-
-
-
-  if (any(GraphsBinaryYields==1)){
-
-    plot_list <- list()
-      for (f in 1:C){
-        for (d in IdxYieldsGraphs){
-
-          # Folder Creation
-          dir.create( paste(tempdir(), "/Outputs/", ModelType, "/Bootstrap/Model ", Economies[f], "/", LabIRF[d], sep=""))
-          dir.create( paste(tempdir(), "/Outputs/", ModelType, "/Bootstrap/Model ", Economies[f], "/", LabIRF[d], "/Yields", sep=""))
-
-          for (b in 1:K){
-            for (i in 1:J){
-              LL <- NumOutBounds[[d]][[ModelType]][[Economies[f]]]$Yields$INF[,i,b]
-              UU <- NumOutBounds[[d]][[ModelType]][[Economies[f]]]$Yields$SUP[,i,b]
-              MM <- NumOutBounds[[d]][[ModelType]][[Economies[f]]]$Yields$MED[,i,b]
-              PP <- NumOutPE[[LabIRF[d]]][[ModelType]][[Economies[f]]]$Yields[,i,b ] # Point estimate
-
-              ALL <- data.frame(cbind(LL,MM,PP, UU))
-              TimeSpan <- 1:InputsForOutputs[[ModelType]][[LabIRF[d]]]$horiz
-              ALL$TimeSpan <- TimeSpan
-
-              nmResponse <- dimnames(NumOutPE[[LabIRF[d]]][[ModelType]][[Economies[f]]]$Yields)[[2]] # names of the "response" factor
-              nmShock <- dimnames(NumOutPE[[LabIRF[d]]][[ModelType]][[Economies[f]]]$Yields)[[3]] # names of the shock
-
-              p <- ggplot(data = ALL, aes(x= TimeSpan )) +  geom_line(aes(y = LL), color = 'blue') + geom_line(aes(y = MM), color = 'green') +
-                geom_line(aes(y = UU), color = 'red') +  geom_line(aes(y = PP)) + theme_classic() +
-                theme(plot.title = element_text(size = 6, face = "bold", hjust = 0.5),
-                      axis.title.x=element_blank(), axis.title.y=element_blank() ) +
-                ggtitle( nmResponse[i]) + geom_hline(yintercept=0)
-
-              plot_list[[i]] <- p
-            }
-            subplots <- cowplot::plot_grid(plotlist= plot_list, ncol=3)
-            suppressMessages(ggplot2::ggsave(subplots, file=paste0(LabIRF[d],"Yields_shock_to_", nmShock[b], ".png"),
-                            path=  PathsGraphs[[ModelType]][[LabIRF[d]]][[Economies[f]]][["Yields"]]))
-          }
-        }
-      }
-
-  }
-
 
   return(NumOutBounds)
-
 }
+
 ##############################################################################################################
-#' Creates the confidence bounds and the graphs of FEVDs and GFEVDs after bootstrap ("sep Q" models)
+#' Creates the confidence bounds and the graphs of FEVDs and GFEVDs after bootstrap (all models)
 #'
 #'@param ModelType  string-vector containing the label of the model to be estimated
 #'@param ModelBootstrap list containing the complete set of model parameters after bootstrap estimation procedure
 #'@param NumOutPE  list of model parameter point estimates
-#'@param InputsForOutputs list conataining the desired inputs for the construction of the outputs of interest
+#'@param InputsForOutputs list containing the desired inputs for the construction of the outputs of interest
 #'@param Economies string-vector containing the names of the economies which are part of the economic system
 #'@param PathsGraphs path of the folder in which the graphs will be saved
 #'
 #'@keywords internal
 
-
-FEVDandGFEVDbs_sepQ <- function(ModelType, ModelBootstrap, NumOutPE, InputsForOutputs, Economies, PathsGraphs){
-
+FEVDandGFEVDbs <- function(ModelType, ModelBootstrap, NumOutPE, InputsForOutputs, Economies, PathsGraphs){
 
   ndraws <- InputsForOutputs[[ModelType]]$Bootstrap$ndraws
   pctg <-   InputsForOutputs[[ModelType]]$Bootstrap$pctg
 
+  # 1) Define the percentiles
   pctg_inf <- (100-pctg)/2
   pctg_sup <- 100 - (100-pctg)/2
   quants <- c(pctg_inf, 50, pctg_sup)/100 # Desired quantiles
 
-
-  # initializarion
-  LabFEVD <- c("FEVD","GFEVD")
-  OutNames <- names(ModelBootstrap$NumOutDraws)
-  C <- length(Economies)
+  # 2) Define some elements of interest
   J <- length(ModelBootstrap$GeneralInputs$mat)
+  C <- length(Economies)
+  Horiz <- InputsForOutputs[[ModelType]]$IRF$horiz
 
+  # 3) Compute confidence bounds
+  if ( any(ModelType ==c("JPS original", "JPS global", "GVAR single"))){
+    K <- nrow(ModelBootstrap$ParaDraws[[ModelType]][[Economies[1]]][[1]]$ests$K1Z)
+    NumOutBounds <- ComputeBounds_FEVDandGFEVD(ModelBootstrap, quants, K, J, ModelType, Economies, ndraws, Horiz)
+  }else{
+    K <- nrow(ModelBootstrap$ParaDraws[[ModelType]][[1]]$ests$K1Z)
+    NumOutBounds <- ComputeBounds_FEVDandGFEVD(ModelBootstrap, quants, K, C*J, ModelType, Economies, ndraws, Horiz)
+}
 
-  HorizNumOut <- c(InputsForOutputs[[ModelType]]$IRF$horiz, InputsForOutputs[[ModelType]]$FEVD$horiz,
-                   InputsForOutputs[[ModelType]]$GIRF$horiz, InputsForOutputs[[ModelType]]$GFEVD$horiz)
+  # 4) PLOTS
+  WG <- WishGraphs_FEVDandGFEVD_Boot(InputsForOutputs, ModelType)
 
-  NumOutBounds <- list()
+  if(any(c(WG$Fac, WG$Yields) == 1)){ cat(' ** FEVDs/GFEVDs (Bootstrap) \n' )
 
+  # a) Factors
+  if (any(WG$Fac == 1)){
+      Boot_Fac_Graphs(NumOutBounds, NumOutPE, ModelType, K, Horiz, Economies, PathsGraphs, "FEVD", WG$Fac,
+                      WG$Fac_Ortho)}
 
-  for (nn in match(LabFEVD, OutNames) ){
+  # b) Yields
+  if (any(WG$Yields == 1)){
+    Boot_Yields_Graphs(NumOutBounds, NumOutPE, ModelType, K, J, Horiz, Economies, PathsGraphs, "FEVD",
+                       WG$Yields, WG$Yields_Ortho)}
+  }
+  return(NumOutBounds)
+}
+
+##############################################################################################################
+###########################################################################################################
+#' Compute the confidence bounds from the model's numerical outputs
+#'
+#'@param ModelBootstrap numerical output set from the bootstrap analysis
+#'@param quants quantile of the confidence bounds
+#'@param FacDim dimension of the risk factor set
+#'@param YieDim dimension of the bond yield set
+#'@param ModelType Desired model type
+#'@param Economies  Economies that are part of the economic system
+#'@param ndraws number of draws selected
+#'@param Horiz horizon of numerical outputs
+#'
+#'@keywords internal
+
+ComputeBounds_IRFandGIRF <- function(ModelBootstrap, quants, FacDim, YieDim, ModelType, Economies, ndraws, Horiz){
+
+  LabIRF <- c("IRF","GIRF")
+
+  # 1) Factors
+  NumOutBounds_Fac  <- FactorBounds_IRFandGIRF(ModelBootstrap, quants, ModelType, ndraws, Horiz, FacDim,
+                                               LabIRF, Economies)
+
+  # 2) Yields
+  NumOutBounds_Yie <- YieldBounds_IRFandGIRF(ModelBootstrap, quants, ModelType, ndraws, Horiz, FacDim,
+                                          YieDim, LabIRF, Economies)
+
+  # Export output
+  Out <- list(Factors = NumOutBounds_Fac , Yields= NumOutBounds_Yie)
+  return(Out)
+}
+
+###########################################################################################################
+#' Compute the confidence bounds for the model P-dynamics
+#'
+#'@param ModelBootstrap numerical output set from the bootstrap analysis
+#'@param quants quantile of the confidence bounds
+#'@param ModelType desired model type
+#'@param ndraws number of draws
+#'@param Horiz horizon of numerical outputs
+#'@param FacDim dimension of the risk factor set
+#'@param LabIRF vector containing the labels "IRF" and "GIRF"
+#'@param Economies Economies that are part of the economic system
+#'
+#'@keywords internal
+
+FactorBounds_IRFandGIRF <- function(ModelBootstrap, quants, ModelType, ndraws, Horiz, FacDim, LabIRF, Economies){
+
+  NumOutBounds_Fac <- list()
+
+  # 1) For models estimated on a country-by-country basis
+  if ( any(ModelType ==c("JPS original", "JPS global", "GVAR single"))){
+      C <- length(Economies)
+
+    for (nn in 1:length(LabIRF)){
     for (i in 1:C){
 
-      K <- nrow(ModelBootstrap$ParaDraws[[ModelType]][[Economies[i]]][[1]]$ests$K1Z)
+      DrawSet <- ModelBootstrap$NumOutDraws[[LabIRF[nn]]][[ModelType]][[Economies[i]]]
+      DimLabelsFac <- dimnames(DrawSet[[1]]$Factors)
 
-      ############################################# Factors ######################################################################
+      NumOutBounds_CS <- FacQuantile_bs(DrawSet, LabIRF[nn], ndraws, quants, Horiz, FacDim, DimLabelsFac,
+                                         ModelType)
+      NumOutBounds_Fac[[LabIRF[nn]]][[ModelType]][[Economies[i]]] <- NumOutBounds_CS
+      }
+  }
 
-      INFfacs <- array(NA, c(HorizNumOut[[nn]], K,K)) # lower bound
-      MEDfacs <- array(NA, c(HorizNumOut[[nn]], K,K)) # Median
-      SUPfacs <- array(NA, c(HorizNumOut[[nn]], K,K)) # upper bound
+}else{
 
-      DimLabelsFac <- dimnames(ModelBootstrap$NumOutDraws[[OutNames[nn]]][[ModelType]][[Economies[i]]][[1]]$Factors)
-      dimnames(INFfacs) <- DimLabelsFac
-      dimnames(MEDfacs) <- DimLabelsFac
-      dimnames(SUPfacs) <- DimLabelsFac
+  # 2) For models estimated for countries jointly
+  JLL_ModLabel <- c("JLL original", "JLL No DomUnit", "JLL joint Sigma")
 
+  for (nn in 1:length(LabIRF)){
+    DrawSet <- ModelBootstrap$NumOutDraws[[LabIRF[nn]]][[ModelType]]
 
-      # Allocation
-      AllShocksOnePeriodFacs <- array(NA, c(ndraws, K, K))
-      Facs <- matrix(NA, nrow = ndraws, ncol = K)
+    if (ModelType %in% JLL_ModLabel){  DimLabelsFac <- dimnames(DrawSet[[1]]$Factors$NonOrtho)
+    }else{ DimLabelsFac <- dimnames(DrawSet[[1]]$Factors)}
 
-      for (thor in 1:HorizNumOut[[nn]]){
-        for (h in 1:K){ # loop through the shocks
-          for (g in 1:ndraws){ # # loop through the draws
-            Facs[g,] <- ModelBootstrap$NumOutDraws[[OutNames[nn]]][[ModelType]][[Economies[i]]][[g]]$Factors[thor,,h] # All responses to one shock in one horizon
-          }
+  NumOutBounds_AllEco <- FacQuantile_bs(DrawSet, LabIRF[nn], ndraws, quants, Horiz, FacDim, DimLabelsFac,
+                                        ModelType)
+  NumOutBounds_Fac[[LabIRF[nn]]][[ModelType]] <- NumOutBounds_AllEco
+}
 
-          AllShocksOnePeriodFacs[,,h]  <- apply(Facs,2, sort) # Ensures that each column is in ascending order
+  #  Orhtgonolized version (JLL-based models)
+  if (ModelType %in% JLL_ModLabel){
 
-          INFfacs[thor, ,h] <- apply(AllShocksOnePeriodFacs[,,h], 2, stats::quantile, probs = quants[1])
-          MEDfacs[thor, ,h] <- apply(AllShocksOnePeriodFacs[,,h], 2, stats::quantile, probs = quants[2])
-          SUPfacs[thor, ,h] <- apply(AllShocksOnePeriodFacs[,,h], 2, stats::quantile, probs = quants[3])
-        }
+    LabIRF_Ortho <- c("IRF_Ortho","GIRF_Ortho")
+
+    for (nn in 1:length(LabIRF_Ortho)){
+    DimLabelsFac <- dimnames(DrawSet[[1]]$Factors$Ortho)
+    NumOutBounds_AllEco_Ortho <- FacQuantile_bs(DrawSet, LabIRF_Ortho[nn], ndraws, quants, Horiz, FacDim,
+                                                DimLabelsFac, ModelType, Ortho = TRUE)
+
+    NumOutBounds_Fac[[LabIRF[nn]]][[ModelType]]$Ortho <- NumOutBounds_AllEco_Ortho
+    }
+  }
+  }
+    return(NumOutBounds_Fac)
+}
+###############################################################################################
+#'Compute quantiles for model P-dynamics
+#'
+#'@param DrawSet Draw-specific set
+#'@param LabIRF vector containing the labels "IRF" and "GIRF"
+#'@param ndraws number of draws
+#'@param quants quantile of the confidence bounds
+#'@param Horiz horizon of numerical outputs
+#'@param FacDim dimension of the risk factor set
+#'@param DimLabelsFac labels of the factor set
+#'@param ModelType desired model type
+#'@param Ortho Orthogonolized version for the JLL models. Default is FALSE.
+#'
+#'
+#'@keywords internal
+
+FacQuantile_bs <- function(DrawSet, LabIRF, ndraws, quants, Horiz, FacDim, DimLabelsFac, ModelType, Ortho = FALSE){
+
+  # Initialization
+  INFfacs <- array(NA, c(Horiz, FacDim, FacDim)) # lower bound
+  MEDfacs <- array(NA, c(Horiz, FacDim, FacDim)) # Median
+  SUPfacs <- array(NA, c(Horiz, FacDim, FacDim)) # upper bound
+
+  dimnames(INFfacs) <- DimLabelsFac
+  dimnames(MEDfacs) <- DimLabelsFac
+  dimnames(SUPfacs) <- DimLabelsFac
+
+  AllShocksOnePeriodFacs <- array(NA, c(ndraws, FacDim, FacDim))
+  Facs <- matrix(NA, nrow = ndraws, ncol = FacDim)
+
+  JLL_ModLab <- c("JLL original", "JLL No DomUnit", "JLL joint Sigma")
+
+  # Compute the quantiles
+  for (thor in 1:Horiz){
+    for (h in 1:FacDim){ # loop through the shocks
+      for (g in 1:ndraws){ # # loop through the draws
+
+        # All responses to one shock in one horizon
+        if (ModelType %in% JLL_ModLab){
+           if (Ortho){ Facs[ g, ] <- DrawSet[[g]]$Factors$Ortho[thor, , h]
+           } else{ Facs[ g, ] <- DrawSet[[g]]$Factors$NonOrtho[thor, , h] }
+        } else{  Facs[ g, ] <- DrawSet[[g]]$Factors[thor, , h]}
       }
 
-      NumOutBounds[[OutNames[nn]]][[ModelType]][[Economies[i]]]$Factors$INF <- INFfacs
-      NumOutBounds[[OutNames[nn]]][[ModelType]][[Economies[i]]]$Factors$MED <- MEDfacs
-      NumOutBounds[[OutNames[nn]]][[ModelType]][[Economies[i]]]$Factors$SUP <- SUPfacs
+      AllShocksOnePeriodFacs[ , , h]  <- apply(Facs,2, sort) # Ensures that each column is in ascending order
 
+      INFfacs[thor, , h] <- apply(AllShocksOnePeriodFacs[ , ,h], 2, stats::quantile, probs = quants[1])
+      MEDfacs[thor, , h] <- apply(AllShocksOnePeriodFacs[ , ,h], 2, stats::quantile, probs = quants[2])
+      SUPfacs[thor, , h] <- apply(AllShocksOnePeriodFacs[ , ,h], 2, stats::quantile, probs = quants[3])
 
+      }
+  }
 
+  # Store results
+  NumOutBounds_Fac <- list()
 
-      ############################################# Yields ######################################################################
-      INFyies <- array(NA, c(HorizNumOut[[nn]], K, J)) # lower bound
-      MEDyies <- array(NA, c(HorizNumOut[[nn]], K, J)) # Median
-      SUPyies <- array(NA, c(HorizNumOut[[nn]], K, J)) # upper bound
+  NumOutBounds_Fac$INF <- INFfacs
+  NumOutBounds_Fac$MED <- MEDfacs
+  NumOutBounds_Fac$SUP <- SUPfacs
 
+  return(NumOutBounds_Fac)
+}
+################################################################################################
+#'Compute the confidence bounds for the model bond yield-related outputs
+#'
+#'@param ModelBootstrap numerical output set from the bootstrap analysis
+#'@param quants quantile of the confidence bounds
+#'@param ModelType desired model type
+#'@param ndraws number of draws
+#'@param Horiz horizon of numerical outputs
+#'@param FacDim dimension of the risk factor set
+#'@param YieDim dimension of the bond yield set
+#'@param LabIRF vector containing the labels "IRF" and "GIRF"
+#'@param Economies Economies that are part of the economic system
+#'
+#'@keywords internal
 
-      DimLabelsYies <- dimnames(ModelBootstrap$NumOutDraws[[OutNames[nn]]][[ModelType]][[Economies[i]]][[1]]$Yields)
-      dimnames(INFyies) <- DimLabelsYies
-      dimnames(MEDyies) <- DimLabelsYies
-      dimnames(SUPyies) <- DimLabelsYies
+YieldBounds_IRFandGIRF <- function(ModelBootstrap, quants, ModelType, ndraws, Horiz, FacDim, YieDim, LabIRF,
+                                   Economies){
 
+  NumOutBounds_Yields <- list()
 
-      #Allocation
-      AllShocksOnePeriodyies <- array(NA, c(ndraws, K, J))
-      yies <- matrix(NA, nrow = ndraws, ncol = K)
+  # 1) For models estimated on a country-by-country basis
+  if ( any(ModelType ==c("JPS original", "JPS global", "GVAR single"))){
+    C <- length(Economies)
 
-      for (thor in 1:HorizNumOut[[nn]]){
-        for (h in 1:J){
-          for (g in 1:ndraws){
-            yies[g,] <- ModelBootstrap$NumOutDraws[[OutNames[nn]]][[ModelType]][[Economies[i]]][[g]]$Yields[thor, ,h] # All responses to one shock in one horizon
-          }
-          AllShocksOnePeriodyies[,,h]  <- apply(yies,2, sort) # Ensures that each column is in ascending order
+    for (nn in 1:length(LabIRF)){
+      for (i in 1:C){
 
-          INFyies[thor, ,h] <- apply(AllShocksOnePeriodyies[,,h], 2, stats::quantile, probs = quants[1])
-          MEDyies[thor, ,h] <- apply(AllShocksOnePeriodyies[,,h], 2, stats::quantile, probs = quants[2])
-          SUPyies[thor, ,h] <- apply(AllShocksOnePeriodyies[,,h], 2, stats::quantile, probs = quants[3])
-        }
+        DrawSet <- ModelBootstrap$NumOutDraws[[LabIRF[nn]]][[ModelType]][[Economies[i]]]
+        DimLabelsYields <- dimnames(DrawSet[[1]]$Yields)
+
+        NumOutBounds_CS <- YieldQuantile_bs(DrawSet, LabIRF[nn], ndraws, quants, Horiz, FacDim, YieDim,
+                                            DimLabelsYields, ModelType)
+        NumOutBounds_Yields[[LabIRF[nn]]][[ModelType]][[Economies[i]]] <- NumOutBounds_CS
+      }
+    }
+
+  }else{
+
+    # 2) For models estimated for countries jointly
+    JLL_ModLabel <- c("JLL original", "JLL No DomUnit", "JLL joint Sigma")
+
+    for (nn in 1:length(LabIRF)){
+      DrawSet <- ModelBootstrap$NumOutDraws[[LabIRF[nn]]][[ModelType]]
+
+      if (ModelType %in% JLL_ModLabel){  DimLabelsYields <- dimnames(DrawSet[[1]]$Yields$NonOrtho)
+      }else{ DimLabelsYields <- dimnames(DrawSet[[1]]$Yields)}
+
+      NumOutBounds_AllEco <- YieldQuantile_bs(DrawSet, LabIRF[nn], ndraws, quants, Horiz, FacDim, YieDim,
+                                              DimLabelsYields, ModelType)
+      NumOutBounds_Yields[[LabIRF[nn]]][[ModelType]] <- NumOutBounds_AllEco
+    }
+
+    #  Orhtgonolized version (JLL-based models)
+    if (ModelType %in% JLL_ModLabel){
+
+      LabIRF_Ortho <- c("IRF_Ortho","GIRF_Ortho")
+
+      for (nn in 1:length(LabIRF_Ortho)){
+        DimLabelsYields <- dimnames(DrawSet[[1]]$Yields$Ortho)
+        NumOutBounds_AllEco_Ortho <- YieldQuantile_bs(DrawSet, LabIRF_Ortho[nn], ndraws, quants, Horiz, FacDim,
+                                                      YieDim, DimLabelsYields, ModelType, Ortho = TRUE)
+
+        NumOutBounds_Yields[[LabIRF[nn]]][[ModelType]]$Ortho <- NumOutBounds_AllEco_Ortho
+      }
+    }
+  }
+  return(NumOutBounds_Yields)
+}
+
+###############################################################################################
+#'Compute quantiles for model bond yield-related outputs
+#'
+#'@param DrawSet Draw-specific set
+#'@param LabIRF vector containing the labels "IRF" and "GIRF"
+#'@param ndraws number of draws
+#'@param quants quantile of the confidence bounds
+#'@param Horiz horizon of numerical outputs
+#'@param FacDim dimension of the risk factor set
+#'@param YieDim dimension of the bond yield set
+#'@param LabelsYies labels of the factor set
+#'@param ModelType desired model type
+#'@param Ortho Orthogonolized version for the JLL models. Default is FALSE.
+#'
+#'@keywords internal
+
+YieldQuantile_bs <- function(DrawSet, LabIRF, ndraws, quants, Horiz, FacDim, YieDim, LabelsYies,
+                             ModelType, Ortho = FALSE){
+
+  # Initialization
+  INFyields <- array(NA, c(Horiz, YieDim, FacDim)) # lower bound
+  MEDyields <- array(NA, c(Horiz, YieDim, FacDim)) # Median
+  SUPyields <- array(NA, c(Horiz, YieDim, FacDim)) # upper bound
+
+  dimnames(INFyields) <- LabelsYies
+  dimnames(MEDyields) <- LabelsYies
+  dimnames(SUPyields) <- LabelsYies
+
+  AllShocksOnePeriodYields <- array(NA, c(ndraws, YieDim, FacDim))
+  yies <- matrix(NA, nrow = ndraws, ncol = YieDim)
+
+  JLL_ModLab <- c("JLL original", "JLL No DomUnit", "JLL joint Sigma")
+
+  # Compute the quantiles
+  for (thor in 1:Horiz){
+    for (h in 1:FacDim){ # loop through the shocks
+      for (g in 1:ndraws){ # # loop through the draws
+
+        # All responses to one shock in one horizon
+        if (ModelType %in% JLL_ModLab){
+          if (Ortho){ yies[g,] <- DrawSet[[g]]$Yields$Ortho[thor,,h]
+          } else{ yies[g,] <- DrawSet[[g]]$Yields$NonOrtho[thor,,h] }
+        } else{  yies[g,] <- DrawSet[[g]]$Yields[thor,,h]}
       }
 
+      AllShocksOnePeriodYields[ , , h]  <- apply(yies,2, sort) # Ensures that each column is in ascending order
 
-      NumOutBounds[[OutNames[nn]]][[ModelType]][[Economies[i]]]$Yields$INF <- INFyies
-      NumOutBounds[[OutNames[nn]]][[ModelType]][[Economies[i]]]$Yields$MED <- MEDyies
-      NumOutBounds[[OutNames[nn]]][[ModelType]][[Economies[i]]]$Yields$SUP <- SUPyies
-
-
-
+      INFyields[thor, ,h] <- apply(AllShocksOnePeriodYields[ , ,h], 2, stats::quantile, probs = quants[1])
+      MEDyields[thor, ,h] <- apply(AllShocksOnePeriodYields[ , ,h], 2, stats::quantile, probs = quants[2])
+      SUPyields[thor, ,h] <- apply(AllShocksOnePeriodYields[ , ,h], 2, stats::quantile, probs = quants[3])
     }
   }
 
+  # Store results
+  NumOutBounds_Yie <- list()
 
-  #################################################################################################################
-  ###################################### PLOTS ####################################################################
-  #################################################################################################################
+  NumOutBounds_Yie$INF <- INFyields
+  NumOutBounds_Yie$MED <- MEDyields
+  NumOutBounds_Yie$SUP <- SUPyields
 
-  ########################################  Factors ###############################################################
+  return(NumOutBounds_Yie)
+}
+###################################################################################################
+#'Extract graphs of interest (bootstrap version)
+#'
+#'@param InputsForOutputs list containing the desired inputs for the construction of IRFs, GIRFs, FEVDs, and GFEVDs
+#'@param ModelType desired model type
+#'
+#'@keywords internal
 
-  GraphsBinaryFactors <- c(InputsForOutputs[[ModelType]]$FEVD$WishGraphs$RiskFactorsBootstrap,
-                          InputsForOutputs[[ModelType]]$GFEVD$WishGraphs$RiskFactorsBootstrap)
+WishGraphs_IRFandGIRF_Boot <- function(InputsForOutputs, ModelType){
 
-  IdxFactorsGraphs <- which(GraphsBinaryFactors == 1)
+  # Factors
+  WishGraphFac <- c(InputsForOutputs[[ModelType]]$IRF$WishGraphs$RiskFactorsBootstrap,
+                    InputsForOutputs[[ModelType]]$GIRF$WishGraphs$RiskFactorsBootstrap)
+
+  if ( any(ModelType ==c("JLL original", "JLL No DomUnit", "JLL joint Sigma"))){
+    WishGraphFac_Ortho <- c(InputsForOutputs[[ModelType]]$IRF$WishGraphsOrtho$RiskFactorsBootstrap,
+                            InputsForOutputs[[ModelType]]$GIRF$WishGraphsOrtho$RiskFactorsBootstrap)
+  } else{ WishGraphFac_Ortho <- NULL}
 
 
+  # Yields
+  WishGraphYields <- c(InputsForOutputs[[ModelType]]$IRF$WishGraphs$YieldsBootstrap,
+                       InputsForOutputs[[ModelType]]$GIRF$WishGraphs$YieldsBootstrap)
 
-  if (any(GraphsBinaryFactors==1)){
+  if ( any(ModelType ==c("JLL original", "JLL No DomUnit", "JLL joint Sigma"))){
+    WishGraphiYields_Ortho  <- c(InputsForOutputs[[ModelType]]$IRF$WishGraphsOrtho$YieldsBootstrap,
+                                 InputsForOutputs[[ModelType]]$GIRF$WishGraphsOrtho$YieldsBootstrap)
+  }else{ WishGraphiYields_Ortho <- NULL}
 
-    cat(' ** FEVDs/GFEVDs (Bootstrap) \n' )
 
-    plot_list <- list()
-    for (f in 1:C){
-      for (d in IdxFactorsGraphs){
+  Out <- list( Fac = WishGraphFac, Fac_Ortho = WishGraphFac_Ortho, Yields = WishGraphYields,
+               Yields_Ortho = WishGraphiYields_Ortho)
+
+  return(Out)
+}
+####################################################################################################
+#'Build P-dynamic graphs after the bootstrap implementation
+#'
+#'@param NumOutBounds numerical output set from the bootstrap analysis
+#'@param NumOutPE numerical output set from the point estimate analysis
+#'@param ModelType desired model type
+#'@param FacDim dimension of the risk factor set
+#'@param Horiz horizon of numerical outputs
+#'@param Economies Economies that are part of the economic system
+#'@param PathsGraphs Path to save the desired graphs
+#'@param OutInt available options are "IRF" and "FEVD"
+#'@param WishFacGraphs Binary variable reflecting the graphs of interest
+#'@param WishFacGraphsOrtho Binary variable reflecting the graphs of interest (orthogonalized version). Default is NULL
+#'
+#'@keywords internal
+
+Boot_Fac_Graphs <- function(NumOutBounds, NumOutPE, ModelType, FacDim, Horiz, Economies, PathsGraphs, OutInt,
+                            WishFacGraphs, WishFacGraphsOrtho = NULL){
+
+  C <- length(Economies)
+
+  if(OutInt == "IRF"){  Lab_Int <- c("IRF","GIRF");  Graph_Lab <- "Factors_shock_to_"
+  } else{   Lab_Int <- c("FEVD","GFEVD");  Graph_Lab <- "Factors_"  }
+
+  JLL_ModLabels <- c("JLL original", "JLL No DomUnit", "JLL joint Sigma")
+
+  IdxFacGraphs <- which(WishFacGraphs == 1)
+
+  ################ 1) Estimation done for countries individually ################
+  if ( any(ModelType ==c("JPS original", "JPS global", "GVAR single"))){
+  for (f in 1:C){
+
+     for (d in IdxFacGraphs){
+
+       # Adjust the graph path
+       if(OutInt == "IRF"){ PathAdj <- AdjustPathIRFs(Lab_Int[d], "Factors", PathsGraphs, Economies[f], ModelType)
+        }else{ PathAdj <- AdjustPathFEVDs(Lab_Int[d], "Factors", PathsGraphs, Economies[f], ModelType)}
+
+       # Labels of shocks and response variables
+      nmResponse <- dimnames(NumOutPE[[Lab_Int[d]]][[ModelType]][[Economies[f]]]$Factors)[[2]]
+      nmShock <- dimnames(NumOutPE[[Lab_Int[d]]][[ModelType]][[Economies[f]]]$Factors)[[3]]
+
+       # Folder Creation
+      FolderCreation_Boot(ModelType, Lab_Int[d], Economies[f], "Factors")
+
+      # Create plots
+      for (b in 1:FacDim){
+        plotlist_OneShock <- Boot_DataGraphFact_perShock(NumOutBounds, NumOutPE, b, nmResponse, Lab_Int[d],
+                                                        ModelType, FacDim, Horiz, Economies[f])
+
+        subplots <- cowplot::plot_grid(plotlist = plotlist_OneShock, ncol = 3)
+        suppressMessages(ggplot2::ggsave(subplots, file=paste0(Lab_Int[d], Graph_Lab, nmShock[b], ".png"),
+                                         path= PathAdj))
+      }
+    }
+  }
+}else{
+
+  ################ 2) Estimation done for countries jointly ###############################
+  for (d in IdxFacGraphs){
+
+    # Adjust the graph path
+    if(OutInt == "IRF"){PathAdj <- AdjustPathIRFs(Lab_Int[d], "Factors", PathsGraphs, Economies, ModelType)
+    }else{ PathAdj <- AdjustPathFEVDs(Lab_Int[d], "Factors", PathsGraphs, Economies, ModelType) }
+
+    # Labels of shocks and response variables
+    if (ModelType %in% JLL_ModLabels){
+    nmResponse <-  dimnames(NumOutPE[[Lab_Int[d]]][[ModelType]]$Factors$NonOrtho)[[2]]
+    nmShock <-  dimnames(NumOutPE[[Lab_Int[d]]][[ModelType]]$Factors$NonOrtho)[[3]]
+    }else{
+    nmResponse <- dimnames(NumOutPE[[Lab_Int[d]]][[ModelType]]$Factors)[[2]]
+    nmShock <- dimnames(NumOutPE[[Lab_Int[d]]][[ModelType]]$Factors)[[3]]
+    }
     # Folder Creation
-      dir.create( paste(tempdir(), "/Outputs/", ModelType, "/Bootstrap/Model ", Economies[f], "/", LabFEVD[d], sep=""))
-      dir.create( paste(tempdir(), "/Outputs/", ModelType, "/Bootstrap/Model ", Economies[f], "/", LabFEVD[d], "/Factors", sep=""))
+    FolderCreation_Boot(ModelType, Lab_Int[d], Economies, "Factors")
 
-        for (b in 1:K){
-          for (i in 1:K){
-            LL <- NumOutBounds[[d]][[ModelType]][[Economies[f]]]$Factors$INF[,i,b]
-            UU <- NumOutBounds[[d]][[ModelType]][[Economies[f]]]$Factors$SUP[,i,b]
-            MM <- NumOutBounds[[d]][[ModelType]][[Economies[f]]]$Factors$MED[,i,b]
-            PP <- NumOutPE[[LabFEVD[d]]][[ModelType]][[Economies[f]]]$Factors[,i,b ] # Point estimate # Point estimate
+    # Create plots
+  for (b in 1:FacDim){
+    plotlist_OneShock <- Boot_DataGraphFact_perShock(NumOutBounds, NumOutPE, b, nmResponse, Lab_Int[d],
+                                                 ModelType, FacDim, Horiz)
 
-            ALL <- data.frame(cbind(LL,MM,PP, UU))
-            TimeSpan <- 1:InputsForOutputs[[ModelType]][[LabFEVD[d]]]$horiz
-            ALL$TimeSpan <- TimeSpan
+    subplots <- cowplot::plot_grid(plotlist= plotlist_OneShock, ncol=3)
+    suppressMessages(ggplot2::ggsave(subplots, file=paste0(Lab_Int[d], Graph_Lab, nmShock[b], ".png"),
+                                     path= PathAdj))
+  }
+  }
+}
 
-            nmResponse <- dimnames(NumOutPE[[LabFEVD[d]]][[ModelType]][[Economies[f]]]$Factors)[[2]] # names of the "response" factor
-            nmShock <- dimnames(NumOutPE[[LabFEVD[d]]][[ModelType]][[Economies[f]]]$Factors)[[3]] # names of the shock
+  ################ 3) Orthogonalized version for JLL-based models ################################
+  if (ModelType %in% JLL_ModLabels){
 
-            p <- ggplot(data = ALL, aes(x= TimeSpan )) +  geom_line(aes(y = LL), color = 'blue') + geom_line(aes(y = MM), color = 'green') +
-              geom_line(aes(y = UU), color = 'red') +  geom_line(aes(y = PP)) + theme_classic() +
-              theme(plot.title = element_text(size = 6, face = "bold", hjust = 0.5),
-                    axis.title.x=element_blank(), axis.title.y=element_blank() ) +
-                    ggtitle( nmResponse[i]) + geom_hline(yintercept=0)
+  if(OutInt == "IRF"){Lab_Int_Ortho <- c("IRF Ortho","GIRF Ortho")}
+  else if(OutInt == "FEVD"){Lab_Int_Ortho <- c("FEVD Ortho","GFEVD Ortho")}
 
-            plot_list[[i]] <- p
-          }
-          subplots <- cowplot::plot_grid(plotlist= plot_list, ncol=3)
-          suppressMessages(ggplot2::ggsave(subplots, file=paste0(LabFEVD[d],"Factors_", nmShock[b], ".png"),
-                          path=  PathsGraphs[[ModelType]][[LabFEVD[d]]][[Economies[f]]][["Factors"]]))
-        }
-      }
+  IdxFacGraphs_Ortho <- which(WishFacGraphsOrtho == 1)
+
+  for (d in IdxFacGraphs_Ortho){
+  # Adjust the graph path
+ if(OutInt == "IRF"){ PathAdj <- AdjustPathIRFs(Lab_Int_Ortho[d], "Factors", PathsGraphs, Economies, ModelType)
+  }else{ PathAdj <- AdjustPathFEVDs(Lab_Int_Ortho[d], "Factors", PathsGraphs, Economies, ModelType) }
+  # Labels of shocks and response variables
+  nmResponse <-  dimnames(NumOutPE[[Lab_Int[d]]][[ModelType]]$Factors$Ortho)[[2]]
+  nmShock <-  dimnames(NumOutPE[[Lab_Int[d]]][[ModelType]]$Factors$Ortho)[[3]]
+
+  # Folder Creation
+  FolderCreation_Boot(ModelType, Lab_Int[d], Economies, "Factors", Ortho = TRUE)
+
+  # Create plots
+  for (b in 1:FacDim){
+    plotlist_OneShock <- Boot_DataGraphFact_perShock(NumOutBounds, NumOutPE, b, nmResponse, Lab_Int[d],
+                                                 ModelType, FacDim, Horiz, Ortho = TRUE)
+
+    subplots <- cowplot::plot_grid(plotlist= plotlist_OneShock, ncol=3)
+    suppressMessages(ggplot2::ggsave(subplots, file=paste0(Lab_Int[d], Graph_Lab, nmShock[b], "_ORTHO", ".png"),
+                                     path= PathAdj))
+  }
+}
+}
+}
+
+###############################################################################################
+#'Creates folder to store graphs generated from the bootstrap analysis
+#'
+#'@param ModelType Desired model type
+#'@param LabIRF Output types "IRF", "GIRF" and "IRF Ortho"
+#'@param Economies economies of the economic system
+#'@param OutType Available option "Factors" or "Yields
+#'@param Ortho Option for orthogonal outputs, for JLL models. Default is FALSE.
+#'
+#'@keywords internal
+
+FolderCreation_Boot  <- function(ModelType, LabIRF, Economies, OutType, Ortho = FALSE){
+
+  # A) Folder for factors
+  if( OutType == "Factors"){
+
+    # 1) Models estimated on a country-by-country basis
+    if ( any(ModelType ==c("JPS original", "JPS global", "GVAR single"))){
+      dir.create( paste(tempdir(), "/Outputs/", ModelType, "/Bootstrap/Model ", Economies, "/", LabIRF, sep=""), showWarnings = FALSE)
+      dir.create( paste(tempdir(), "/Outputs/", ModelType, "/Bootstrap/Model ", Economies, "/", LabIRF, "/Factors", sep=""))
+    } else{
+
+      # 2) Country estimated jointly
+      dir.create( paste(tempdir(), "/Outputs/", ModelType, "/Bootstrap/", LabIRF, sep=""), showWarnings = FALSE)
+      dir.create( paste(tempdir(), "/Outputs/", ModelType, "/Bootstrap/", LabIRF, "/Factors", sep=""))
+      # 3) Orthogonalized outputs (for JLL models)
+      if (Ortho){
+        dir.create( paste(tempdir(), "/Outputs/", ModelType, "/Bootstrap/", LabIRF, "/Factors/Ortho", sep=""))}
     }
 
+  }else{
+    # B) Folder for yields
+    # 1) Models estimated on a country-by-country basis
+    if ( any(ModelType ==c("JPS original", "JPS global", "GVAR single"))){
+      dir.create( paste(tempdir(), "/Outputs/", ModelType, "/Bootstrap/Model ", Economies, "/", LabIRF, sep=""), showWarnings = FALSE)
+      dir.create( paste(tempdir(), "/Outputs/", ModelType, "/Bootstrap/Model ", Economies, "/", LabIRF, "/Yields", sep=""))
+    } else{
 
+      # 2) Country estimated jointly
+      dir.create( paste(tempdir(), "/Outputs/", ModelType, "/Bootstrap/", LabIRF, sep=""), showWarnings = FALSE)
+      dir.create( paste(tempdir(), "/Outputs/", ModelType, "/Bootstrap/", LabIRF, "/Yields", sep=""))
+      # 3) Orthogonalized outputs (for JLL models)
+      if (Ortho){
+        dir.create( paste(tempdir(), "/Outputs/", ModelType, "/Bootstrap/", LabIRF, "/Yields/Ortho", sep=""))}
+    }
+  }
+}
+
+####################################################################################################
+#' Generates the desired bootstrap graphs
+#'
+#'@param NumOutBounds numerical output set from the bootstrap analysis
+#'@param NumOutPE numerical output set from the point estimate analysis
+#'@param IdxShock index associated with the shock variable
+#'@param nmResponse Label of the response variable
+#'@param Lab_Int Output types "IRF", "GIRF" and "IRF Ortho"
+#'@param ModelType desired model type
+#'@param FacDim dimension from the P-dynamics
+#'@param Horiz horizon of analysis
+#'@param Economies name of economies forming the economic system
+#'@param Ortho Option for orthogonal outputs, for JLL models. Default is FALSE.
+#'
+#'@keywords internal
+
+Boot_DataGraphFact_perShock <- function(NumOutBounds, NumOutPE, IdxShock, nmResponse, Lab_Int, ModelType,
+                                         FacDim, Horiz, Economies = NULL, Ortho = FALSE){
+
+  plot_list <- list()
+
+  for (i in 1:FacDim){
+    # Confidence Bounds
+    if ( any(ModelType ==c("JPS original", "JPS global", "GVAR single"))){
+      LL <- NumOutBounds$Factors[[Lab_Int]][[ModelType]][[Economies]]$INF[ , i, IdxShock]
+      UU <- NumOutBounds$Factors[[Lab_Int]][[ModelType]][[Economies]]$SUP[ , i, IdxShock]
+      MM <- NumOutBounds$Factors[[Lab_Int]][[ModelType]][[Economies]]$MED[ , i, IdxShock]
+    }else if(any(ModelType ==c("JLL original", "JLL No DomUnit", "JLL joint Sigma")) & Ortho == 1){
+      LL <- NumOutBounds$Factors[[Lab_Int]][[ModelType]]$Ortho$INF[ , i, IdxShock]
+      UU <- NumOutBounds$Factors[[Lab_Int]][[ModelType]]$Ortho$SUP[ , i, IdxShock]
+      MM <- NumOutBounds$Factors[[Lab_Int]][[ModelType]]$Ortho$MED[ , i, IdxShock]
+     }else{
+      LL <- NumOutBounds$Factors[[Lab_Int]][[ModelType]]$INF[ , i, IdxShock]
+      UU <- NumOutBounds$Factors[[Lab_Int]][[ModelType]]$SUP[ , i, IdxShock]
+      MM <- NumOutBounds$Factors[[Lab_Int]][[ModelType]]$MED[ , i, IdxShock]
+    }
+
+    # Point estimate
+    if ( any(ModelType ==c("JPS original", "JPS global", "GVAR single"))){
+      PP <- NumOutPE[[Lab_Int]][[ModelType]][[Economies]]$Factors[ , i, IdxShock]
+    }else if(any(ModelType ==c("JLL original", "JLL No DomUnit", "JLL joint Sigma"))){
+      if (Ortho){ PP <- NumOutPE[[Lab_Int]][[ModelType]]$Factors$Ortho[ , i, IdxShock]
+      } else{ PP <- NumOutPE[[Lab_Int]][[ModelType]]$Factors$NonOrtho[ , i, IdxShock]}
+    }else{ PP <- NumOutPE[[Lab_Int]][[ModelType]]$Factors[ , i, IdxShock]}
+
+    # Add time-span
+    ALLdata <- data.frame(cbind(LL,MM,PP, UU))
+    TimeSpan <- 1:Horiz
+    ALLdata$TimeSpan <- TimeSpan
+
+    p <- Boot_graph_template(ALLdata, nmResponse[i])
+
+    plot_list[[i]] <- p
   }
 
-  ########################################  Yields ###############################################################
+  return(plot_list)
+}
 
-  GraphsBinaryYields <- c(InputsForOutputs[[ModelType]]$FEVD$WishGraphs$YieldsBootstrap,
-                           InputsForOutputs[[ModelType]]$GFEVD$WishGraphs$YieldsBootstrap)
+####################################################################################################
+#' Builds template from bootstrap-related graphs
+#'
+#'@param ALLdata data-frame containing the necessary data for building the grahs
+#'@param nmResponse string containing the name of the response variable
+#'
+#'@keywords internal
 
-  IdxYieldsGraphs <- which(GraphsBinaryYields == 1)
+Boot_graph_template <- function(ALLdata, nmResponse){
 
+  p <- ggplot(data = ALLdata, aes(x= ALLdata$TimeSpan )) +  geom_line(aes(y = ALLdata$LL), color = 'blue') +
+    geom_line(aes(y = ALLdata$MM), color = 'green') + geom_line(aes(y = ALLdata$UU), color = 'red') +
+    geom_line(aes(y = ALLdata$PP)) + theme_classic() +
+    theme(plot.title = element_text(size = 6, face = "bold", hjust = 0.5),
+          axis.title.x=element_blank(), axis.title.y=element_blank() ) +
+    ggtitle( nmResponse) + geom_hline(yintercept=0)
 
+  return(p)
+}
 
-  if (any(GraphsBinaryYields==1)){
+######################################################################################################
+#'Build P-dynamic graphs after the bootstrap implementation
+#'
+#'@param NumOutBounds numerical output set from the bootstrap analysis
+#'@param NumOutPE numerical output set from the point estimate analysis
+#'@param ModelType desired model type
+#'@param FacDim dimension of the risk factor set
+#'@param Horiz horizon of numerical outputs
+#'@param Economies Economies that are part of the economic system
+#'@param PathsGraphs Path to save the desired graphs
+#'@param OutInt Available option are "IRF" or "FEVD"
+#'@param WishYieldGraphs Binary variable reflecting the graphs of interest
+#'@param WishYieldGraphsOrtho Binary variable reflecting the graphs of interest (orthogonalized version). Default is NULL
+#'
+#'@keywords internal
 
-    plot_list <- list()
+Boot_Yields_Graphs <- function(NumOutBounds, NumOutPE, ModelType, FacDim, YielDim, Horiz, Economies, PathsGraphs,
+                               OutInt, WishYieldGraphs, WishYieldGraphsOrtho = NULL){
+
+  C <- length(Economies)
+  if(OutInt == "IRF"){Lab_Int <- c("IRF","GIRF"); Graph_Lab <- "Yields_shock_to_"
+  } else{ Lab_Int <- c("FEVD","GFEVD"); Graph_Lab <- "Yields_"
+  }
+  JLL_ModLabels <- c("JLL original", "JLL No DomUnit", "JLL joint Sigma")
+
+  IdxYielddGraphs <- which(WishYieldGraphs == 1)
+
+  ################ 1) Estimation done for countries individually ################
+  if ( any(ModelType ==c("JPS original", "JPS global", "GVAR single"))){
     for (f in 1:C){
-      for (d in IdxYieldsGraphs){
+
+      for (d in IdxYielddGraphs){
+
+        # Adjust the graph path
+        if(OutInt == "IRF"){ PathAdj <- AdjustPathIRFs(Lab_Int[d], "Yields", PathsGraphs, Economies[f], ModelType)
+        }else{ PathAdj <- AdjustPathFEVDs(Lab_Int[d], "Yields", PathsGraphs, Economies[f], ModelType)}
+
+        # Labels of shocks and response variables
+        nmResponse <- dimnames(NumOutPE[[Lab_Int[d]]][[ModelType]][[Economies[f]]]$Yields)[[2]]
+        nmShock <- dimnames(NumOutPE[[Lab_Int[d]]][[ModelType]][[Economies[f]]]$Yields)[[3]]
 
         # Folder Creation
-        dir.create( paste(tempdir(), "/Outputs/", ModelType, "/Bootstrap/Model ", Economies[f], "/", LabFEVD[d], sep=""))
-        dir.create( paste(tempdir(), "/Outputs/", ModelType, "/Bootstrap/Model ", Economies[f], "/", LabFEVD[d], "/Yields", sep=""))
+        FolderCreation_Boot(ModelType, Lab_Int[d], Economies[f], "Yields")
 
-        for (b in 1:J){
-        for (i in 1:K){
-            LL <- NumOutBounds[[d]][[ModelType]][[Economies[f]]]$Yields$INF[,i,b]
-            UU <- NumOutBounds[[d]][[ModelType]][[Economies[f]]]$Yields$SUP[,i,b]
-            MM <- NumOutBounds[[d]][[ModelType]][[Economies[f]]]$Yields$MED[,i,b]
-            PP <- NumOutPE[[LabFEVD[d]]][[ModelType]][[Economies[f]]]$Yields[,i,b ] # Point estimate
+        # Create plots
+        if (Lab_Int[d] %in% c("IRF","GIRF")){ DimInt <- FacDim
+        }else if(Lab_Int[d] %in% c("FEVD", "GFEVD")){ DimInt <- YielDim }
 
-            ALL <- data.frame(cbind(LL,MM,PP, UU))
-            TimeSpan <- 1:InputsForOutputs[[ModelType]][[LabFEVD[d]]]$horiz
-            ALL$TimeSpan <- TimeSpan
+        for(b in 1:DimInt){
+          plot_list  <- Boot_DataGraphYield_perShock(NumOutBounds, NumOutPE, b, nmResponse, Lab_Int[d],
+                                                       ModelType, FacDim, YielDim, Horiz, Economies[f])
 
-            nmResponse <- dimnames(NumOutPE[[LabFEVD[d]]][[ModelType]][[Economies[f]]]$Yields)[[2]] # names of the "response" factor
-            nmShock <- dimnames(NumOutPE[[LabFEVD[d]]][[ModelType]][[Economies[f]]]$Yields)[[3]] # names of the shock
-
-            p <- ggplot(data = ALL, aes(x= TimeSpan )) +  geom_line(aes(y = LL), color = 'blue') + geom_line(aes(y = MM), color = 'green') +
-              geom_line(aes(y = UU), color = 'red') +  geom_line(aes(y = PP)) + theme_classic() +
-              theme(plot.title = element_text(size = 6, face = "bold", hjust = 0.5),
-                    axis.title.x=element_blank(), axis.title.y=element_blank() ) +
-              ggtitle( nmResponse[i]) + geom_hline(yintercept=0)
-
-            plot_list[[i]] <- p
-          }
-          subplots <- cowplot::plot_grid(plotlist= plot_list, ncol=3)
-          suppressMessages(ggplot2::ggsave(subplots, file=paste0(LabFEVD[d],"Yields_", nmShock[b], ".png"),
-                          path=  PathsGraphs[[ModelType]][[LabFEVD[d]]][[Economies[f]]][["Yields"]]))
+          subplots <- cowplot::plot_grid(plotlist= plot_list, ncol= 3)
+          suppressMessages(ggplot2::ggsave(subplots, file=paste0(Lab_Int[d], Graph_Lab, nmShock[b], ".png"),
+                                           path= PathAdj))
         }
       }
     }
+  }else{
 
-  }
+    ################ 2) Estimation done for countries jointly ###############################
+    for (d in IdxYielddGraphs){
 
+      # Adjust the graph path
+      if(OutInt == "IRF"){ PathAdj <- AdjustPathIRFs(Lab_Int[d], "Yields", PathsGraphs, Economies, ModelType)
+      }else{ PathAdj <- AdjustPathFEVDs(Lab_Int[d], "Yields", PathsGraphs, Economies, ModelType) }
 
-  return(NumOutBounds)
-
-}
-
-
-######################################################################################################
-######################################################################################################
-####################### OUTPUTS FOR MODELS IN WHICH THE ESTIMATION ###################################
-########################       IS DONE FOR ALL COUNTRIES JOINTLY      ################################
-######################################################################################################
-######################################################################################################
-#' Creates the confidence bounds and the graphs of IRFs and GIRFs after bootstrap ("joint Q" models)
-#'
-#'@param ModelType  string-vector containing the label of the model to be estimated
-#'@param ModelBootstrap list containing the complete set of model parameters after bootstrap estimation procedure
-#'@param NumOutPE  list of model parameter point estimates
-#'@param InputsForOutputs list conataining the desired inputs for the construction of the outputs of interest
-#'@param Economies  string-vector containing the names of the economies which are part of the economic system
-#'@param PathsGraphs path of the folder in which the graphs will be saved
-#'
-#'
-#'@keywords internal
-
-
-
-IRFandGIRFbs_jointQ <- function(ModelType, ModelBootstrap, NumOutPE, InputsForOutputs, Economies, PathsGraphs){
-
-
-  ndraws <- InputsForOutputs[[ModelType]]$Bootstrap$ndraws
-  pctg <-   InputsForOutputs[[ModelType]]$Bootstrap$pctg
-
-  #Define the percentiles
-  pctg_inf <- (100-pctg)/2
-  pctg_sup <- 100 - (100-pctg)/2
-  quants <- c(pctg_inf, 50, pctg_sup)/100 # Desired quantiles
-
-  # initializarion
-  LabIRF <- c("IRF","GIRF")
-  OutNames <- names(ModelBootstrap$NumOutDraws)
-  C <- length(Economies)
-  J <-  length(ModelBootstrap$GeneralInputs$mat)
-  CJ <- C*J
-
-  HorizNumOut <- c(InputsForOutputs[[ModelType]]$IRF$horiz, InputsForOutputs[[ModelType]]$FEVD$horiz,
-                   InputsForOutputs[[ModelType]]$GIRF$horiz, InputsForOutputs[[ModelType]]$GFEVD$horiz)
-
-  NumOutBounds <- list()
-
-
-    for (nn in match(LabIRF, OutNames) ){
-
-      K <- nrow(ModelBootstrap$ParaDraws[[ModelType]][[1]]$ests$K1Z)
-      ############################################# Factors ######################################################################
-
-      INFfacs <- array(NA, c(HorizNumOut[[nn]], K,K)) # lower bound
-      MEDfacs <- array(NA, c(HorizNumOut[[nn]], K,K)) # Median
-      SUPfacs <- array(NA, c(HorizNumOut[[nn]], K,K)) # upper bound
-
-      if (any(ModelType ==c("JLL original", "JLL No DomUnit", "JLL joint Sigma"))){
-        DimLabelsFac <- dimnames(ModelBootstrap$NumOutDraws[[OutNames[nn]]][[ModelType]][[1]]$Factors$NonOrtho)
+      # Labels of shocks and response variables
+      if (ModelType %in% JLL_ModLabels){
+        nmResponse <-  dimnames(NumOutPE[[Lab_Int[d]]][[ModelType]]$Yields$NonOrtho)[[2]]
+        nmShock <-  dimnames(NumOutPE[[Lab_Int[d]]][[ModelType]]$Yields$NonOrtho)[[3]]
       }else{
-        DimLabelsFac <- dimnames(ModelBootstrap$NumOutDraws[[OutNames[nn]]][[ModelType]][[1]]$Factors)
+        nmResponse <- dimnames(NumOutPE[[Lab_Int[d]]][[ModelType]]$Yields)[[2]]
+        nmShock <- dimnames(NumOutPE[[Lab_Int[d]]][[ModelType]]$Yields)[[3]]
       }
 
-      dimnames(INFfacs) <- DimLabelsFac
-      dimnames(MEDfacs) <- DimLabelsFac
-      dimnames(SUPfacs) <- DimLabelsFac
+      # Folder Creation
+      FolderCreation_Boot(ModelType, Lab_Int[d], Economies, "Yields")
 
+      # Create plots
+      if (Lab_Int[d] %in% c("IRF","GIRF")){ DimInt <- FacDim
+      }else if(Lab_Int[d] %in% c("FEVD", "GFEVD")){ DimInt <- C*YielDim }
 
-      # Allocation
-      AllShocksOnePeriodFacs <- array(NA, c(ndraws, K, K))
-      Facs <- matrix(NA, nrow = ndraws, ncol = K)
+      for(b in 1:DimInt){
+        plot_list  <- Boot_DataGraphYield_perShock(NumOutBounds, NumOutPE, b, nmResponse, Lab_Int[d],
+                                                   ModelType, FacDim, C*YielDim, Horiz, Economies)
 
-      for (thor in 1:HorizNumOut[[nn]]){
-        for (h in 1:K){ # loop through the shocks
-          for (g in 1:ndraws){ # # loop through the draws
-            if (any(ModelType ==c("JLL original", "JLL No DomUnit", "JLL joint Sigma"))){
-              Facs[g,] <- ModelBootstrap$NumOutDraws[[OutNames[nn]]][[ModelType]][[g]]$Factors$NonOrtho[thor,,h]
-            } else{
-              Facs[g,] <- ModelBootstrap$NumOutDraws[[OutNames[nn]]][[ModelType]][[g]]$Factors[thor,,h] # All responses to one shock in one horizon
-            }
-          }
-
-          AllShocksOnePeriodFacs[,,h]  <- apply(Facs,2, sort) # Ensures that each column is in ascending order
-
-          INFfacs[thor, ,h] <- apply(AllShocksOnePeriodFacs[,,h], 2, stats::quantile, probs = quants[1])
-          MEDfacs[thor, ,h] <- apply(AllShocksOnePeriodFacs[,,h], 2, stats::quantile, probs = quants[2])
-          SUPfacs[thor, ,h] <- apply(AllShocksOnePeriodFacs[,,h], 2, stats::quantile, probs = quants[3])
-        }
+        subplots <- cowplot::plot_grid(plotlist= plot_list, ncol= 3)
+        suppressMessages(ggplot2::ggsave(subplots, file=paste0(Lab_Int[d], Graph_Lab, nmShock[b], ".png"),
+                                         path= PathAdj))
       }
-
-      NumOutBounds[[OutNames[nn]]][[ModelType]]$Factors$INF <- INFfacs
-      NumOutBounds[[OutNames[nn]]][[ModelType]]$Factors$MED <- MEDfacs
-      NumOutBounds[[OutNames[nn]]][[ModelType]]$Factors$SUP <- SUPfacs
-
-
-      ############################################# Yields ######################################################################
-      INFyies <- array(NA, c(HorizNumOut[[nn]], CJ, K)) # lower bound
-      MEDyies <- array(NA, c(HorizNumOut[[nn]], CJ, K)) # Median
-      SUPyies <- array(NA, c(HorizNumOut[[nn]], CJ, K)) # upper bound
-
-      if (any(ModelType ==c("JLL original", "JLL No DomUnit", "JLL joint Sigma"))){
-        DimLabelsYies <- dimnames(ModelBootstrap$NumOutDraws[[OutNames[nn]]][[ModelType]][[1]]$Yields$NonOrtho)
-      } else{
-        DimLabelsYies <- dimnames(ModelBootstrap$NumOutDraws[[OutNames[nn]]][[ModelType]][[1]]$Yields)
-      }
-
-      dimnames(INFyies) <- DimLabelsYies
-      dimnames(MEDyies) <- DimLabelsYies
-      dimnames(SUPyies) <- DimLabelsYies
-
-
-      #Allocation
-      AllShocksOnePeriodyies <- array(NA, c(ndraws, CJ, K))
-      yies <- matrix(NA, nrow = ndraws, ncol = CJ)
-
-      for (thor in 1:HorizNumOut[[nn]]){
-        for (h in 1:K){
-          for (g in 1:ndraws){
-            if (any(ModelType ==c("JLL original", "JLL No DomUnit", "JLL joint Sigma"))){
-              yies[g,] <- ModelBootstrap$NumOutDraws[[OutNames[nn]]][[ModelType]][[g]]$Yields$NonOrtho[thor, ,h]
-            }else{
-              yies[g,] <- ModelBootstrap$NumOutDraws[[OutNames[nn]]][[ModelType]][[g]]$Yields[thor, ,h] # All responses to one shock in one horizon
-            }
-
-
-
-          }
-          AllShocksOnePeriodyies[,,h]  <- apply(yies,2, sort) # Ensures that each column is in ascending order
-
-          INFyies[thor, ,h] <- apply(AllShocksOnePeriodyies[,,h], 2, stats::quantile, probs = quants[1])
-          MEDyies[thor, ,h] <- apply(AllShocksOnePeriodyies[,,h], 2, stats::quantile, probs = quants[2])
-          SUPyies[thor, ,h] <- apply(AllShocksOnePeriodyies[,,h], 2, stats::quantile, probs = quants[3])
-        }
-      }
-
-
-      NumOutBounds[[OutNames[nn]]][[ModelType]]$Yields$INF <- INFyies
-      NumOutBounds[[OutNames[nn]]][[ModelType]]$Yields$MED <- MEDyies
-      NumOutBounds[[OutNames[nn]]][[ModelType]]$Yields$SUP <- SUPyies
-
     }
+  }
 
+  ################ 3) Orthogonalized version for JLL-based models ################################
+  if (ModelType %in% JLL_ModLabels){
 
-  #################################################################################################################
-  ###################################### PLOTS ####################################################################
-  #################################################################################################################
+    if(OutInt == "IRF"){Lab_Int_Ortho <- c("IRF Ortho","GIRF Ortho")}
+    else{Lab_Int_Ortho <- c("FEVD Ortho","GFEVD Ortho")}
+    IdxYieldGraphs_Ortho <- which(WishYieldGraphsOrtho == 1)
 
-  ########################################  Factors ###############################################################
+    for (d in IdxYieldGraphs_Ortho){
+      # Adjust the graph path
+      if(OutInt == "IRF"){PathAdj <- AdjustPathIRFs(Lab_Int_Ortho[d], "Yields", PathsGraphs, Economies, ModelType)
+      }else{ PathAdj <- AdjustPathFEVDs(Lab_Int_Ortho[d], "Yields", PathsGraphs, Economies, ModelType) }
 
-  GraphsBinaryFactors <- c(InputsForOutputs[[ModelType]]$IRF$WishGraphs$RiskFactorsBootstrap,
-                          InputsForOutputs[[ModelType]]$GIRF$WishGraphs$RiskFactorsBootstrap)
+      # Labels of shocks and response variables
+      nmResponse <-  dimnames(NumOutPE[[Lab_Int[d]]][[ModelType]]$Yields$Ortho)[[2]]
+      nmShock <-  dimnames(NumOutPE[[Lab_Int[d]]][[ModelType]]$Yields$Ortho)[[3]]
 
-  IdxFacGraphs <- which(GraphsBinaryFactors == 1)
+      # Folder Creation
+      FolderCreation_Boot(ModelType, Lab_Int[d], Economies, "Yields", Ortho = TRUE)
 
+      # Create plots
+      if (Lab_Int[d] %in% c("IRF","GIRF")){ DimInt <- FacDim
+      }else if(Lab_Int[d] %in% c("FEVD", "GFEVD")){ DimInt <- C*YielDim }
 
-  if (any(GraphsBinaryFactors==1)){
+      for(b in 1:DimInt){
+        plot_list  <- Boot_DataGraphYield_perShock(NumOutBounds, NumOutPE, b, nmResponse, Lab_Int[d],
+                                                   ModelType, FacDim, C*YielDim, Horiz, Economies, Ortho = TRUE)
 
-    cat(' ** IRFs/GIRFs (Bootstrap) \n' )
-
-    plot_list <- list()
-
-
-      for (d in IdxFacGraphs){
-        # Folder Creation
-        dir.create( paste(tempdir(), "/Outputs/", ModelType, "/Bootstrap/", LabIRF[d], sep=""))
-        dir.create( paste(tempdir(), "/Outputs/", ModelType, "/Bootstrap/", LabIRF[d], "/Factors", sep=""))
-
-        for (b in 1:K){
-          for (i in 1:K){
-            LL <- NumOutBounds[[d]][[ModelType]]$Factors$INF[,i,b]
-            UU <- NumOutBounds[[d]][[ModelType]]$Factors$SUP[,i,b]
-            MM <- NumOutBounds[[d]][[ModelType]]$Factors$MED[,i,b]
-            if (any(ModelType ==c("JLL original", "JLL No DomUnit", "JLL joint Sigma"))){
-              PP <- NumOutPE[[LabIRF[d]]][[ModelType]]$Factors$NonOrtho[,i,b ]
-            }else{ PP <- NumOutPE[[LabIRF[d]]][[ModelType]]$Factors[,i,b ]} # Point estimate
-
-            ALL <- data.frame(cbind(LL,MM,PP, UU))
-            TimeSpan <- 1:InputsForOutputs[[ModelType]][[LabIRF[d]]]$horiz
-            ALL$TimeSpan <- TimeSpan
-
-            nmResponse <- DimLabelsFac[[2]] # names of the "response" factor
-            nmShock <- DimLabelsFac[[3]] # names of the shock
-
-            p <- ggplot(data = ALL, aes(x= TimeSpan )) +  geom_line(aes(y = LL), color = 'blue') + geom_line(aes(y = MM), color = 'green') +
-              geom_line(aes(y = UU), color = 'red') +  geom_line(aes(y = PP)) + theme_classic() +
-              theme(plot.title = element_text(size = 6, face = "bold", hjust = 0.5),
-                    axis.title.x=element_blank(), axis.title.y=element_blank() ) +
-              ggtitle( nmResponse[i]) + geom_hline(yintercept=0)
-
-            plot_list[[i]] <- p
-          }
-          subplots <- cowplot::plot_grid(plotlist= plot_list, ncol=3)
-          suppressMessages(ggplot2::ggsave(subplots, file=paste0(LabIRF[d],"Factors_shock_to_", nmShock[b], ".png"),
-                          path= PathsGraphs[[ModelType]][[LabIRF[d]]][["Factors"]]))
-        }
+        subplots <- cowplot::plot_grid(plotlist= plot_list, ncol= 3)
+        suppressMessages(ggplot2::ggsave(subplots, file=paste0(Lab_Int[d], Graph_Lab, nmShock[b], ".png"),
+                                         path= PathAdj))
       }
-
+    }
   }
-
-  ########################################  Yields ###############################################################
-
-  GraphsBinaryYields <- c(InputsForOutputs[[ModelType]]$IRF$WishGraphs$YieldsBootstrap,
-                          InputsForOutputs[[ModelType]]$GIRF$WishGraphs$YieldsBootstrap)
-
-  IdxYieldsGraphs <- which(GraphsBinaryYields == 1)
-
-
-  if (any(GraphsBinaryYields==1)){
-
-    plot_list <- list()
-
-      for (d in IdxYieldsGraphs){
-
-        # Folder Creation
-        dir.create( paste(tempdir(), "/Outputs/", ModelType, "/Bootstrap/", LabIRF[d], sep=""))
-        dir.create( paste(tempdir(), "/Outputs/", ModelType, "/Bootstrap/", LabIRF[d], "/Yields", sep=""))
-
-        for (b in 1:K){
-          for (i in 1:CJ){
-            LL <- NumOutBounds[[d]][[ModelType]]$Yields$INF[,i,b]
-            UU <- NumOutBounds[[d]][[ModelType]]$Yields$SUP[,i,b]
-            MM <- NumOutBounds[[d]][[ModelType]]$Yields$MED[,i,b]
-            if (any(ModelType ==c("JLL original", "JLL No DomUnit", "JLL joint Sigma"))){
-              PP <- NumOutPE[[LabIRF[d]]][[ModelType]]$Yields$NonOrtho[,i,b ]
-            }else{ PP <- NumOutPE[[LabIRF[d]]][[ModelType]]$Yields[,i,b ] } # Point estimate
-
-            ALL <- data.frame(cbind(LL,MM,PP, UU))
-            TimeSpan <- 1:InputsForOutputs[[ModelType]][[LabIRF[d]]]$horiz
-            ALL$TimeSpan <- TimeSpan
-
-            nmResponse <- DimLabelsYies[[2]] # names of the "response" factor
-            nmShock <- DimLabelsYies[[3]] # names of the shock
-
-            p <- ggplot(data = ALL, aes(x= TimeSpan )) +  geom_line(aes(y = LL), color = 'blue') + geom_line(aes(y = MM), color = 'green') +
-              geom_line(aes(y = UU), color = 'red') +  geom_line(aes(y = PP)) +  theme_classic() +
-              theme(plot.title = element_text(size = 6, face = "bold", hjust = 0.5),
-                    axis.title.x=element_blank(), axis.title.y=element_blank() ) +
-              ggtitle( nmResponse[i]) + geom_hline(yintercept=0)
-
-            plot_list[[i]] <- p
-          }
-          subplots <- cowplot::plot_grid(plotlist= plot_list, ncol=3)
-          suppressMessages(ggplot2::ggsave(subplots, file=paste0(LabIRF[d],"Yields_shock_to_", nmShock[b], ".png"),
-                          path= PathsGraphs[[ModelType]][[LabIRF[d]]][["Yields"]]))
-        }
-        }
-
-  }
-
-  return(NumOutBounds)
-
 }
 
-
-##############################################################################################################
-#' Creates the confidence bounds and the graphs of FEVDs and GFEVDs after bootstrap ("joint Q" models)
+####################################################################################################
+#'Generates the desired bootstrap graphs
 #'
-#'@param ModelType string-vector containing the label of the model to be estimated
-#'@param ModelBootstrap list containing the complete set of model parameters after bootstrap estimation procedure
-#'@param NumOutPE  list of model parameter point estimates
-#'@param InputsForOutputs list conataining the desired inputs for the construction of the outputs of interest
-#'@param Economies  string-vector containing the names of the economies which are part of the economic system
-#'@param PathsGraphs path of the folder in which the graphs will be saved
+#'@param NumOutBounds numerical output set from the bootstrap analysis
+#'@param NumOutPE numerical output set from the point estimate analysis
+#'@param IdxShock index associated with the shock variable
+#'@param nmResponse Label of the response variable
+#'@param Lab_Int Output types "IRF" or "FEVD"
+#'@param ModelType desired model type
+#'@param FacDim dimension from bond yield set
+#'@param YieldDim dimension from the P-dynamics
+#'@param Horiz horizon of analysis
+#'@param Economies name of economies forming the economic system
+#'@param Ortho Option for orthogonal outputs, for JLL models. Default is FALSE.
 #'
 #'@keywords internal
 
+Boot_DataGraphYield_perShock <- function(NumOutBounds, NumOutPE, IdxShock, nmResponse, Lab_Int, ModelType,
+                                         FacDim, YieldDim, Horiz, Economies = NULL, Ortho = FALSE){
 
-FEVDandGFEVDbs_jointQ <- function(ModelType, ModelBootstrap, NumOutPE, InputsForOutputs, Economies, PathsGraphs){
+  if (Lab_Int %in% c("IRF","GIRF")){ DimInt <- YieldDim
+  }else if(Lab_Int  %in% c("FEVD", "GFEVD")){ DimInt <- FacDim }
 
-  ndraws <- InputsForOutputs[[ModelType]]$Bootstrap$ndraws
-  pctg <-   InputsForOutputs[[ModelType]]$Bootstrap$pctg
+  plot_list <- list()
 
+  for (i in 1:DimInt){
 
-  pctg_inf <- (100-pctg)/2
-  pctg_sup <- 100 - (100-pctg)/2
-  quants <- c(pctg_inf, 50, pctg_sup)/100 # Desired quantiles
+    # Get Confidence interval set
+    CI_data <- BuildCI_Yields(NumOutBounds, NumOutPE, Lab_Int, ModelType, Economies, i, IdxShock, Ortho)
 
+    # Build data-frame and add time-span
+    TimeSpan <- 1:Horiz
+    ALLdata <- data.frame( LL = CI_data$LL,  MM = CI_data$MM, PP = CI_data$PP, UU = CI_data$UU, TimeSpan = TimeSpan)
 
-  # initializarion
+    p <- Boot_graph_template(ALLdata, nmResponse[i])
+
+    plot_list[[i]] <- p
+  }
+
+  return(plot_list)
+}
+###########################################################################################
+#'Build Confidence intervals for yield-related outputs
+#'
+#'@param NumOutBounds numerical output set from the bootstrap analysis
+#'@param NumOutPE numerical output set from the point estimate analysis
+#'@param Lab_Int Label of interest. available options are "IRF" and "FEVD"
+#'@param ModelType desired model type
+#'@param Economies name of the economies forming the economic system
+#'@param IdxResp index associated with the response variable
+#'@param IdxShock index associated with the shock variable
+#'@param Ortho Option for orthogonal outputs, for JLL models. Default is FALSE.
+#'
+#'@keywords internal
+
+BuildCI_Yields <- function(NumOutBounds, NumOutPE, Lab_Int, ModelType, Economies, IdxResp, IdxShock, Ortho = FALSE){
+
+    # a) Confidence Bounds
+    if ( any(ModelType ==c("JPS original", "JPS global", "GVAR single"))){
+      LL <- NumOutBounds$Yields[[Lab_Int]][[ModelType]][[Economies]]$INF[ , IdxResp, IdxShock]
+      UU <- NumOutBounds$Yields[[Lab_Int]][[ModelType]][[Economies]]$SUP[ , IdxResp, IdxShock]
+      MM <- NumOutBounds$Yields[[Lab_Int]][[ModelType]][[Economies]]$MED[ , IdxResp, IdxShock]
+    } else if(any(ModelType ==c("JLL original", "JLL No DomUnit", "JLL joint Sigma")) & Ortho == 1){
+      LL <- NumOutBounds$Yields[[Lab_Int]][[ModelType]]$Ortho$INF[ , IdxResp, IdxShock]
+      UU <- NumOutBounds$Yields[[Lab_Int]][[ModelType]]$Ortho$SUP[ , IdxResp, IdxShock]
+      MM <- NumOutBounds$Yields[[Lab_Int]][[ModelType]]$Ortho$MED[ , IdxResp, IdxShock]
+    }else{
+      LL <- NumOutBounds$Yields[[Lab_Int]][[ModelType]]$INF[ , IdxResp, IdxShock]
+      UU <- NumOutBounds$Yields[[Lab_Int]][[ModelType]]$SUP[ , IdxResp, IdxShock]
+      MM <- NumOutBounds$Yields[[Lab_Int]][[ModelType]]$MED[ , IdxResp, IdxShock]
+    }
+
+    # b) Point estimate
+    if ( any(ModelType ==c("JPS original", "JPS global", "GVAR single"))){
+      PP <- NumOutPE[[Lab_Int]][[ModelType]][[Economies]]$Yields[ , IdxResp, IdxShock]
+    }else if(any(ModelType ==c("JLL original", "JLL No DomUnit", "JLL joint Sigma"))){
+      if (Ortho){ PP <- NumOutPE[[Lab_Int]][[ModelType]]$Yields$Ortho[ , IdxResp, IdxShock]
+      } else{ PP <- NumOutPE[[Lab_Int]][[ModelType]]$Yields$NonOrtho[ , IdxResp, IdxShock]}
+    }else{ PP <- NumOutPE[[Lab_Int]][[ModelType]]$Yields[ ,IdxResp, IdxShock]}
+
+  return(list(LL= LL, MM = MM, PP = PP, UU = UU))
+}
+
+###############################################################################################
+#' Compute the confidence bounds around the P-dynamics and bond yields for FEVD and GFEVD
+#'
+#'@param ModelBootstrap numerical output set from the bootstrap analysis
+#'@param quants quantile of the confidence bounds
+#'@param FacDim dimension of the risk factor set
+#'@param YieDim dimension of the bond yield set
+#'@param ModelType desired model type
+#'@param Economies Economies that are part of the economic system
+#'@param ndraws number of draws
+#'@param Horiz horizon of numerical outputs
+#'
+#'@keywords internal
+
+ComputeBounds_FEVDandGFEVD <- function(ModelBootstrap, quants, FacDim, YieDim, ModelType, Economies, ndraws, Horiz){
+
   LabFEVD <- c("FEVD","GFEVD")
-  OutNames <- names(ModelBootstrap$NumOutDraws)
-  C <- length(Economies)
-  J <-  length(ModelBootstrap$GeneralInputs$mat)
-  CJ <- C*J
 
-
-  HorizNumOut <- c(InputsForOutputs[[ModelType]]$IRF$horiz, InputsForOutputs[[ModelType]]$FEVD$horiz,
-                   InputsForOutputs[[ModelType]]$GIRF$horiz, InputsForOutputs[[ModelType]]$GFEVD$horiz)
-
-  NumOutBounds <- list()
-
-
-      for (nn in match(LabFEVD, OutNames) ){
-
-
-      K <- nrow(ModelBootstrap$ParaDraws[[ModelType]][[1]]$ests$K1Z)
-
-      ############################################# Factors ######################################################################
-
-      INFfacs <- array(NA, c( HorizNumOut[[nn]], K,K)) # lower bound
-      MEDfacs <- array(NA, c( HorizNumOut[[nn]], K,K)) # Median
-      SUPfacs <- array(NA, c( HorizNumOut[[nn]], K,K)) # upper bound
-      if (any(ModelType ==c("JLL original", "JLL No DomUnit", "JLL joint Sigma"))){
-        DimLabelsFac <- dimnames(ModelBootstrap$NumOutDraws[[OutNames[nn]]][[ModelType]][[1]]$Factors$NonOrtho)
-      }else{
-        DimLabelsFac <- dimnames(ModelBootstrap$NumOutDraws[[OutNames[nn]]][[ModelType]][[1]]$Factors)
-      }
-
-      dimnames(INFfacs) <- DimLabelsFac
-      dimnames(MEDfacs) <- DimLabelsFac
-      dimnames(SUPfacs) <- DimLabelsFac
-
-
-      # Allocation
-      AllShocksOnePeriodFacs <- array(NA, c(ndraws, K, K))
-      Facs <- matrix(NA, nrow = ndraws, ncol = K)
-
-      for (thor in 1: HorizNumOut[[nn]]){
-        for (h in 1:K){ # loop through the shocks
-          for (g in 1:ndraws){ # # loop through the draws
-            if (any(ModelType ==c("JLL original",  "JLL No DomUnit",  "JLL joint Sigma"))){
-              Facs[g,] <- ModelBootstrap$NumOutDraws[[OutNames[nn]]][[ModelType]][[g]]$Factors$NonOrtho[thor,,h] # All responses to one shock in one horizon
-            }else{
-              Facs[g,] <- ModelBootstrap$NumOutDraws[[OutNames[nn]]][[ModelType]][[g]]$Factors[thor,,h]
-            }
-
-          }
-
-          AllShocksOnePeriodFacs[,,h]  <- apply(Facs,2, sort) # Ensures that each column is in ascending order
-
-          INFfacs[thor, ,h] <- apply(AllShocksOnePeriodFacs[,,h], 2, stats::quantile, probs = quants[1])
-          MEDfacs[thor, ,h] <- apply(AllShocksOnePeriodFacs[,,h], 2, stats::quantile, probs = quants[2])
-          SUPfacs[thor, ,h] <- apply(AllShocksOnePeriodFacs[,,h], 2, stats::quantile, probs = quants[3])
-        }
-      }
-
-      NumOutBounds[[OutNames[nn]]][[ModelType]]$Factors$INF <- INFfacs
-      NumOutBounds[[OutNames[nn]]][[ModelType]]$Factors$MED <- MEDfacs
-      NumOutBounds[[OutNames[nn]]][[ModelType]]$Factors$SUP <- SUPfacs
-
-
-      ############################################# Yields ######################################################################
-      INFyies <- array(NA, c(HorizNumOut[[nn]], K, CJ)) # lower bound
-      MEDyies <- array(NA, c(HorizNumOut[[nn]], K, CJ)) # Median
-      SUPyies <- array(NA, c(HorizNumOut[[nn]], K, CJ)) # upper bound
-
-      if (any(ModelType ==c("JLL original", "JLL No DomUnit", "JLL joint Sigma"))){
-        DimLabelsYies <- dimnames(ModelBootstrap$NumOutDraws[[OutNames[nn]]][[ModelType]][[1]]$Yields$NonOrtho)
-      } else{
-        DimLabelsYies <- dimnames(ModelBootstrap$NumOutDraws[[OutNames[nn]]][[ModelType]][[1]]$Yields)
-      }
-      dimnames(INFyies) <- DimLabelsYies
-      dimnames(MEDyies) <- DimLabelsYies
-      dimnames(SUPyies) <- DimLabelsYies
-
-      #Allocation
-      AllShocksOnePeriodyies <- array(NA, c(ndraws, K, CJ))
-      yies <- matrix(NA, nrow = ndraws, ncol = K)
-
-      for (thor in 1:HorizNumOut[[nn]]){
-        for (h in 1:CJ){
-          for (g in 1:ndraws){
-
-            if (any(ModelType ==c("JLL original", "JLL No DomUnit", "JLL joint Sigma"))){
-              yies[g,] <- ModelBootstrap$NumOutDraws[[OutNames[nn]]][[ModelType]][[g]]$Yields$NonOrtho[thor, ,h]
-            }else{
-              yies[g,] <- ModelBootstrap$NumOutDraws[[OutNames[nn]]][[ModelType]][[g]]$Yields[thor, ,h] # All responses to one shock in one horizon
-            }
-
-          }
-          AllShocksOnePeriodyies[,,h]  <- apply(yies,2, sort) # Ensures that each column is in ascending order
-
-          INFyies[thor, ,h] <- apply(AllShocksOnePeriodyies[,,h], 2, stats::quantile, probs = quants[1])
-          MEDyies[thor, ,h] <- apply(AllShocksOnePeriodyies[,,h], 2, stats::quantile, probs = quants[2])
-          SUPyies[thor, ,h] <- apply(AllShocksOnePeriodyies[,,h], 2, stats::quantile, probs = quants[3])
-        }
-      }
-
-
-      NumOutBounds[[OutNames[nn]]][[ModelType]]$Yields$INF <- INFyies
-      NumOutBounds[[OutNames[nn]]][[ModelType]]$Yields$MED <- MEDyies
-      NumOutBounds[[OutNames[nn]]][[ModelType]]$Yields$SUP <- SUPyies
-
-    }
-
-
-  #################################################################################################################
-  ###################################### PLOTS ####################################################################
-  #################################################################################################################
-
-  ########################################  Factors ###############################################################
-  GraphsBinaryFactors <- c(InputsForOutputs[[ModelType]]$FEVD$WishGraphs$RiskFactorsBootstrap,
-                           InputsForOutputs[[ModelType]]$GFEVD$WishGraphs$RiskFactorsBootstrap)
-
-  IdxFacGraphs <- which(GraphsBinaryFactors == 1)
-
-
-
-  if (any(GraphsBinaryFactors==1)){
-
-    cat(' ** FEVDs/GFEVDs (Bootstrap) \n\n' )
-
-    plot_list <- list()
-
-
-      for (d in IdxFacGraphs){
-        # Folder Creation
-        dir.create( paste(tempdir(), "/Outputs/", ModelType, "/Bootstrap/", LabFEVD[d], sep=""))
-        dir.create( paste(tempdir(), "/Outputs/", ModelType, "/Bootstrap/", LabFEVD[d], "/Factors", sep=""))
-
-
-        for (b in 1:K){
-          for (i in 1:K){
-            LL <- NumOutBounds[[d]][[ModelType]]$Factors$INF[,i,b]
-            UU <- NumOutBounds[[d]][[ModelType]]$Factors$SUP[,i,b]
-            MM <- NumOutBounds[[d]][[ModelType]]$Factors$MED[,i,b]
-            if (any(ModelType ==c("JLL original", "JLL No DomUnit", "JLL joint Sigma"))){
-              PP <- NumOutPE[[LabFEVD[d]]][[ModelType]]$Factors$NonOrtho[,i,b ]
-            }else{  PP <- NumOutPE[[LabFEVD[d]]][[ModelType]]$Factors[,i,b ]} # Point estimate}
-
-
-            ALL <- data.frame(cbind(LL,MM,PP, UU))
-            TimeSpan <- 1:InputsForOutputs[[ModelType]][[LabFEVD[d]]]$horiz
-            ALL$TimeSpan <- TimeSpan
-
-            nmResponse <- DimLabelsFac[[2]] # names of the "response" factor
-            nmShock <- DimLabelsFac[[3]] # names of the shock
-
-            p <- ggplot(data = ALL, aes(x= TimeSpan )) +  geom_line(aes(y = LL), color = 'blue') + geom_line(aes(y = MM), color = 'green') +
-              geom_line(aes(y = UU), color = 'red') +  geom_line(aes(y = PP)) +  theme_classic() +
-              theme(plot.title = element_text(size = 6, face = "bold", hjust = 0.5),
-                    axis.title.x=element_blank(), axis.title.y=element_blank() ) +
-              ggtitle( nmResponse[i]) + geom_hline(yintercept=0)
-
-            plot_list[[i]] <- p
-          }
-          subplots <- cowplot::plot_grid(plotlist= plot_list, ncol=3)
-          suppressMessages(ggplot2::ggsave(subplots, file=paste0(LabFEVD[d],"Factors_", nmShock[b], ".png"),
-                          path= PathsGraphs[[ModelType]][[LabFEVD[d]]][["Factors"]]))
-        }
-      }
-
-  }
-
-  ########################################  Yields ###############################################################
-
-  GraphsBinarYields <- c(InputsForOutputs[[ModelType]]$FEVD$WishGraphs$YieldsBootstrap,
-                           InputsForOutputs[[ModelType]]$GFEVD$WishGraphs$YieldsBootstrap)
-
-  IdxYieldGraphs <- which(GraphsBinarYields == 1)
-
-
-  if (any(GraphsBinarYields==1)){
-
-
-    plot_list <- list()
-
-      for (d in IdxYieldGraphs){
-        # Folder Creation
-        dir.create( paste(tempdir(), "/Outputs/", ModelType, "/Bootstrap/", LabFEVD[d], sep=""))
-        dir.create( paste(tempdir(), "/Outputs/", ModelType, "/Bootstrap/", LabFEVD[d], "/Yields", sep=""))
-
-        for (b in 1:CJ){
-          for (i in 1:K){
-            LL <- NumOutBounds[[d]][[ModelType]]$Yields$INF[,i,b]
-            UU <- NumOutBounds[[d]][[ModelType]]$Yields$SUP[,i,b]
-            MM <- NumOutBounds[[d]][[ModelType]]$Yields$MED[,i,b]
-            if (any(ModelType ==c("JLL original", "JLL No DomUnit", "JLL joint Sigma"))){
-              PP <- NumOutPE[[LabFEVD[d]]][[ModelType]]$Yields$NonOrtho[,i,b ]
-            }else{  PP <- NumOutPE[[LabFEVD[d]]][[ModelType]]$Yields[,i,b ] } # Point estimate
-
-            ALL <- data.frame(cbind(LL,MM,PP, UU))
-            TimeSpan <- 1:InputsForOutputs[[ModelType]][[LabFEVD[d]]]$horiz
-            ALL$TimeSpan <- TimeSpan
-
-            nmResponse <- DimLabelsYies[[2]] # names of the "response" factor
-            nmShock <- DimLabelsYies[[3]] # names of the shock
-
-            p <- ggplot(data = ALL, aes(x= TimeSpan )) +  geom_line(aes(y = LL), color = 'blue') + geom_line(aes(y = MM), color = 'green') +
-              geom_line(aes(y = UU), color = 'red') +  geom_line(aes(y = PP)) + theme_classic() +
-              theme(plot.title = element_text(size = 6, face = "bold", hjust = 0.5),
-                    axis.title.x=element_blank(), axis.title.y=element_blank() ) +
-              ggtitle( nmResponse[i]) + geom_hline(yintercept=0)
-
-            plot_list[[i]] <- p
-          }
-          subplots <- cowplot::plot_grid(plotlist= plot_list, ncol=3)
-          suppressMessages(ggplot2::ggsave(subplots, file=paste0(LabFEVD[d],"Yields_", nmShock[b], ".png"),
-                          path= PathsGraphs[[ModelType]][[LabFEVD[d]]][["Yields"]]))
-        }
-      }
-
-
-  }
-
-  return(NumOutBounds)
-
+  # 1) Factors
+  NumOutBounds_Fac  <- FactorBounds_FEVDandGFEVD(ModelBootstrap, quants, ModelType, ndraws, Horiz, FacDim,
+                                                 LabFEVD, Economies)
+
+  # 2) Yields
+  # NOTE: in order to avoid over-complicating the code, in the function below the arguments "YieDim" and "FacDim"
+  # are swapped wrt to the original function design. This helps to accommodate the code for the different output
+  #structures in both IRF and FEVD.
+  NumOutBounds_Yie <- YieldBounds_FEVDandGFEVD(ModelBootstrap, quants, ModelType, ndraws, Horiz, YieDim, FacDim,
+                                               LabFEVD, Economies)
+  # Export output
+  Out <- list(Factors = NumOutBounds_Fac , Yields= NumOutBounds_Yie)
+
+  return(Out)
 }
 
-
-##############################################################################################################
-########################  OUTPUTS FOR ORTHOGONALIZED FACTORS #################################################
-##############################################################################################################
-#' Creates the confidence bounds and the graphs of IRFs and GIRFs after bootstrap (JLL-based models)
+###############################################################################################
+#'Compute the confidence bounds for the model bond P-dynamics-related outputs
 #'
-#'@param ModelType  string-vector containing the label of the model to be estimated
-#'@param ModelBootstrap list containing the complete set of model parameters after bootstrap estimation procedure
-#'@param NumOutPE  list of model parameter point estimates
-#'@param InputsForOutputs list conataining the desired inputs for the construction of the outputs of interest
-#'@param Economies  string-vector containing the names of the economies which are part of the economic system
-#'@param PathsGraphs path of the folder in which the graphs will be saved
-#'
+#'@param ModelBootstrap numerical output set from the bootstrap analysis
+#'@param quants quantile of the confidence bounds
+#'@param ModelType desired model type
+#'@param ndraws number of draws
+#'@param Horiz horizon of numerical outputs
+#'@param FacDim dimension of the risk factor set
+#'@param LabFEVD vector containing the labels "FEVD" and "GFEVD"
+#'@param Economies Economies that are part of the economic system
 #'
 #'@keywords internal
 
+FactorBounds_FEVDandGFEVD <- function(ModelBootstrap, quants, ModelType, ndraws, Horiz, FacDim, LabFEVD, Economies){
 
-IRFandGIRFbs_jointQ_Ortho <- function(ModelType, ModelBootstrap, NumOutPE, InputsForOutputs, Economies, PathsGraphs){
+  NumOutBounds_Fac <- list()
 
+  # 1) For models estimated on a country-by-country basis
+  if ( any(ModelType ==c("JPS original", "JPS global", "GVAR single"))){
+    C <- length(Economies)
 
-  ndraws <- InputsForOutputs[[ModelType]]$Bootstrap$ndraws
-  pctg <-   InputsForOutputs[[ModelType]]$Bootstrap$pctg
+    for (nn in 1:length(LabFEVD)){
+      for (i in 1:C){
 
+        DrawSet <- ModelBootstrap$NumOutDraws[[LabFEVD[nn]]][[ModelType]][[Economies[i]]]
+        DimLabelsFac <- dimnames(DrawSet[[1]]$Factors)
 
-  #Define the percentiles
-  pctg_inf <- (100-pctg)/2
-  pctg_sup <- 100 - (100-pctg)/2
-  quants <- c(pctg_inf, 50, pctg_sup)/100 # Desired quantiles
-
-  # initializarion
-  LabIRF <- c("IRF","GIRF")
-  OutNames <- names(ModelBootstrap$NumOutDraws)
-  C <- length(Economies)
-  J <-  length(ModelBootstrap$GeneralInputs$mat)
-  CJ <- C*J
-
-
-  HorizNumOut <- c(InputsForOutputs[[ModelType]]$IRF$horiz, InputsForOutputs[[ModelType]]$FEVD$horiz,
-                   InputsForOutputs[[ModelType]]$GIRF$horiz, InputsForOutputs[[ModelType]]$GFEVD$horiz)
-
-  NumOutBounds <- list()
-
-
-  for (nn in match(LabIRF, OutNames) ){
-
-
-      K <- nrow(ModelBootstrap$ParaDraws[[ModelType]][[1]]$ests$K1Z)
-      ############################################# Factors ######################################################################
-
-      INFfacs <- array(NA, c(HorizNumOut[[nn]], K,K)) # lower bound
-      MEDfacs <- array(NA, c(HorizNumOut[[nn]], K,K)) # Median
-      SUPfacs <- array(NA, c(HorizNumOut[[nn]], K,K)) # upper bound
-
-      DimLabelsFac <- dimnames(ModelBootstrap$NumOutDraws[[OutNames[nn]]][[ModelType]][[1]]$Factors$Ortho)
-      dimnames(INFfacs) <- DimLabelsFac
-      dimnames(MEDfacs) <- DimLabelsFac
-      dimnames(SUPfacs) <- DimLabelsFac
-
-
-      # Allocation
-      AllShocksOnePeriodFacs <- array(NA, c(ndraws, K, K))
-      Facs <- matrix(NA, nrow = ndraws, ncol = K)
-
-      for (thor in 1:HorizNumOut[[nn]]){
-        for (h in 1:K){ # loop through the shocks
-          for (g in 1:ndraws){ # # loop through the draws
-            Facs[g,] <- ModelBootstrap$NumOutDraws[[OutNames[nn]]][[ModelType]][[g]]$Factors$Ortho[thor,,h] # All responses to one shock in one horizon
-          }
-
-          AllShocksOnePeriodFacs[,,h]  <- apply(Facs,2, sort) # Ensures that each column is in ascending order
-
-          INFfacs[thor, ,h] <- apply(AllShocksOnePeriodFacs[,,h], 2, stats::quantile, probs = quants[1])
-          MEDfacs[thor, ,h] <- apply(AllShocksOnePeriodFacs[,,h], 2, stats::quantile, probs = quants[2])
-          SUPfacs[thor, ,h] <- apply(AllShocksOnePeriodFacs[,,h], 2, stats::quantile, probs = quants[3])
-        }
+        NumOutBounds_CS <- FacQuantile_bs(DrawSet, LabFEVD[nn], ndraws, quants, Horiz, FacDim, DimLabelsFac,
+                                          ModelType)
+        NumOutBounds_Fac[[LabFEVD[nn]]][[ModelType]][[Economies[i]]] <- NumOutBounds_CS
       }
-
-      NumOutBounds[[OutNames[nn]]][[ModelType]]$Factors$INF <- INFfacs
-      NumOutBounds[[OutNames[nn]]][[ModelType]]$Factors$MED <- MEDfacs
-      NumOutBounds[[OutNames[nn]]][[ModelType]]$Factors$SUP <- SUPfacs
-
-
-      ############################################# Yields ######################################################################
-      INFyies <- array(NA, c(HorizNumOut[[nn]], CJ, K)) # lower bound
-      MEDyies <- array(NA, c(HorizNumOut[[nn]], CJ, K)) # Median
-      SUPyies <- array(NA, c(HorizNumOut[[nn]], CJ, K)) # upper bound
-
-
-      DimLabelsYies <- dimnames(ModelBootstrap$NumOutDraws[[OutNames[nn]]][[ModelType]][[1]]$Yields$Ortho)
-      dimnames(INFyies) <- DimLabelsYies
-      dimnames(MEDyies) <- DimLabelsYies
-      dimnames(SUPyies) <- DimLabelsYies
-
-
-      #Allocation
-      AllShocksOnePeriodyies <- array(NA, c(ndraws, CJ, K))
-      yies <- matrix(NA, nrow = ndraws, ncol = CJ)
-
-      for (thor in 1:HorizNumOut[[nn]]){
-        for (h in 1:K){
-          for (g in 1:ndraws){
-            yies[g,] <- ModelBootstrap$NumOutDraws[[OutNames[nn]]][[ModelType]][[g]]$Yields$Ortho[thor, ,h] # All responses to one shock in one horizon
-          }
-          AllShocksOnePeriodyies[,,h]  <- apply(yies,2, sort) # Ensures that each column is in ascending order
-
-          INFyies[thor, ,h] <- apply(AllShocksOnePeriodyies[,,h], 2, stats::quantile, probs = quants[1])
-          MEDyies[thor, ,h] <- apply(AllShocksOnePeriodyies[,,h], 2, stats::quantile, probs = quants[2])
-          SUPyies[thor, ,h] <- apply(AllShocksOnePeriodyies[,,h], 2, stats::quantile, probs = quants[3])
-        }
-      }
-
-
-      NumOutBounds[[OutNames[nn]]][[ModelType]]$Yields$INF <- INFyies
-      NumOutBounds[[OutNames[nn]]][[ModelType]]$Yields$MED <- MEDyies
-      NumOutBounds[[OutNames[nn]]][[ModelType]]$Yields$SUP <- SUPyies
-
     }
 
+  }else{
 
-  #################################################################################################################
-  ###################################### PLOTS ####################################################################
-  #################################################################################################################
+    # 2) For models estimated for countries jointly
+    JLL_ModLabel <- c("JLL original", "JLL No DomUnit", "JLL joint Sigma")
 
-  ########################################  Factors ###############################################################
-  GraphsBinarFactors <- c(InputsForOutputs[[ModelType]]$IRF$WishGraphsOrtho$RiskFactorsBootstrap,
-                         InputsForOutputs[[ModelType]]$GIRF$WishGraphsOrtho$RiskFactorsBootstrap)
+    for (nn in 1:length(LabFEVD)){
+      DrawSet <- ModelBootstrap$NumOutDraws[[LabFEVD[nn]]][[ModelType]]
 
-  IdxFactorsGraphs <- which(GraphsBinarFactors == 1)
+      if (ModelType %in% JLL_ModLabel){  DimLabelsFac <- dimnames(DrawSet[[1]]$Factors$NonOrtho)
+      }else{ DimLabelsFac <- dimnames(DrawSet[[1]]$Factors)}
 
+      NumOutBounds_AllEco <- FacQuantile_bs(DrawSet, LabFEVD[nn], ndraws, quants, Horiz, FacDim, DimLabelsFac,
+                                            ModelType)
+      NumOutBounds_Fac[[LabFEVD[nn]]][[ModelType]] <- NumOutBounds_AllEco
+    }
 
-  if (any(GraphsBinarFactors==1)){
+    #  Orhtgonolized version (JLL-based models)
+    if (ModelType %in% JLL_ModLabel){
 
-    cat(' ** IRFs/GIRFs-Ortho (Bootstrap) \n' )
+      LabFEVD_Ortho <- c("FEVD_Ortho","GFEVD_Ortho")
 
-    plot_list <- list()
+      for (nn in 1:length(LabFEVD_Ortho)){
+        DimLabelsFac <- dimnames(DrawSet[[1]]$Factors$Ortho)
+        NumOutBounds_AllEco_Ortho <- FacQuantile_bs(DrawSet, LabFEVD_Ortho[nn], ndraws, quants, Horiz, FacDim,
+                                                    DimLabelsFac, ModelType, Ortho = TRUE)
 
-
-      for (d in IdxFactorsGraphs){
-        # Folder Creation
-        dir.create( paste(tempdir(), "/Outputs/", ModelType, "/Bootstrap/", LabIRF[d], sep=""))
-        dir.create( paste(tempdir(), "/Outputs/", ModelType, "/Bootstrap/", LabIRF[d], "/Factors", sep=""))
-        dir.create( paste(tempdir(), "/Outputs/", ModelType, "/Bootstrap/", LabIRF[d], "/Factors/Ortho", sep=""))
-
-        for (b in 1:K){
-          for (i in 1:K){
-            LL <- NumOutBounds[[d]][[ModelType]]$Factors$INF[,i,b]
-            UU <- NumOutBounds[[d]][[ModelType]]$Factors$SUP[,i,b]
-            MM <- NumOutBounds[[d]][[ModelType]]$Factors$MED[,i,b]
-            PP <- NumOutPE[[LabIRF[d]]][[ModelType]]$Factors$Ortho[,i,b ] # Point estimate
-
-            ALL <- data.frame(cbind(LL,MM,PP, UU))
-            TimeSpan <- 1:HorizNumOut[[nn]]
-            ALL$TimeSpan <- TimeSpan
-
-            nmResponse <- DimLabelsFac[[2]] # names of the "response" factor
-            nmShock <- DimLabelsFac[[3]] # names of the shock
-
-            p <- ggplot(data = ALL, aes(x= TimeSpan )) +  geom_line(aes(y = LL), color = 'blue') + geom_line(aes(y = MM), color = 'green') +
-              geom_line(aes(y = UU), color = 'red') +  geom_line(aes(y = PP)) + theme_classic() +
-              theme(plot.title = element_text(size = 6, face = "bold", hjust = 0.5),
-                    axis.title.x=element_blank(), axis.title.y=element_blank() ) +
-              ggtitle( nmResponse[i]) + geom_hline(yintercept=0)
-
-            plot_list[[i]] <- p
-          }
-          subplots <- cowplot::plot_grid(plotlist= plot_list, ncol=3)
-          suppressMessages(ggplot2::ggsave(subplots, file=paste0(LabIRF[d],"Factors_shock_to_", nmShock[b],"ORTHO", ".png"),
-                          path= PathsGraphs[[ModelType]][[LabIRF[d]]][["Factors Ortho"]]))
-        }
+        NumOutBounds_Fac[[LabFEVD[nn]]][[ModelType]]$Ortho <- NumOutBounds_AllEco_Ortho
       }
-
+    }
   }
-
-  ########################################  Yields ###############################################################
-
-  GraphsBinarYields <- c(InputsForOutputs[[ModelType]]$IRF$WishGraphsOrtho$YieldsBootstrap,
-                          InputsForOutputs[[ModelType]]$GIRF$WishGraphsOrtho$YieldsBootstrap)
-
-  IdxYieldssGraphs <- which(GraphsBinarYields == 1)
-
-
-  if (any(GraphsBinarYields==1)){
-
-
-    plot_list <- list()
-
-
-      for (d in IdxYieldssGraphs){
-
-        # Folder Creation
-        dir.create( paste(tempdir(), "/Outputs/", ModelType, "/Bootstrap/", LabIRF[d], sep=""))
-        dir.create( paste(tempdir(), "/Outputs/", ModelType, "/Bootstrap/", LabIRF[d], "/Yields", sep=""))
-        dir.create( paste(tempdir(), "/Outputs/", ModelType, "/Bootstrap/", LabIRF[d], "/Yields/Ortho", sep=""))
-
-        for (b in 1:K){
-          for (i in 1:CJ){
-            LL <- NumOutBounds[[d]][[ModelType]]$Yields$INF[,i,b]
-            UU <- NumOutBounds[[d]][[ModelType]]$Yields$SUP[,i,b]
-            MM <- NumOutBounds[[d]][[ModelType]]$Yields$MED[,i,b]
-            PP <- NumOutPE[[LabIRF[d]]][[ModelType]]$Yields$Ortho[,i,b ] # Point estimate
-
-            ALL <- data.frame(cbind(LL,MM,PP, UU))
-            TimeSpan <- 1:HorizNumOut[[nn]]
-            ALL$TimeSpan <- TimeSpan
-
-
-            nmResponse <- DimLabelsYies[[2]] # names of the "response" factor
-            nmShock <- DimLabelsYies[[3]] # names of the shock
-
-            p <- ggplot(data = ALL, aes(x= TimeSpan )) +  geom_line(aes(y = LL), color = 'blue') + geom_line(aes(y = MM), color = 'green') +
-              geom_line(aes(y = UU), color = 'red') +  geom_line(aes(y = PP)) + theme_classic() +
-              theme(plot.title = element_text(size = 6, face = "bold", hjust = 0.5),
-                    axis.title.x=element_blank(), axis.title.y=element_blank() ) +
-              ggtitle( nmResponse[i]) + geom_hline(yintercept=0)
-
-            plot_list[[i]] <- p
-          }
-          subplots <- cowplot::plot_grid(plotlist= plot_list, ncol=3)
-          suppressMessages(ggplot2::ggsave(subplots, file=paste0(LabIRF[d],"Yields_shock_to_", nmShock[b], "ORTHO", ".png"),
-                          path= PathsGraphs[[ModelType]][[LabIRF[d]]][["Yields Ortho"]]))
-        }
-      }
-
-
-
-  }
-
-  return(NumOutBounds)
-
+  return(NumOutBounds_Fac)
 }
-
-
-##############################################################################################################
-#' Creates the confidence bounds and the graphs of FEVDs and GFEVDs after bootstrap (JLL-based models)
+######################################################################################################
+#'Compute the confidence bounds for the model bond yield-related outputs
 #'
-#'@param ModelType string-vector containing the label of the model to be estimated
-#'@param ModelBootstrap list containing the complete set of model parameters after bootstrap estimation procedure
-#'@param NumOutPE  list of model parameter point estimates
-#'@param InputsForOutputs list conataining the desired inputs for the construction of the outputs of interest
-#'@param Economies a string-vector containing the names of the economies which are part of the economic system
-#'@param PathsGraphs path of the folder in which the graphs will be saved
-#'
+#'@param ModelBootstrap numerical output set from the bootstrap analysis
+#'@param quants quantile of the confidence bounds
+#'@param ModelType desired model type
+#'@param ndraws number of draws
+#'@param Horiz horizon of numerical outputs
+#'@param FacDim dimension of the risk factor set
+#'@param YieDim dimension of the bond yield set
+#'@param LabFEVD vector containing the labels "FEVD" and "GFEVD"
+#'@param Economies Economies that are part of the economic system
 #'
 #'@keywords internal
 
+YieldBounds_FEVDandGFEVD <- function(ModelBootstrap, quants, ModelType, ndraws, Horiz, FacDim, YieDim, LabFEVD,
+                                   Economies){
 
-FEVDandGFEVDbs_jointQ_Ortho <- function(ModelType, ModelBootstrap, NumOutPE, InputsForOutputs, Economies, PathsGraphs){
+  NumOutBounds_Yields <- list()
 
-  ndraws <- InputsForOutputs[[ModelType]]$Bootstrap$ndraws
-  pctg <-   InputsForOutputs[[ModelType]]$Bootstrap$pctg
+  # 1) For models estimated on a country-by-country basis
+  if ( any(ModelType ==c("JPS original", "JPS global", "GVAR single"))){
+    C <- length(Economies)
 
-  # function
-  pctg_inf <- (100-pctg)/2
-  pctg_sup <- 100 - (100-pctg)/2
-  quants <- c(pctg_inf, 50, pctg_sup)/100 # Desired quantiles
+    for (nn in 1:length(LabFEVD)){
+      for (i in 1:C){
 
+        DrawSet <- ModelBootstrap$NumOutDraws[[LabFEVD[nn]]][[ModelType]][[Economies[i]]]
+        DimLabelsYields <- dimnames(DrawSet[[1]]$Yields)
 
-  # initializarion
-  LabFEVD <- c("FEVD","GFEVD")
-  OutNames <- names(ModelBootstrap$NumOutDraws)
-  C <- length(Economies)
-  J <-  length(ModelBootstrap$GeneralInputs$mat)
-  CJ <- C*J
-
-
-  HorizNumOut <- c(InputsForOutputs[[ModelType]]$IRF$horiz, InputsForOutputs[[ModelType]]$FEVD$horiz,
-                   InputsForOutputs[[ModelType]]$GIRF$horiz, InputsForOutputs[[ModelType]]$GFEVD$horiz)
-
-  NumOutBounds <- list()
-
-
-    for (nn in match(LabFEVD, OutNames) ){
-
-      K <- nrow(ModelBootstrap$ParaDraws[[ModelType]][[1]]$ests$K1Z)
-
-      ############################################# Factors ######################################################################
-
-      INFfacs <- array(NA, c(HorizNumOut[[nn]], K,K)) # lower bound
-      MEDfacs <- array(NA, c(HorizNumOut[[nn]], K,K)) # Median
-      SUPfacs <- array(NA, c(HorizNumOut[[nn]], K,K)) # upper bound
-
-      DimLabelsFac <- dimnames(ModelBootstrap$NumOutDraws[[OutNames[nn]]][[ModelType]][[1]]$Factors$Ortho)
-      dimnames(INFfacs) <- DimLabelsFac
-      dimnames(MEDfacs) <- DimLabelsFac
-      dimnames(SUPfacs) <- DimLabelsFac
-
-
-      # Allocation
-      AllShocksOnePeriodFacs <- array(NA, c(ndraws, K, K))
-      Facs <- matrix(NA, nrow = ndraws, ncol = K)
-
-      for (thor in 1:HorizNumOut[[nn]]){
-        for (h in 1:K){ # loop through the shocks
-          for (g in 1:ndraws){ # # loop through the draws
-            Facs[g,] <- ModelBootstrap$NumOutDraws[[OutNames[nn]]][[ModelType]][[g]]$Factors$Ortho[thor,,h] # All responses to one shock in one horizon
-          }
-
-          AllShocksOnePeriodFacs[,,h]  <- apply(Facs,2, sort) # Ensures that each column is in ascending order
-
-          INFfacs[thor, ,h] <- apply(AllShocksOnePeriodFacs[,,h], 2, stats::quantile, probs = quants[1])
-          MEDfacs[thor, ,h] <- apply(AllShocksOnePeriodFacs[,,h], 2, stats::quantile, probs = quants[2])
-          SUPfacs[thor, ,h] <- apply(AllShocksOnePeriodFacs[,,h], 2, stats::quantile, probs = quants[3])
-        }
+        NumOutBounds_CS <- YieldQuantile_bs(DrawSet, LabFEVD[nn], ndraws, quants, Horiz, FacDim, YieDim,
+                                            DimLabelsYields, ModelType)
+        NumOutBounds_Yields[[LabFEVD[nn]]][[ModelType]][[Economies[i]]] <- NumOutBounds_CS
       }
-
-      NumOutBounds[[OutNames[nn]]][[ModelType]]$Factors$INF <- INFfacs
-      NumOutBounds[[OutNames[nn]]][[ModelType]]$Factors$MED <- MEDfacs
-      NumOutBounds[[OutNames[nn]]][[ModelType]]$Factors$SUP <- SUPfacs
-
-
-      ############################################# Yields ######################################################################
-      INFyies <- array(NA, c(HorizNumOut[[nn]], K, CJ)) # lower bound
-      MEDyies <- array(NA, c(HorizNumOut[[nn]], K, CJ)) # Median
-      SUPyies <- array(NA, c(HorizNumOut[[nn]], K, CJ)) # upper bound
-
-      DimLabelsYies <- dimnames(ModelBootstrap$NumOutDraws[[OutNames[nn]]][[ModelType]][[1]]$Yields$Ortho)
-      dimnames(INFyies) <- DimLabelsYies
-      dimnames(MEDyies) <- DimLabelsYies
-      dimnames(SUPyies) <- DimLabelsYies
-
-      #Allocation
-      AllShocksOnePeriodyies <- array(NA, c(ndraws, K, CJ))
-      yies <- matrix(NA, nrow = ndraws, ncol = K)
-
-      for (thor in 1:HorizNumOut[[nn]]){
-        for (h in 1:CJ){
-          for (g in 1:ndraws){
-            yies[g,] <- ModelBootstrap$NumOutDraws[[OutNames[nn]]][[ModelType]][[g]]$Yields$Ortho[thor, ,h] # All responses to one shock in one horizon
-          }
-          AllShocksOnePeriodyies[,,h]  <- apply(yies,2, sort) # Ensures that each column is in ascending order
-
-          INFyies[thor, ,h] <- apply(AllShocksOnePeriodyies[,,h], 2, stats::quantile, probs = quants[1])
-          MEDyies[thor, ,h] <- apply(AllShocksOnePeriodyies[,,h], 2, stats::quantile, probs = quants[2])
-          SUPyies[thor, ,h] <- apply(AllShocksOnePeriodyies[,,h], 2, stats::quantile, probs = quants[3])
-        }
-      }
-
-
-      NumOutBounds[[OutNames[nn]]][[ModelType]]$Yields$INF <- INFyies
-      NumOutBounds[[OutNames[nn]]][[ModelType]]$Yields$MED <- MEDyies
-      NumOutBounds[[OutNames[nn]]][[ModelType]]$Yields$SUP <- SUPyies
-
     }
 
+  }else{
 
-  #################################################################################################################
-  ###################################### PLOTS ####################################################################
-  #################################################################################################################
+    # 2) For models estimated for countries jointly
+    JLL_ModLabel <- c("JLL original", "JLL No DomUnit", "JLL joint Sigma")
 
-  ########################################  Factors ###############################################################
+    for (nn in 1:length(LabFEVD)){
+      DrawSet <- ModelBootstrap$NumOutDraws[[LabFEVD[nn]]][[ModelType]]
 
-  GraphsBinarFactors <- c(InputsForOutputs[[ModelType]]$FEVD$WishGraphsOrtho$RiskFactorsBootstrap,
-                         InputsForOutputs[[ModelType]]$GFEVD$WishGraphsOrtho$RiskFactorsBootstrap)
+      if (ModelType %in% JLL_ModLabel){  DimLabelsYields <- dimnames(DrawSet[[1]]$Yields$NonOrtho)
+      }else{ DimLabelsYields <- dimnames(DrawSet[[1]]$Yields)}
 
-  IdxFactorsGraphs <- which(GraphsBinarFactors == 1)
+      NumOutBounds_AllEco <- YieldQuantile_bs(DrawSet, LabFEVD[nn], ndraws, quants, Horiz, FacDim, YieDim,
+                                              DimLabelsYields, ModelType)
+      NumOutBounds_Yields[[LabFEVD[nn]]][[ModelType]] <- NumOutBounds_AllEco
+    }
 
+    #  Orhtgonolized version (JLL-based models)
+    if (ModelType %in% JLL_ModLabel){
 
+      LabFEVD_Ortho <- c("FEVD_Ortho","GFEVD_Ortho")
 
-  if (any(GraphsBinarFactors==1)){
+      for (nn in 1:length(LabFEVD_Ortho)){
+        DimLabelsYields <- dimnames(DrawSet[[1]]$Yields$Ortho)
+        NumOutBounds_AllEco_Ortho <- YieldQuantile_bs(DrawSet, LabFEVD_Ortho[nn], ndraws, quants, Horiz, FacDim,
+                                                      YieDim, DimLabelsYields, ModelType, Ortho = TRUE)
 
-    cat(' ** FEVDs/GFEVDs-Ortho (Bootstrap) \n' )
-
-    plot_list <- list()
-
-      for (d in IdxFactorsGraphs){
-        # Folder Creation
-        dir.create( paste(tempdir(), "/Outputs/", ModelType, "/Bootstrap/", LabFEVD[d], sep=""))
-        dir.create( paste(tempdir(), "/Outputs/", ModelType, "/Bootstrap/", LabFEVD[d], "/Factors", sep=""))
-        dir.create( paste(tempdir(), "/Outputs/", ModelType, "/Bootstrap/", LabFEVD[d], "/Factors/Ortho", sep=""))
-
-
-        for (b in 1:K){
-          for (i in 1:K){
-            LL <- NumOutBounds[[d]][[ModelType]]$Factors$INF[,i,b]
-            UU <- NumOutBounds[[d]][[ModelType]]$Factors$SUP[,i,b]
-            MM <- NumOutBounds[[d]][[ModelType]]$Factors$MED[,i,b]
-            PP <- NumOutPE[[LabFEVD[d]]][[ModelType]]$Factors$Ortho[,i,b ] # Point estimate
-
-            ALL <- data.frame(cbind(LL,MM,PP, UU))
-            TimeSpan <- 1:HorizNumOut[[nn]]
-            ALL$TimeSpan <- TimeSpan
-
-            nmResponse <- DimLabelsFac[[2]] # names of the "response" factor
-            nmShock <- DimLabelsFac[[3]] # names of the shock
-
-            p <- ggplot(data = ALL, aes(x= TimeSpan )) +  geom_line(aes(y = LL), color = 'blue') + geom_line(aes(y = MM), color = 'green') +
-              geom_line(aes(y = UU), color = 'red') +  geom_line(aes(y = PP)) + theme_classic() +
-              theme(plot.title = element_text(size = 6, face = "bold", hjust = 0.5),
-                    axis.title.x=element_blank(), axis.title.y=element_blank() ) +
-              ggtitle( nmResponse[i]) + geom_hline(yintercept=0)
-
-            plot_list[[i]] <- p
-          }
-          subplots <- cowplot::plot_grid(plotlist= plot_list, ncol=3)
-          suppressMessages(ggplot2::ggsave(subplots, file=paste0(LabFEVD[d],"Factors_", nmShock[b], "ORTHO", ".png"),
-                          path= PathsGraphs[[ModelType]][[LabFEVD[d]]][["Factors Ortho"]]))
-        }
+        NumOutBounds_Yields[[LabFEVD[nn]]][[ModelType]]$Ortho <- NumOutBounds_AllEco_Ortho
       }
-
+    }
   }
+  return(NumOutBounds_Yields)
+}
+######################################################################################################
+#'Extract graphs of interest (bootstrap version)
+#'
+#'@param InputsForOutputs list containing the desired inputs for the construction of IRFs, GIRFs, FEVDs, and GFEVDs
+#'@param ModelType desired model type
+#'
+#'@keywords internal
 
-  ########################################  Yields ###############################################################
+WishGraphs_FEVDandGFEVD_Boot <- function(InputsForOutputs, ModelType){
 
-  GraphsBinarYields <- c(InputsForOutputs[[ModelType]]$FEVD$WishGraphsOrtho$YieldsBootstrap,
-                         InputsForOutputs[[ModelType]]$GFEVD$WishGraphsOrtho$YieldsBootstrap)
+  # 1) Factors
+  WishGraphFac <- c(InputsForOutputs[[ModelType]]$FEVD$WishGraphs$RiskFactorsBootstrap,
+                    InputsForOutputs[[ModelType]]$GFEVD$WishGraphs$RiskFactorsBootstrap)
 
-  IdxYieldsGraphs <- which(GraphsBinarYields == 1)
+  if ( any(ModelType ==c("JLL original", "JLL No DomUnit", "JLL joint Sigma"))){
+    WishGraphFac_Ortho <- c(InputsForOutputs[[ModelType]]$FEVD$WishGraphsOrtho$RiskFactorsBootstrap,
+                            InputsForOutputs[[ModelType]]$GFEVD$WishGraphsOrtho$RiskFactorsBootstrap)
+  } else{ WishGraphFac_Ortho <- NULL}
 
+  # 2) Yields
+  WishGraphYields <- c(InputsForOutputs[[ModelType]]$FEVD$WishGraphs$YieldsBootstrap,
+                       InputsForOutputs[[ModelType]]$GFEVD$WishGraphs$YieldsBootstrap)
 
-
-    if (any(GraphsBinarYields==1)){
-
-    plot_list <- list()
-
-
-      for (d in IdxYieldsGraphs){
-        # Folder Creation
-        dir.create( paste(tempdir(), "/Outputs/", ModelType, "/Bootstrap/", LabFEVD[d], sep=""))
-        dir.create( paste(tempdir(), "/Outputs/", ModelType, "/Bootstrap/", LabFEVD[d], "/Yields", sep=""))
-        dir.create( paste(tempdir(), "/Outputs/", ModelType, "/Bootstrap/", LabFEVD[d], "/Yields/Ortho", sep=""))
-
-
-        for (b in 1:CJ){
-          for (i in 1:K){
-            LL <- NumOutBounds[[d]][[ModelType]]$Yields$INF[,i,b]
-            UU <- NumOutBounds[[d]][[ModelType]]$Yields$SUP[,i,b]
-            MM <- NumOutBounds[[d]][[ModelType]]$Yields$MED[,i,b]
-            PP <- NumOutPE[[LabFEVD[d]]][[ModelType]]$Yields$Ortho[,i,b ] # Point estimate
-
-            ALL <- data.frame(cbind(LL,MM,PP, UU))
-            TimeSpan <- 1:HorizNumOut[[nn]]
-            ALL$TimeSpan <- TimeSpan
-
-            nmResponse <- DimLabelsYies[[2]] # names of the "response" factor
-            nmShock <- DimLabelsYies[[3]] # names of the shock
-
-            p <- ggplot(data = ALL, aes(x= TimeSpan )) +  geom_line(aes(y = LL), color = 'blue') + geom_line(aes(y = MM), color = 'green') +
-              geom_line(aes(y = UU), color = 'red') +  geom_line(aes(y = PP)) + theme_classic() +
-              theme(plot.title = element_text(size = 6, face = "bold", hjust = 0.5),
-                    axis.title.x=element_blank(), axis.title.y=element_blank() )    +
-              ggtitle( nmResponse[i]) + geom_hline(yintercept=0)
-
-            plot_list[[i]] <- p
-          }
-          subplots <- cowplot::plot_grid(plotlist= plot_list, ncol=3)
-          suppressMessages(ggplot2::ggsave(subplots, file=paste0(LabFEVD[d],"Yields_", nmShock[b], "ORTHO", ".png"),
-                          path= PathsGraphs[[ModelType]][[LabFEVD[d]]][["Yields Ortho"]]))
-        }
-      }
+  if ( any(ModelType ==c("JLL original", "JLL No DomUnit", "JLL joint Sigma"))){
+    WishGraphiYields_Ortho  <- c(InputsForOutputs[[ModelType]]$FEVD$WishGraphsOrtho$YieldsBootstrap,
+                                 InputsForOutputs[[ModelType]]$GFEVD$WishGraphsOrtho$YieldsBootstrap)
+  }else{ WishGraphiYields_Ortho <- NULL}
 
 
-  }
+  Out <- list( Fac = WishGraphFac, Fac_Ortho = WishGraphFac_Ortho, Yields = WishGraphYields,
+               Yields_Ortho = WishGraphiYields_Ortho)
 
-  return(NumOutBounds)
-
+  return(Out)
 }

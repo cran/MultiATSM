@@ -167,7 +167,6 @@ Maturities <- function(DataYields, Economies, UnitYields){
   J <- length(AllMat)/C
   mat <- AllMat[1:J]/fac
 
-
   return(mat)
 }
 
@@ -209,9 +208,7 @@ Maturities <- function(DataYields, Economies, UnitYields){
 #'@param DataPathTrade path of the Excel file containing the data (if any)
 #'
 #'
-#'
 #'@keywords internal
-
 
 
 SpecificMLEInputs <-function(ModelType, Economies, RiskFactors, FactorLabels, GVARlist = NULL, JLLlist = NULL,
@@ -641,7 +638,11 @@ GetPdynPara <- function(RiskFactors, FactorLabels, Economies,  ModelType, BRWinp
       }
     }
 
+    tryCatch({
     PdynPara <- GetPdynPara_BC(ModelType, BRWinputs, RiskFactors, Economies, FactorLabels, GVARinputs, JLLinputs)
+    }, error = function(err) {
+      stop("BRW procedure leads to a highly collinear system. Please choose another combination of BRW parameters.")})
+
 
   } else{
 
@@ -879,6 +880,6 @@ Check_label_consistency <- function(Economies, DomesticMacroFac, GlobalMacroFac,
   }
 
   if (any(lengths(list(missing_economies, missing_DomVariables, missing_GlobalVariables)) > 0)){
-    stop("Inconsistent model input specicifications. Check messages above.")
+    stop("Inconsistent model input specifications. Check messages above.")
   }
 }

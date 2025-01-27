@@ -1,8 +1,8 @@
 Package: MultiATSM
 Type: Package
 Title: Multicountry Term Structure of Interest Rates Models
-Version: 1.1.0
-Date: 2024-12-15
+Version: 1.2.0
+Date: 2025-01-27
 Authors@R: 
     person("Rubens", "Moura", , "rubens.gtmoura@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-8105-4729"))
@@ -10,15 +10,17 @@ Description: Estimation routines for several classes of affine term structure of
 License: GPL-2 | GPL-3
 Encoding: UTF-8
 RoxygenNote: 7.2.3
-Imports: zoo, pracma, ggplot2
+Imports: pracma, ggplot2
 Suggests: readxl, readr, magic, Jmisc, functional, cowplot, reshape2,
         sjmisc, stringr, knitr, rmarkdown, bookdown, kableExtra,
         neldermead, magrittr, hablar
 Depends: R (>= 4.3.0)
 VignetteBuilder: knitr
+URL: https://github.com/rubensmoura87/MultiATSM
+BugReports: https://github.com/rubensmoura87/MultiATSM/issues
 NeedsCompilation: no
-Packaged: 2024-12-16 09:23:42 UTC; rmoura
+Packaged: 2025-01-27 16:59:24 UTC; rmoura
 Author: Rubens Moura [aut, cre] (<https://orcid.org/0000-0001-8105-4729>)
 Maintainer: Rubens Moura <rubens.gtmoura@gmail.com>
 Repository: CRAN
-Date/Publication: 2024-12-16 09:40:02 UTC
+Date/Publication: 2025-01-27 17:10:01 UTC
