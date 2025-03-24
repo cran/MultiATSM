@@ -1,7 +1,6 @@
 #' Estimates a GVAR(1) and a VARX(1,1,1) models
 #'
-#
-#'@param GVARinputs GVARinputs List. Inputs for GVAR model estimation:
+#' @param GVARinputs List of inputs for GVAR model estimation:
 #' \enumerate{
 #'        \item  \code{Economies}:  A character vector containing the names of the economies included in the system.
 #'        \item  \code{GVARFactors}: A list of all variables used in the estimation of the VARX model \cr
@@ -19,31 +18,28 @@
 #'          \item \code{Wgvar}: The GVAR transition matrix (C x C) used in the model solution. \cr
 #'                                (See the output from the \code{\link{Transition_Matrix}} function.).
 #' }
-#'@param N    Integer. Number of country-specific spanned factors.
-#'@param CheckInputs A logical flag to indicate whether to perform a prior consistency check on the inputs provided in \code{GVARinputs}. The default is set to FALSE
+#' @param N Integer. Number of country-specific spanned factors.
+#' @param CheckInputs A logical flag to indicate whether to perform a prior consistency check on the inputs provided in \code{GVARinputs}. The default is set to FALSE
 #'
-#'
-#'
-#'@return   A list containing
-#'\enumerate{
-#'\item parameters of the country-specific VARX(1,1,1)
-#'\itemize{
-#'\item intercept (M+Nx1);
-#'\item phi_1   (M+N x M+N);
-#'\item phi_1^star (M+N x M+N);
-#'\item phi_g (M+N x M+N);
-#'\item Sigma (M+N x G)
-#'}
-#'\item parameters of the GVAR.
-#'\itemize{
+#' @return A list containing
+#' \enumerate{
+#' \item parameters of the country-specific VARX(1,1,1)
+#' \itemize{
+#' \item intercept (M+Nx1);
+#' \item phi_1   (M+N x M+N);
+#' \item phi_1^star (M+N x M+N);
+#' \item phi_g (M+N x M+N);
+#' \item Sigma (M+N x G)
+#' }
+#' \item parameters of the GVAR.
+#' \itemize{
 #' \item F0 (F X 1);
 #' \item F1 (F x F);
 #' \item Sigma_y (F x F)
-#'}
-#'}
+#' }
+#' }
 #'
-#'
-#'@examples
+#' @examples
 #' data(CM_Factors_GVAR)
 #'
 #' GVARinputs <- list( Economies = c("China", "Brazil", "Mexico", "Uruguay"),
@@ -56,39 +52,38 @@
 #' N <- 3
 #'
 #' GVARPara <- GVAR(GVARinputs, N)
-
-#'@references
+#'
+#' @references
 #' Chudik and Pesaran, (2016). "Theory and Practice of GVAR modelling" (Journal of Economic Surveys)
-#'@export
+#' @export
 
+GVAR <- function(GVARinputs, N, CheckInputs = FALSE) {
+  # 0) Check whether there are inconsistency in the specification of GVARinputs
+  if (isTRUE(CheckInputs)) {
+    CheckInputsGVAR(GVARinputs, N)
+  }
 
+  # 1) Preliminary work
+  # Labels of group of variables
+  DomAndStarLabels <- names(GVARinputs$GVARFactors[[GVARinputs$Economies[1]]]$Factors)
+  L <- length(DomAndStarLabels)
+  DomLabels <- DomAndStarLabels[1:(L/2)]
+  StarLabels <- DomAndStarLabels[(L/2+1):L]
+  GlobalLabels <- names(GVARinputs$GVARFactors$Global)
 
-GVAR <- function(GVARinputs, N, CheckInputs = F){
+  # 2) Prepare variables to be used in the estimation
+  Factors_Clean <- GVAR_PrepFactors(GVARinputs, DomLabels, StarLabels, GlobalLabels, N)
 
-# 0) Check whether there are inconsistency in the specification of GVARinputs
-  if (isTRUE(CheckInputs)){CheckInputsGVAR(GVARinputs, N)}
+  # 3) Estimate the country-specific VARX(1,1,1) models
+  ParaVARX <- VARX(GVARinputs, Factors_Clean, DomLabels, StarLabels, GlobalLabels, N)
 
-# 1) Preliminary work
-# Labels of group of variables
-DomAndStarLabels <- names(GVARinputs$GVARFactors[[GVARinputs$Economies[1]]]$Factors)
-L <- length(DomAndStarLabels)
-DomLabels <- DomAndStarLabels[1:(L/2)]
-StarLabels <- DomAndStarLabels[(L/2+1):L]
-GlobalLabels <- names(GVARinputs$GVARFactors$Global)
+  # 4) Estimate the dynamics of the global variables: VAR(1)
+  ParaGlobal <- MarginalModelPara(GVARinputs)
 
-# 2) Prepare variables to be used in the estimation
-Factors_Clean <- GVAR_PrepFactors(GVARinputs, DomLabels, StarLabels, GlobalLabels, N)
+  # 5) Build a GVAR(1)
+  GVARoutputs <- BuildGVAR(ParaVARX, ParaGlobal, GVARinputs, DomLabels, GlobalLabels, N)
 
-# 3) Estimate the country-specific VARX(1,1,1) models
-ParaVARX <- VARX(GVARinputs, Factors_Clean, DomLabels, StarLabels, GlobalLabels, N)
-
-# 4) Estimate the dynamics of the global variables: VAR(1)
-ParaGlobal <- MarginalModelPara(GVARinputs)
-
-# 5) Build a GVAR(1)
-GVARoutputs <- BuildGVAR(ParaVARX, ParaGlobal, GVARinputs, DomLabels, GlobalLabels, N)
-
-return(GVARoutputs)
+  return(GVARoutputs)
 }
 
 #####################################################################################################################
@@ -114,13 +109,12 @@ EstimationSigma_GVARrest <- function(SigmaUnres, res, IdxVarRest){
 
   K <- nrow(SigmaUnres)
 
-
   # Set the constraints in the Sigma matrix
   IdxNONzeroGVAR <- which(Se!=0)
   x <- Se[IdxNONzeroGVAR] # vector containing the initial guesses
 
 
-  MLfunction <- functional::Curry(llk_JLL_Sigma, res=res, IdxNONzero= IdxNONzeroGVAR, K=K)
+  MLfunction <- function(...) llk_JLL_Sigma(..., res = res, IdxNONzero = IdxNONzeroGVAR, K = K)
 
   iter <- 'off' # hides the outputs of each iteration. If one wants to display these features then set 'iter'
   options200 <- neldermead::optimset(MaxFunEvals = 200000*length(x), Display = iter,
@@ -161,50 +155,33 @@ GVAR_PrepFactors <- function(GVARinputs, DomLabels, StarLabels, GlobalLabels, N)
 
   # 1) Prepare variables to be used in the estimation
   # a) Z.t:
-  Z.t <- list()
-  for (i in 1:C){
-    X <- matrix(NA, nrow= length(DomLabels), ncol=(T-1))
-    for (j in 1:(M+N)){
-      X[j,] <- GVARinputs$GVARFactors[[GVARinputs$Economies[i]]]$Factors[[j]][2:T]
-    }
-    Z.t[[i]] <- X
-  }
+  Z.t <- lapply(GVARinputs$Economies, function(economy) {
+    X <- sapply(1:(M + N), function(j) GVARinputs$GVARFactors[[economy]]$Factors[[j]][2:T])
+  t(X)
+  })
   names(Z.t) <- GVARinputs$Economies
 
   # b) Z lagged (Z.Lt)
-  Z.Lt <- list()
-  for (i in 1:C){
-    X <- matrix(NA, nrow= length(DomLabels), ncol=(T-1))
-    for (j in 1:(M+N)){
-      X[j,] <- GVARinputs$GVARFactors[[GVARinputs$Economies[i]]]$Factors[[j]][1:(T-1)]
-    }
-    Z.Lt[[i]] <- X
-  }
+  Z.Lt <- lapply(GVARinputs$Economies, function(economy) {
+    X <- sapply(1:(M + N), function(j) GVARinputs$GVARFactors[[economy]]$Factors[[j]][1:(T-1)])
+    t(X)
+  })
   names(Z.Lt) <- GVARinputs$Economies
 
   # c) Z star lagged (Zstar.Lt)
   idx1 <- M + N
-  Zstar.Lt <- list()
-  for (i in 1:C){
-    X <- matrix(NA, nrow= length(StarLabels), ncol=(T-1))
-    for (j in 1:(M+N)){
-      X[j,] <- GVARinputs$GVARFactors[[GVARinputs$Economies[i]]]$Factors[[idx1+j]][1:(T-1)]
-    }
-    Zstar.Lt[[i]] <- X
-  }
+  Zstar.Lt <- lapply(GVARinputs$Economies, function(economy) {
+   X <- sapply(1:(M + N), function(j) GVARinputs$GVARFactors[[economy]]$Factors[[idx1 + j]][1:(T-1)])
+   t(X)
+  })
   names(Zstar.Lt) <- GVARinputs$Economies
 
   # d) Global lagged (Global.Lt)
-  Global.Lt <- list()
-  X <- matrix(NA, nrow= G, ncol=(T-1))
-  for (j in seq_len(G)){
-    X[j,] <- GVARinputs$GVARFactors$Global[[j]][1:(T-1)]
-  }
-  Global.Lt <- X
+  Global.Lt <- do.call(rbind, lapply(seq_len(G), function(j) GVARinputs$GVARFactors$Global[[j]][1:(T-1)]))
   rownames(Global.Lt) <- GlobalLabels
 
   # Export outputs
-  Outputs <- list(Z.t = Z.t, Z.Lt = Z.Lt, Zstar.Lt = Zstar.Lt, Global.Lt= Global.Lt)
+  Outputs <- list(Z.t = Z.t, Z.Lt = Z.Lt, Zstar.Lt = Zstar.Lt, Global.Lt = Global.Lt)
   return(Outputs)
 }
 
@@ -235,130 +212,110 @@ G <- length(GlobalLabels)
 M <- length(DomLabels) - N
 
 # Prepare regressor set in LHS and RHS
-LHS <- vector(mode='list', length = C)
-RHS <- vector(mode='list', length = C)
+LHS <- lapply(GVARinputs$Economies, function(economy) Z.t[[economy]])
+RHS <- lapply(GVARinputs$Economies, function(economy) {
+  rbind(rep(1, times = T-1), Z.Lt[[economy]], Zstar.Lt[[economy]], Global.Lt)
+})
 names(LHS) <- GVARinputs$Economies
 names(RHS) <- GVARinputs$Economies
-for (i in 1:C){
-  LHS[[i]] <- Z.t[[i]]
-  RHS[[i]] <- rbind(rep(1, times=T-1), Z.Lt[[i]], Zstar.Lt[[i]], Global.Lt)
-  rownames(RHS[[i]]) <- c("Intercept", DomLabels, StarLabels, GlobalLabels)
-}
 
 # Set the foreign contemporaneous matrices to be equal to zero
-phi0_star <- list()
-X <- matrix(0, nrow= M + N, ncol= M + N)
-for (i in 1:C){
-  phi0_star[[i]]<- X
-}
+phi0_star <- lapply(GVARinputs$Economies, function(economy) matrix(0, nrow = M + N, ncol = M + N))
 names(phi0_star) <- GVARinputs$Economies
 
 # 1) Estimate the VARX(1,1,1)
 # a) unconstrained system:
-Coeff <- list()
+if (GVARinputs$VARXtype == 'unconstrained') {
+  ModelEstimates <- lapply(GVARinputs$Economies, function(economy) {
+    stats::lm(t(LHS[[economy]]) ~ t(RHS[[economy]]) - 1)
+  })
+  Coeff <- lapply(ModelEstimates, function(model) t(model$coefficients))
+  et <- lapply(ModelEstimates, function(model) t(model$residuals))
+  Sigma <- lapply(et, function(residuals) crossprod(t(residuals)) / T)
+  names(Coeff) <- GVARinputs$Economies
+  names(Sigma) <- GVARinputs$Economies
 
-if (GVARinputs$VARXtype == 'unconstrained'){
-  ModelEstimates <- list()
-  et <- list()
-  Sigma <- list()
-  for (i in 1:C){
-    ModelEstimates[[i]] <- stats::lm( t(LHS[[i]]) ~ t(RHS[[i]])-1) # RHS and LHS are Tx(M+N)
-    Coeff[[i]] <- t(ModelEstimates[[i]]$coefficients)
-    et[[i]] <-t(ModelEstimates[[i]]$residual)
-    Sigma[[i]] <- (et[[i]]%*%t(et[[i]]))/T
-    rownames(Coeff[[i]]) <- DomLabels
-  }
-}
-# b) constrained system: zero restrictions for the spanned factors in the feedback matrix
-else  if (GVARinputs$VARXtype == 'constrained: Spanned Factors'){
-  idxIntercept<- 1
+#  b) constrained system: zero restrictions for the spanned factors in the feedback matrix
+} else if (GVARinputs$VARXtype == 'constrained: Spanned Factors') {
+
+  idxIntercept <- 1
   idxM <- idxIntercept + M
   idxP <- idxM + N
-  idxM.star <- idxP + M
-  idxP.star <- idxM.star + N
-  idx.global <- idxP.star + G
+  idxM_star <- idxP + M
+  idxP_star <- idxM_star + N
+  idx_global <- idxP_star + G
 
-  Bcon <- list()
-  Coeff <- list()
-  eT <- list()
-  Sigma <- list()
+  Bcon <- lapply(GVARinputs$Economies, function(economy) {
+    Bcon <- matrix(NaN, nrow = nrow(LHS[[economy]]), ncol = nrow(RHS[[economy]]))
+    Bcon[, (idxM_star + 1):idxP_star] <- 0
+    Bcon
+  })
+  names(Bcon) <- GVARinputs$Economies
 
-  for (i in 1:C){
-    Bcon[[i]] <- matrix(NaN, nrow= nrow(LHS[[i]]), ncol=nrow(RHS[[i]])) # (M+N)x (2*(M+N)+G+1)
-    # b.1) if constrains is avoid the effect of P* on P and M:
-    Bcon[[i]][,(idxM.star+1):idxP.star] <- 0
-
-    Coeff[[i]] <- Reg__OLSconstrained(Y= LHS[[i]], X= RHS[[i]],Bcon[[i]], G=NULL)
-    colnames(Coeff[[i]]) <- c("Intercept", DomLabels, StarLabels, GlobalLabels)
-    rownames(Coeff[[i]]) <- DomLabels
-
-    eT[[i]] <- LHS[[i]] - Coeff[[i]]%*%RHS[[i]]
-    Sigma[[i]] <- (eT[[i]]%*%t(eT[[i]]))/T
-  }
+  Coeff <- lapply(GVARinputs$Economies, function(economy) {
+    Reg__OLSconstrained(Y = LHS[[economy]], X = RHS[[economy]], Bcon[[economy]], G = NULL)
+  })
   names(Coeff) <- GVARinputs$Economies
-}
+  et <- lapply(GVARinputs$Economies, function(economy) LHS[[economy]] - Coeff[[economy]] %*% RHS[[economy]])
+  Sigma <- lapply(et, function(residuals) crossprod(t(residuals)) / T)
+  names(Sigma) <- GVARinputs$Economies
 
-
-# c) constrained system: one variable of the system is only affected by its own lags and the star counterparts
-if (any(GVARinputs$VARXtype == paste("constrained:", DomLabels))){
+  # c) constrained system: one variable of the system is only affected by its own lags and the star counterparts
+} else if (any(GVARinputs$VARXtype == paste("constrained:", DomLabels))) {
   VARXLabs <- c("Intercept", DomLabels, StarLabels, GlobalLabels)
-  zz <- stringr::str_length("constrained: ")
-  VarInt <- substr(GVARinputs$VARXtype, start = zz+1, stop = stringr::str_length(GVARinputs$VARXtype) )
+  zz <- nchar("constrained: ")
+  VarInt <- substr(GVARinputs$VARXtype, start = zz + 1, stop = nchar(GVARinputs$VARXtype))
 
-  idxIntercept<- 1
+  idxIntercept <- 1
   idxCol <- which(grepl(VarInt, VARXLabs))
   idxRow <- which(grepl(VarInt, DomLabels))
 
-  Bcon <- list()
-  Coeff <- list()
-  eT <- list()
-  SigmaUnrest <- list()
-  Sigma <- list()
+  # c.1) Identify the zero-restrictions:
+  Bcon <- lapply(GVARinputs$Economies, function(economy) {
+    Bcon <- matrix(NaN, nrow = nrow(LHS[[economy]]), ncol = nrow(RHS[[economy]]))
+    rownames(Bcon) <- DomLabels
+    colnames(Bcon) <- VARXLabs
+    Bcon[idxRow, -c(idxIntercept, idxCol)] <- 0
+    Bcon
+  })
+  names(Bcon) <- GVARinputs$Economies
 
-  for (i in 1:C){
+  Coeff <- lapply(GVARinputs$Economies, function(economy) {
+    Reg__OLSconstrained(Y = LHS[[economy]], X = RHS[[economy]], Bcon[[economy]], G = NULL)
+  })
+  names(Coeff) <- GVARinputs$Economies
+  et <- lapply(GVARinputs$Economies, function(economy) LHS[[economy]] - Coeff[[economy]] %*% RHS[[economy]])
 
-    Bcon[[i]] <- matrix(NaN, nrow= nrow(LHS[[i]]), ncol=nrow(RHS[[i]])) # (M+N)x (2*(M+N)+G+1)
-    # c.1) Identify the zero-restrictions:
-    rownames(Bcon[[i]]) <- DomLabels
-    colnames(Bcon[[i]]) <- VARXLabs
-    Bcon[[i]][idxRow, -c(idxIntercept, idxCol)] <- 0
+  names(et) <- GVARinputs$Economies
+  # Initial guess
+  SigmaUnrest <- lapply(et, function(residuals) crossprod(t(residuals)) / T)
 
-    Coeff[[i]] <- Reg__OLSconstrained(Y= LHS[[i]], X= RHS[[i]],Bcon[[i]], G=NULL)
-    colnames(Coeff[[i]]) <- VARXLabs
-    rownames(Coeff[[i]]) <- DomLabels
-
-    eT[[i]] <- LHS[[i]] - Coeff[[i]]%*%RHS[[i]]
-    SigmaUnrest[[i]] <- (eT[[i]]%*%t(eT[[i]]))/T # Initial guess
-
-    # Estimate sigma with restrictions
-    Sigma[[i]] <- EstimationSigma_GVARrest(SigmaUnrest[[i]], eT[[i]], idxRow)
+  # Estimate sigma with restrictions
+  Sigma <- lapply(GVARinputs$Economies, function(economy) {
+  EstimationSigma_GVARrest(SigmaUnrest[[economy]], et[[economy]], idxRow)
+  })
+  names(Sigma) <- GVARinputs$Economies
 
   }
-  names(Coeff) <- GVARinputs$Economies
-}
-
 
 # 2) Prepare outputs:
-ParaVARX <- list()
-
 idxPhi0 <- 1
 idxPhi1 <- idxPhi0 + (N+M)
-idxPhi1.star <- idxPhi1 + (N+M)
-idxPhi.global <- idxPhi1.star+G
+idxPhi1_star <- idxPhi1 + (N+M)
+idxPhi_global <- idxPhi1_star+G
 
-if (G == 0){ Idx_G <- c()} else{Idx_G <- (idxPhi1.star+1):idxPhi.global}
+if (G == 0){ Idx_G <- c()} else{Idx_G <- (idxPhi1_star+1):idxPhi_global}
 
-for (i in 1:C){
-  ParaVARX[[i]] <- vector(mode = 'list', length = 6)
-  names(ParaVARX[[i]]) <- c('Phi0', 'Phi1', 'Phi1.star', 'Phi.global', 'Sigma', 'Phi0.star')
-
-  ParaVARX[[i]]$Phi0 <- Coeff[[i]][,idxPhi0]
-  ParaVARX[[i]]$Phi1 <- Coeff[[i]][,(idxPhi0+1):idxPhi1]
-  ParaVARX[[i]]$Phi1.star <- Coeff[[i]][,(idxPhi1+1):idxPhi1.star]
-  ParaVARX[[i]]$Phi.global <- Coeff[[i]][, Idx_G]
-  ParaVARX[[i]]$Sigma <- Sigma[[i]]
-  ParaVARX[[i]]$Phi0.star <- phi0_star[[i]]
-}
+ParaVARX <- lapply(GVARinputs$Economies, function(economy) {
+  list(
+    Phi0 = Coeff[[economy]][, idxPhi0],
+    Phi1 = Coeff[[economy]][, (idxPhi0 + 1):idxPhi1],
+    Phi1_star = Coeff[[economy]][, (idxPhi1 + 1):idxPhi1_star],
+    Phi_global = Coeff[[economy]][, Idx_G],
+    Sigma = Sigma[[economy]],
+    Phi0_star = phi0_star[[economy]]
+  )
+})
 names(ParaVARX) <- GVARinputs$Economies
 
 return(ParaVARX)
@@ -388,12 +345,12 @@ M <- length(DomLabels) - N
 # a) a0
 a0 <- Get_a0(GVARinputs, ParaVARX)
 # b) Ai0 and Ai1:
-Ai0 <- list()
-Ai1 <- list()
-for (i in 1:C){
-  Ai0[[i]] <- cbind(diag(N+M), ParaVARX[[GVARinputs$Economies[i]]]$Phi0.star)
-  Ai1[[i]] <- cbind(ParaVARX[[GVARinputs$Economies[i]]]$Phi1, ParaVARX[[GVARinputs$Economies[i]]]$Phi1.star)
-}
+Ai0 <- lapply(GVARinputs$Economies, function(economy) {
+  cbind(diag(N + M), ParaVARX[[economy]]$Phi0_star)
+})
+Ai1 <- lapply(GVARinputs$Economies, function(economy) {
+  cbind(ParaVARX[[economy]]$Phi1, ParaVARX[[economy]]$Phi1_star)
+})
 names(Ai0) <- GVARinputs$Economies
 names(Ai1) <- GVARinputs$Economies
 # c) Wi (link matrices)
@@ -406,33 +363,28 @@ Gs_Sigma <- Get_G0G1Sigma(ParaVARX, GVARinputs, Ai0, Ai1, Wi)
 # a) Gy.0:
 Gy.0 <- magic::adiag(diag(G), Gs_Sigma$G0)
 # b) Gy.1:
-Gy.1 <- Get_Gy1(ParaVARX, GVARinputs,  Gs_Sigma$G1, GlobalPara$Phi.w1)
+Gy.1 <- Get_Gy1(ParaVARX, GVARinputs,  Gs_Sigma$G1, GlobalPara$Phi_w1)
 
 # 4) Build the GVAR(1): y_t = F0 + F1* y_{t-1} + (Gy.0)^(-1)ey_t ( equation 19)
 # a) F0 and F1:
-Phi0VARX <- list()
-for (i in 1:C){  Phi0VARX[[i]] <-  ParaVARX[[GVARinputs$Economies[[i]]]]$Phi0}
-Phi0VARX <- do.call(rbind,lapply(Phi0VARX,matrix,ncol=1))
+Phi0VARX <- do.call(rbind, lapply(GVARinputs$Economies, function(econ) {
+                    matrix(ParaVARX[[econ]]$Phi0, ncol = 1)}))
 
-F0 <- solve(Gy.0)%*%rbind(GlobalPara$Phi.w0, Phi0VARX)
+F0 <- solve(Gy.0)%*%rbind(GlobalPara$Phi_w0, Phi0VARX)
 F1 <- solve(Gy.0)%*%Gy.1
 
 # b) Sigma_y:
 Sigma_y <- magic::adiag(GlobalPara$Sigma_w, Gs_Sigma$Sigma)
 
 # 5) Prepare labels of the tables
-labelsDomVar <- c()
-for (i in 1:C){
-  labelsDomVarCS <- paste(DomLabels, GVARinputs$Economies[i])
-  labelsDomVar <- append(labelsDomVar,labelsDomVarCS)
-}
+labelsDomVar <- unlist(lapply(GVARinputs$Economies, function(econ) {
+                      paste(DomLabels, econ)}))
 
 labelsTables <- c(GlobalLabels,labelsDomVar)
 
 dimnames(F1) <- list(labelsTables, labelsTables)
 dimnames(Sigma_y) <- list(labelsTables, labelsTables)
 rownames(F0) <- labelsTables
-
 
 GVARoutputs <- list(VARX = ParaVARX, Gy.0 = Gy.0, F0 = F0, F1 = F1, Sigma_y = Sigma_y)
 return(GVARoutputs)
@@ -450,52 +402,42 @@ BuildLinkMat<- function(GVARinputs, N, M){
 
   C <- length(GVARinputs$Economies)
 
-# Bottom part of Wi
-bottomWi <- list()
-for(i in 1:C){
-  b <- matrix(NA, nrow=N+M, ncol= C*(N+M))
-  bottomWi[[i]] <- b
-}
+  bottomWi <- lapply(1:C, function(i) matrix(NA, nrow = N + M, ncol = C * (N + M)))
 
-a <- matrix(NA, nrow=N+M, ncol= N+M)
-for (j in 1:C){
+# Bottom part of Wi
+for (j in 1:C) {
   count0 <- 0
-  for (i in 1:C){
-    count1 <- count0 +  (N+M)
-    a <- GVARinputs$Wgvar[j,i]*diag(N+M)
-    bottomWi[[j]][,(count0+1):count1] <- a
+  for (i in 1:C) {
+    count1 <- count0 + (N + M)
+    bottomWi[[j]][, (count0 + 1):count1] <- GVARinputs$Wgvar[j, i] * diag(N + M)
     count0 <- count1
   }
 }
+
 names(bottomWi) <- GVARinputs$Economies
 
 # Top part of Wi
-topWi <- list()
-for(i in 1:C){
-  c <- matrix(NA, nrow= N+M, ncol= C*(N+M))
-  topWi[[i]] <- c
-}
+# Initialize topWi as a list of NA-filled matrices
+topWi <- lapply(1:C, function(i) matrix(NA, nrow = N + M, ncol = C * (N + M)))
 
-d <- matrix(NA, nrow=N+M, ncol= N+M)
 IndexPos <- diag(C)
-for (j in 1:C){
+for (j in 1:C) {
   count0 <- 0
-  for (i in 1:C){
-    count1 <- count0 +  (N+M)
-    d <- IndexPos[j,i]*diag(N+M)
-    topWi[[j]][,(count0+1):count1] <- d
+  for (i in 1:C) {
+    count1 <- count0 + (N + M)
+    topWi[[j]][, (count0 + 1):count1] <- IndexPos[j, i] * diag(N + M)
     count0 <- count1
   }
 }
 names(topWi) <- GVARinputs$Economies
 
-# Concatenate TopWi and bottomWi in Wi
-Wi <- list()
-for (i in 1:C){ Wi[[i]] <- rbind(topWi[[i]], bottomWi[[i]])}
+# Concatenate topWi and bottomWi into Wi
+Wi <- lapply(1:C, function(i) rbind(topWi[[i]], bottomWi[[i]]))
 names(Wi) <- GVARinputs$Economies
 
 return(Wi)
 }
+
 ##############################################################################################################
 #' Estimate the marginal model for the global factors
 #'
@@ -514,26 +456,23 @@ if (length(X) != 0 ){
   RHS <- as.matrix(X[2:T,])
   LHS <- as.matrix(X[1:(T-1),])
 
-  Phi.w1 <- matrix(NA, nrow=G, ncol= G)
-  Phi.w0 <- matrix(NA, nrow=G, ncol= 1)
+  Phi_w1 <- matrix(NA, nrow=G, ncol= G)
+  Phi_w0 <- matrix(NA, nrow=G, ncol= 1)
   for (i in seq_len(G)){
-    Phi.w0[i,] <- stats::lm( LHS[,i] ~ RHS)$coefficients[1]
-    Phi.w1[i,] <- stats::lm( LHS[,i] ~ RHS)$coefficients[seq_len(max(G, 0)) + 1]
+    Phi_w0[i,] <- stats::lm( LHS[,i] ~ RHS)$coefficients[1]
+    Phi_w1[i,] <- stats::lm( LHS[,i] ~ RHS)$coefficients[seq_len(max(G, 0)) + 1]
   }
 
-  eta.t <- matrix(NA, nrow= G, ncol=T-1)
-  for (j in 1:(T-1)){
-    eta.t[,j] <- LHS[j,] - Phi.w0 - Phi.w1%*%RHS[j,]
-  }
+  eta_t <- t(LHS) - matrix(Phi_w0, ncol = T-1, nrow= G) - Phi_w1%*%t(RHS)
 
-  Sigma_w <- (eta.t%*%t(eta.t))/T
+  Sigma_w <- (eta_t%*%t(eta_t))/T
 } else{
-  Phi.w0 <- c()
-  Phi.w1 <- matrix(,ncol = 0, nrow=0)
+  Phi_w0 <- c()
+  Phi_w1 <- matrix(,ncol = 0, nrow=0)
   Sigma_w <- matrix(,ncol = 0, nrow=0)
 }
 
-ParaExport <- list(Phi.w0 = Phi.w0, Phi.w1 = Phi.w1, Sigma_w = Sigma_w)
+ParaExport <- list(Phi_w0 = Phi_w0, Phi_w1 = Phi_w1, Sigma_w = Sigma_w)
 
 return(ParaExport)
 }
@@ -556,15 +495,8 @@ Get_G0G1Sigma <- function(ParaVARX, GVARinputs, Ai0, Ai1, Wi){
   MN <- nrow(Ai1[[1]])
 
 # a) G0 and G1
-G0prep <- list()
-G1prep <- list()
-for (i in 1:C){
-  G0prep[[i]] <- Ai0[[i]]%*%Wi[[i]]
-  G1prep[[i]] <- Ai1[[i]]%*%Wi[[i]]
-}
-G0 <- do.call(rbind,lapply(G0prep,matrix,ncol=C*(MN)))
-G1 <- do.call(rbind,lapply(G1prep,matrix,ncol=C*(MN)))
-
+G0 <- do.call(rbind, lapply(1:C, function(i) as.matrix(Ai0[[i]] %*% Wi[[i]], ncol = C * MN)))
+G1 <- do.call(rbind, lapply(1:C, function(i) as.matrix(Ai1[[i]] %*% Wi[[i]], ncol = C * MN)))
 
 # b) Sigma
 Sigma <- matrix(0, ncol=C*(MN), nrow=C*(MN) )
@@ -575,7 +507,7 @@ for (i in 1:C){
   count0 <- count1
 }
 
-out <- list(G0=G0, G1=G1, Sigma = Sigma)
+out <- list(G0 = G0, G1 = G1, Sigma = Sigma)
 
 return(out)
 
@@ -589,7 +521,7 @@ return(out)
 #'@keywords internal
 
 
-Get_a0<- function(GVARinputs, ParaVARX){
+Get_a0 <- function(GVARinputs, ParaVARX){
 
   C <- length(ParaVARX)
   MN <- length(ParaVARX[[1]]$Phi0)
@@ -613,11 +545,11 @@ return(a0)
 #'@param ParaVARX List containing the set of VARX model parameters
 #'@param GVARinputs  List of inputs for GVAR-based models
 #'@param G1 feedback matrix from a GVAR without global variables
-#'@param Phi.w1 feedback matrix from a marginal model
+#'@param Phi_w1 feedback matrix from a marginal model
 #'
 #'@keywords internal
 
-Get_Gy1<- function(ParaVARX, GVARinputs, G1, Phi.w1){
+Get_Gy1<- function(ParaVARX, GVARinputs, G1, Phi_w1){
 
   G <- length(GVARinputs$GVARFactors$Global)
   C <- length(GVARinputs$Economies)
@@ -626,13 +558,13 @@ Get_Gy1<- function(ParaVARX, GVARinputs, G1, Phi.w1){
   if (G != 0 ){
     D1 <- list()
     for (i in 1:C){
-      D1[[i]] <- ParaVARX[[GVARinputs$Economies[[i]]]]$Phi.global
+      D1[[i]] <- ParaVARX[[GVARinputs$Economies[[i]]]]$Phi_global
     }
     D1 <- do.call(rbind,lapply(D1,matrix,ncol=G))
   } else { D1 <- c()}
 
-  topGy.1 <- matrix(0, nrow =G, ncol= C*(MN) +G)
-  topGy.1[seq_len(G),seq_len(G)] <- Phi.w1
+  topGy.1 <- matrix(0, nrow = G, ncol= C*(MN) +G)
+  topGy.1[seq_len(G),seq_len(G)] <- Phi_w1
 
   bottomGy.1 <- cbind(D1,G1)
   Gy.1 <- rbind(topGy.1, bottomGy.1)
@@ -700,7 +632,6 @@ StarFactors <- function(RiskFactors, Economies, W){
 
   StarLabel <- c()
   ListFactors <- list()
-
 
   # Re-arrange country-specific factors per country
   for (i in 1:C){

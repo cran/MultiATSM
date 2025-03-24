@@ -12,7 +12,7 @@
 
 <meta name="author" content="Rubens Moura" />
 
-<meta name="date" content="2025-01-27" />
+<meta name="date" content="2025-03-23" />
 
 <title>MultiATSM package - General Guidelines</title>
 
@@ -573,7 +573,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">MultiATSM package - General Guidelines</h1>
 <h4 class="author">Rubens Moura</h4>
-<h4 class="date">2025-01-27</h4>
+<h4 class="date">2025-03-23</h4>
 
 
 <div id="TOC">
@@ -598,7 +598,8 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </ul></li>
 <li><a href="#S:SectionReplication" id="toc-S:SectionReplication"><span class="toc-section-number">4</span> Examples of full implementation of ATSMs</a>
 <ul>
-<li><a href="#general-template" id="toc-general-template"><span class="toc-section-number">4.1</span> General template</a></li>
+<li><a href="#S:SectionTemplate" id="toc-S:SectionTemplate"><span class="toc-section-number">4.1</span> General template</a></li>
+<li><a href="#user-friendly-inspection-of-key-elements-in-the-selected-atsm-specification" id="toc-user-friendly-inspection-of-key-elements-in-the-selected-atsm-specification"><span class="toc-section-number">4.2</span> User-Friendly Inspection of Key Elements in the Selected ATSM Specification</a></li>
 </ul></li>
 <li><a href="#references" id="toc-references">References</a></li>
 </ul>
@@ -611,18 +612,18 @@ repository</a>.</p>
 <p>The <em>MultiATSM</em> package offers estimation routines and various outputs
 for single and multi-country affine term structure models (ATSMs). All
 the frameworks of this package are based on the unspanned economic risk
-framework from <strong>(JPS, 2014)</strong>. In essence, these models assume the
-absence of arbitrage opportunities, consider a linear state space
-representation of the yield curve dynamics and offer a tractable
-approach to simultaneously combine the traditional yield curve factors
-(spanned factors) along with macroeconomic and financial variables
+framework from <span class="citation">Joslin, Priebsch, and Singleton (2014)</span> <strong>(JPS, 2014)</strong>. In essence,
+these models assume the absence of arbitrage opportunities, consider a
+linear state space representation of the yield curve dynamics and offer
+a tractable approach to simultaneously combine the traditional yield curve
+factors (spanned factors) along with macroeconomic variables
 (unspanned factors).</p>
 <p>The <em>MultiATSM</em> package currently supports the generation of outputs for
 eight distinct classes of ATSMs. Specifically, the package accommodates
 models estimated either on a <em>country-by-country</em> basis, following the
 approach of JPS (2014), or <em>jointly</em> across all countries within the
 economic system, as developed in <strong>JLL (2015)</strong> by
-<span class="citation">Jotikasthira, Le, and Lundblad (2015)</span> and <strong>CM (2024)</strong> by <span class="citation">Candelon and Moura (Forthcoming)</span>.</p>
+<span class="citation">Jotikasthira, Le, and Lundblad (2015)</span> and <strong>CM (2024)</strong> by <span class="citation">Candelon and Moura (2024)</span>.</p>
 <p>Due to peculiar features of JPS-based specifications, an efficient
 estimation of the parameters governing the risk-neutral (<span class="math inline">\(Q\)</span>-measure)
 and the physical (<span class="math inline">\(P\)</span>-measure) probability measures can be carried out
@@ -1157,12 +1158,12 @@ estimate ATSMs from scratch.</p>
 <div id="S:SectionDataPackage" class="section level2" number="1.1">
 <h2><span class="header-section-number">1.1</span> Package data-set</h2>
 <p>The <em>MultiATSM</em> package includes modified datasets compared to those
-originally used in <span class="citation">Candelon and Moura (2023)</span> (CM, 2023) and <span class="citation">Candelon and Moura (Forthcoming)</span>
-(CM, 2024) due to limited availability of certain data sources. In some
-cases, simulated data replicating the original methodology is employed.
-To simplify the exposition, the database of CM (2024) is used throughout
-the following sections to demonstrate the package’s functions. These
-datasets can be accessed using the <code>LoadData()</code> function with the
+originally used in <span class="citation">Candelon and Moura (2023)</span> (CM, 2023) and <span class="citation">Candelon and Moura (2024)</span>
+(CM, 2024) due to limited availability of certain data sources. As such,
+in some cases, simulated data replicating the original methodology is
+employed. To simplify the exposition, the database of CM (2024) is used
+throughout the following sections to demonstrate the package’s functions.
+These datasets can be accessed using the <code>LoadData()</code> function with the
 argument <em>CM_2024</em>, and similarly, the CM (2023) data with <em>CM_2023</em>.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">LoadData</span>(<span class="st">&quot;CM_2024&quot;</span>)</span></code></pre></div>
 <p>The previous function loads four types of datasets. The first dataset
@@ -1182,8 +1183,9 @@ terminology of JPS (2014), this dataset includes <em>(i)</em> country-specific
 <strong>spanned factors</strong> (commonly represented by level, slope, and curvature
 – see Section <a href="#S:SpaFac">3.1</a> for an intuitive explanation of these
 factors) and <em>(ii)</em> a set of country-specific and global <strong>unspanned
-factors</strong>, such as economic growth and inflation. Similar to the bond
-yield data, these economic indicators must be constructed by the user.</p>
+factors</strong>, namely macroeconomic variables such as economic growth and
+inflation. Similar to the bond yield data, these economic indicators
+must be constructed by the user.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&#39;CM_Factors&#39;</span>)</span></code></pre></div>
 <p>The final two datasets are essential for estimating GVAR-based models.
 The trade flows data, sourced from the International Monetary Fund
@@ -1234,7 +1236,7 @@ containing the full time series of risk factors required for the model.</p>
 <div id="fundamental-inputs-required-for-estimation" class="section level2" number="2.1">
 <h2><span class="header-section-number">2.1</span> Fundamental inputs required for estimation</h2>
 <p>In order to estimate any ATSM of this package, the user needs to specify
-several general model inputs, namely:</p>
+several general inputs, namely:</p>
 <p><strong>1. Desired ATSM class</strong></p>
 <ul>
 <li><em>Model type</em>: a character vector indicating the model type to be
@@ -1319,10 +1321,11 @@ inputs to build the <code>transition matrix()</code> . An example of this list o
 inputs is</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>W_type <span class="ot">&lt;-</span> <span class="st">&#39;Sample Mean&#39;</span> <span class="co"># Method to compute the transition matrix</span></span>
 <span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>t_First_Wgvar <span class="ot">&lt;-</span> <span class="st">&quot;2000&quot;</span> <span class="co"># First year of the sample</span></span>
-<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>t_Last_Wgvar <span class="ot">&lt;-</span>  <span class="st">&quot;2015&quot;</span> <span class="co"># Last year of the sample</span></span></code></pre></div>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>t_Last_Wgvar <span class="ot">&lt;-</span>  <span class="st">&quot;2015&quot;</span> <span class="co"># Last year of the sample</span></span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>DataConnectedness <span class="ot">&lt;-</span> TradeFlows <span class="co"># Measure of connectedness across countries</span></span></code></pre></div>
 <p>Therefore, a complete <em>GVARlist</em> is</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>GVARlist <span class="ot">&lt;-</span> <span class="fu">list</span>( <span class="at">VARXtype =</span> <span class="st">&quot;unconstrained&quot;</span>, <span class="at">W_type =</span> <span class="st">&quot;Sample Mean&quot;</span>,</span>
-<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>                  <span class="at">t_First_Wgvar =</span> <span class="st">&quot;2000&quot;</span>, <span class="at">t_Last_Wgvar =</span> <span class="st">&quot;2015&quot;</span>) </span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>GVARlist <span class="ot">&lt;-</span> <span class="fu">list</span>( <span class="at">VARXtype =</span> <span class="st">&quot;unconstrained&quot;</span>, <span class="at">W_type =</span> <span class="st">&quot;Sample Mean&quot;</span>, <span class="at">t_First_Wgvar =</span> <span class="st">&quot;2000&quot;</span>,</span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>                   <span class="at">t_Last_Wgvar =</span> <span class="st">&quot;2015&quot;</span>, <span class="at">DataConnectedness =</span> TradeFlows) </span></code></pre></div>
 <p>Regarding the JLL-ATSM frameworks, it is sufficient to specify the name
 of the dominant economy (if applicable) within the economic system:</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>JLLlist <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">DomUnit =</span>  <span class="st">&quot;China&quot;</span>)</span></code></pre></div>
@@ -1377,23 +1380,21 @@ generates the necessary inputs for building the likelihood function
 based on the user-provided inputs described in the previous sections,
 which are then directly utilized in the model optimization process. One
 possible use of <code>InputsForOpt()</code> is:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="fu">data</span>(CM_GlobalMacroFactors)</span>
-<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a><span class="fu">data</span>(CM_DomMacroFactors)</span>
-<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a><span class="fu">data</span>(CM_Yields)</span>
-<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a></span>
-<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a>ModelType <span class="ot">&lt;-</span> <span class="st">&quot;JPS original&quot;</span></span>
-<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a>Economies <span class="ot">&lt;-</span> <span class="st">&quot;Mexico&quot;</span></span>
-<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a>t0 <span class="ot">&lt;-</span> <span class="st">&quot;01-05-2007&quot;</span> <span class="co"># Initial Sample Date (Format: &quot;dd-mm-yyyy&quot;)</span></span>
-<span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a>tF <span class="ot">&lt;-</span> <span class="st">&quot;01-12-2018&quot;</span> <span class="co"># Final Sample Date (Format: &quot;dd-mm-yyyy&quot;)</span></span>
-<span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="dv">3</span></span>
-<span id="cb15-10"><a href="#cb15-10" tabindex="-1"></a>GlobalVar <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Gl_Eco_Act&quot;</span>) <span class="co"># Global Variables</span></span>
-<span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a>DomVar <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Eco_Act&quot;</span>) <span class="co"># Domestic Variables</span></span>
-<span id="cb15-12"><a href="#cb15-12" tabindex="-1"></a>FactorLabels <span class="ot">&lt;-</span> <span class="fu">LabFac</span>(N, DomVar, GlobalVar, Economies, ModelType)</span>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="fu">LoadData</span>(<span class="st">&quot;CM_2024&quot;</span>) </span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a>ModelType <span class="ot">&lt;-</span> <span class="st">&quot;JPS original&quot;</span></span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a>Economies <span class="ot">&lt;-</span> <span class="st">&quot;Mexico&quot;</span></span>
+<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a>t0 <span class="ot">&lt;-</span> <span class="st">&quot;01-05-2007&quot;</span> <span class="co"># Initial Sample Date (Format: &quot;dd-mm-yyyy&quot;)</span></span>
+<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a>tF <span class="ot">&lt;-</span> <span class="st">&quot;01-12-2018&quot;</span> <span class="co"># Final Sample Date (Format: &quot;dd-mm-yyyy&quot;)</span></span>
+<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a>GlobalVar <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Gl_Eco_Act&quot;</span>) <span class="co"># Global Variables</span></span>
+<span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a>DomVar <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Eco_Act&quot;</span>) <span class="co"># Domestic Variables</span></span>
+<span id="cb15-10"><a href="#cb15-10" tabindex="-1"></a>FactorLabels <span class="ot">&lt;-</span> <span class="fu">LabFac</span>(N, DomVar, GlobalVar, Economies, ModelType)</span>
+<span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a></span>
+<span id="cb15-12"><a href="#cb15-12" tabindex="-1"></a>DataFreq <span class="ot">&lt;-</span> <span class="st">&quot;Monthly&quot;</span></span>
 <span id="cb15-13"><a href="#cb15-13" tabindex="-1"></a></span>
-<span id="cb15-14"><a href="#cb15-14" tabindex="-1"></a>DataFreq <span class="ot">&lt;-</span> <span class="st">&quot;Monthly&quot;</span></span>
-<span id="cb15-15"><a href="#cb15-15" tabindex="-1"></a></span>
-<span id="cb15-16"><a href="#cb15-16" tabindex="-1"></a>ATSMInputs <span class="ot">&lt;-</span> <span class="fu">InputsForOpt</span>(t0, tF, ModelType, Yields, GlobalMacroVar, DomesticMacroVar,</span>
-<span id="cb15-17"><a href="#cb15-17" tabindex="-1"></a>                         FactorLabels, Economies, DataFreq,<span class="at">CheckInputs =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<span id="cb15-14"><a href="#cb15-14" tabindex="-1"></a>ATSMInputs <span class="ot">&lt;-</span> <span class="fu">InputsForOpt</span>(t0, tF, ModelType, Yields, GlobalMacroVar, DomesticMacroVar,  </span>
+<span id="cb15-15"><a href="#cb15-15" tabindex="-1"></a>                           FactorLabels, Economies, DataFreq, <span class="at">CheckInputs =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 </div>
 <div id="additional-inputs-for-numerical-and-graphical-outputs" class="section level2" number="2.4">
 <h2><span class="header-section-number">2.4</span> Additional inputs for numerical and graphical outputs</h2>
@@ -1432,7 +1433,8 @@ different types of the desired graphical outputs.</p>
 <p>In its current form, the <em>MultiATSM</em> package allows for the calculation
 of two risk compensation measures: term premia and forward premia. In
 particular, a <span class="math inline">\(n\)</span>-maturity bond yield can be decomposed as the sum of
-its expected (<span class="math inline">\(Exp_t^{(n)}\)</span>) and term premia (<span class="math inline">\(TP_t^{(n)}\)</span>) components.
+its expected short-rate (<span class="math inline">\(Exp_t^{(n)}\)</span>) and term premia
+(<span class="math inline">\(TP_t^{(n)}\)</span>) components.
 Technically: <span class="math display">\[
 y_t^{(n)} = Exp_t^{(n)} + TP_t^{(n)}
 \]</span> In the package’s standard form, the expected short rate term is
@@ -1448,14 +1450,14 @@ provide a two-element numerical vector containing the maturities
 corresponding to the starting and ending dates of the bond maturity.
 Example:</p>
 <div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a>    WishFPremia <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co"># Wish to estimate the forward premia: YES: 1, NO:0 </span></span>
-<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a>    FPmatLim <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">60</span>,<span class="dv">120</span>)</span></code></pre></div>
+<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a>    FPmatLim <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">60</span>, <span class="dv">120</span>)</span></code></pre></div>
 </div>
 <div id="bootstrap-settings" class="section level3" number="2.4.2">
 <h3><span class="header-section-number">2.4.2</span> Bootstrap settings</h3>
-<p>If the user intends to generate confidence bands around the point
-estimates of the numerical outputs previously described using a
-bootstrap procedure, an additional list of inputs is required.
-Specifically:</p>
+<p>An additional list of inputs is required if the user intends to
+generate confidence bands around the point estimates of the numerical
+outputs. These results are achieved using a bootstrap procedure.
+Specifically, the list of inputs include:</p>
 <ul>
 <li>The desired bootstrap procedure (<em>methodBS</em>): Available options are
 <em>(i)</em> standard residual bootstrap (<em>bs</em>); <em>(ii)</em> wild bootstrap
@@ -1491,12 +1493,12 @@ set as <em>Expanding</em>.</li>
 </div>
 <div id="S:SectionEstimation" class="section level1" number="3">
 <h1><span class="header-section-number">3</span> Model Estimation</h1>
-<p>Once bond yields and economic time series data are gathered and model
-features are selected, ATSM estimation proceeds in three steps. First,
-estimate the country-specific spanned factors for inclusion in the
-global ATSM. Next, estimate the parameters governing risk factor
-dynamics under the <span class="math inline">\(P-\)</span>measure. Finally, optimize the entire selected
-ATSM, including the <span class="math inline">\(Q-\)</span>measure parameters.</p>
+<p>Once bond yields and other (macro)economic time series data are gathered
+and model features are selected, ATSM estimation proceeds in three steps.
+First, the package estimates the country-specific spanned factors for
+inclusion in the global ATSM. Next, it estimates the parameters governing
+risk factor dynamics under the <span class="math inline">\(P-\)</span>measure. Finally, it optimizes the
+entire selected ATSM, including the <span class="math inline">\(Q-\)</span>measure parameters.</p>
 <div id="S:SpaFac" class="section level2" number="3.1">
 <h2><span class="header-section-number">3.1</span> Spanned Factors</h2>
 <p>The spanned factors are yield-related variables that are used to fit the
@@ -1506,9 +1508,9 @@ principal components (PCs) of the set of observed bond yields. Formally,
 <span class="math inline">\(P_{i,t}\)</span> is constructed as <span class="math inline">\(P_{i,t} = w_i Y_{i,t}\)</span> where <span class="math inline">\(w_i\)</span> is the
 PC weight matrix and <span class="math inline">\(Y_{i,t}\)</span> is a country-specific column-vector of
 yields with increasing maturities.</p>
-<p>For <em>N=3</em>, the spanned factors are traditionally interpreted as level,
-slope, and curvature. The nature of such interpretability results from
-the features of the PC weight matrix as illustrated below:</p>
+<p>For <span class="math inline">\(N = 3\)</span>, the spanned factors are traditionally interpreted as level,
+slope, and curvature. This interpretation arises from the structure of
+the principal component (PC) weight matrix, as shown below :</p>
 <div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a>w <span class="ot">&lt;-</span> <span class="fu">pca_weights_one_country</span>(Yields, <span class="at">Economy =</span> <span class="st">&quot;Uruguay&quot;</span>) </span></code></pre></div>
 <p>In matrix <em>w</em>, each row stores the weights used for constructing each
 spanned factor. The entries of the first row are linked to the
@@ -1530,7 +1532,7 @@ Figure 3.1: Yield loadings on the spanned factors
 </p>
 </div>
 <p>To directly obtain the time series of the country-specific spanned
-factors, the user can simply use the <code>Spanned_Factors()</code> function as
+factors, the user can use the <code>Spanned_Factors()</code> function as
 follows:</p>
 <div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&#39;CM_Yields&#39;</span>)</span>
 <span id="cb23-2"><a href="#cb23-2" tabindex="-1"></a>Economies <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;China&quot;</span>, <span class="st">&quot;Brazil&quot;</span>, <span class="st">&quot;Mexico&quot;</span>, <span class="st">&quot;Uruguay&quot;</span>)</span>
@@ -1555,7 +1557,7 @@ the models <em>JPS global</em> and <em>JPS multi</em>, the estimation of the
 <div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;CM_Factors&quot;</span>)</span>
 <span id="cb24-2"><a href="#cb24-2" tabindex="-1"></a>PdynPara <span class="ot">&lt;-</span> <span class="fu">VAR</span>(RiskFactors, <span class="at">VARtype=</span> <span class="st">&quot;unconstrained&quot;</span>)</span></code></pre></div>
 <p>whereas the estimation of a <em>JPS original</em> model for China is</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a>FactorsChina <span class="ot">&lt;-</span> RiskFactors[<span class="dv">1</span><span class="sc">:</span><span class="dv">7</span>,]</span>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a>FactorsChina <span class="ot">&lt;-</span> RiskFactors[<span class="dv">1</span><span class="sc">:</span><span class="dv">7</span>, ]</span>
 <span id="cb25-2"><a href="#cb25-2" tabindex="-1"></a>PdynPara <span class="ot">&lt;-</span> <span class="fu">VAR</span>(FactorsChina, <span class="at">VARtype=</span> <span class="st">&quot;unconstrained&quot;</span>)</span></code></pre></div>
 <p>In both cases, the outputs generated are the vector of intercepts and
 both the feedback and variance-covariance matrices of an unconstrained
@@ -1565,7 +1567,7 @@ VAR model.</p>
 <h3><span class="header-section-number">3.2.2</span> GVAR</h3>
 <p>The <code>GVAR()</code> function is designed to estimate a first-order GVAR which
 is built from country-specific VARX(1,1,1) models. For a comprehensive
-discussion of GVAR models, see <span class="citation">Chudik and Pesaran (2016)</span>.</p>
+discussion of GVAR models, see, for instance, <span class="citation">Chudik and Pesaran (2016)</span>.</p>
 <p>The <code>GVAR()</code> function requires two key inputs: the number of
 country-specific spanned factors (N) and a set of supplementary inputs
 stored in the <em>GVARinputs</em> list. The former is composed by four
@@ -1698,7 +1700,7 @@ error (<em>se</em>), in addition to the intercept (<em>K0Z</em>) and the feedbac
 <span class="math inline">\(P-\)</span>dynamics and are known in closed form. Likewise, <em>r0</em> and <em>se</em> have
 analytical solutions and can be factored out of the log-likelihood
 function. However, the remaining parameters (<em>K1XQ</em> and <em>SSZ</em>) require
-numerical estimation. <span class="citation">Le and Singleton (2018)</span> provides standardized routines
+numerical estimation. <span class="citation">Le and Singleton (2018)</span> provide standardized routines
 (integrated into this package) to set effective initial values,
 facilitating the optimization process.</p>
 <p>The <em>MultiATSM</em> package offers two optimization algorithms: <em>fminunc</em>
@@ -1716,7 +1718,7 @@ on, the functions of this package are used to replicate some of the
 results presented in the original papers of JPS (2014), CM (2023) and CM
 (2024). See the <a href="Paper-Replications.html">Paper Replication Vignette</a> of
 this package for a detailed reproduction.</p>
-<div id="general-template" class="section level2" number="4.1">
+<div id="S:SectionTemplate" class="section level2" number="4.1">
 <h2><span class="header-section-number">4.1</span> General template</h2>
 <div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" tabindex="-1"></a><span class="do">########################################################################################################</span></span>
 <span id="cb33-2"><a href="#cb33-2" tabindex="-1"></a><span class="do">#################################### USER INPUTS #######################################################</span></span>
@@ -1744,59 +1746,59 @@ this package for a detailed reproduction.</p>
 <span id="cb33-24"><a href="#cb33-24" tabindex="-1"></a><span class="co"># B.1) SPECIFIC model inputs</span></span>
 <span id="cb33-25"><a href="#cb33-25" tabindex="-1"></a><span class="do">#################################### GVAR-based models ##################################################</span></span>
 <span id="cb33-26"><a href="#cb33-26" tabindex="-1"></a>GVARlist <span class="ot">&lt;-</span> <span class="fu">list</span>( <span class="at">VARXtype =</span> <span class="st">&quot;unconstrained&quot;</span>, <span class="at">W_type =</span> <span class="st">&quot;Sample Mean&quot;</span>, <span class="at">t_First_Wgvar =</span> <span class="st">&quot;2005&quot;</span>,</span>
-<span id="cb33-27"><a href="#cb33-27" tabindex="-1"></a>                  <span class="at">t_Last_Wgvar =</span> <span class="st">&quot;2019&quot;</span>)</span>
+<span id="cb33-27"><a href="#cb33-27" tabindex="-1"></a>                  <span class="at">t_Last_Wgvar =</span> <span class="st">&quot;2019&quot;</span>, DataConnectedness <span class="ot">&lt;-</span> TradeFlows ) </span>
 <span id="cb33-28"><a href="#cb33-28" tabindex="-1"></a><span class="co"># VARXtype: Available options &quot;unconstrained&quot; or &quot;constrained&quot; (VARX)</span></span>
 <span id="cb33-29"><a href="#cb33-29" tabindex="-1"></a><span class="co"># W_type: Method to compute the transition matrix. Options:&quot;Time-varying&quot; or &quot;Sample Mean&quot;</span></span>
 <span id="cb33-30"><a href="#cb33-30" tabindex="-1"></a><span class="co"># t_First_Wgvar: First year of the sample (transition matrix)</span></span>
 <span id="cb33-31"><a href="#cb33-31" tabindex="-1"></a><span class="co"># t_Last_Wgvar:  Last year of the sample (transition matrix)</span></span>
-<span id="cb33-32"><a href="#cb33-32" tabindex="-1"></a><span class="do">#################################### JLL-based models ###################################################</span></span>
-<span id="cb33-33"><a href="#cb33-33" tabindex="-1"></a>JLLlist <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">DomUnit =</span>  <span class="st">&quot;China&quot;</span>)</span>
-<span id="cb33-34"><a href="#cb33-34" tabindex="-1"></a><span class="co"># DomUnit: name of the economy of the economic system, or &quot;None&quot; for the model &quot;JLL No DomUnit&quot;</span></span>
-<span id="cb33-35"><a href="#cb33-35" tabindex="-1"></a><span class="do">###################################### BRW inputs  ######################################################</span></span>
-<span id="cb33-36"><a href="#cb33-36" tabindex="-1"></a>WishBC <span class="ot">&lt;-</span> <span class="dv">0</span> <span class="co"># Wish to estimate the model with the bias correction method of BRW (2012): #YES: 1, NO:0</span></span>
-<span id="cb33-37"><a href="#cb33-37" tabindex="-1"></a>BRWlist <span class="ot">&lt;-</span> <span class="fu">within</span>(<span class="fu">list</span>(<span class="at">flag_mean =</span> <span class="cn">TRUE</span>, <span class="at">gamma =</span> <span class="fl">0.05</span>, <span class="at">N_iter =</span> <span class="dv">250</span>, <span class="at">B =</span> <span class="dv">50</span>, <span class="at">checkBRW =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb33-38"><a href="#cb33-38" tabindex="-1"></a>                       <span class="at">B_check =</span> <span class="dv">1000</span>),  N_burn <span class="ot">&lt;-</span> <span class="fu">round</span>(N_iter <span class="sc">*</span> <span class="fl">0.15</span>))</span>
-<span id="cb33-39"><a href="#cb33-39" tabindex="-1"></a><span class="co"># flag_mean: TRUE = compute the mean; FALSE = compute the median</span></span>
-<span id="cb33-40"><a href="#cb33-40" tabindex="-1"></a><span class="co"># gamma: Adjustment parameter</span></span>
-<span id="cb33-41"><a href="#cb33-41" tabindex="-1"></a><span class="co"># N_iter:  Number of iteration to be conserved</span></span>
-<span id="cb33-42"><a href="#cb33-42" tabindex="-1"></a><span class="co"># N_burn:  Number of iteration to be discarded</span></span>
-<span id="cb33-43"><a href="#cb33-43" tabindex="-1"></a><span class="co"># B: Number of bootstrap samples</span></span>
-<span id="cb33-44"><a href="#cb33-44" tabindex="-1"></a><span class="co"># checkBRW: wishes to perform closeness check: TRUE or FALSE</span></span>
-<span id="cb33-45"><a href="#cb33-45" tabindex="-1"></a><span class="co"># B_check: If checkBRW is chosen as TRUE, then choose number of bootstrap samples used in the check</span></span>
-<span id="cb33-46"><a href="#cb33-46" tabindex="-1"></a></span>
-<span id="cb33-47"><a href="#cb33-47" tabindex="-1"></a><span class="co"># C) Decide on Settings for numerical outputs</span></span>
-<span id="cb33-48"><a href="#cb33-48" tabindex="-1"></a>WishFPremia <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co"># Wish to estimate the forward premia: YES: 1, NO:0</span></span>
-<span id="cb33-49"><a href="#cb33-49" tabindex="-1"></a>FPmatLim <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">60</span>,<span class="dv">120</span>) <span class="co">#  If the forward premia is desired, then choose the Min and max maturities of the</span></span>
-<span id="cb33-50"><a href="#cb33-50" tabindex="-1"></a>                      <span class="co"># forward premia. Otherwise set NA</span></span>
-<span id="cb33-51"><a href="#cb33-51" tabindex="-1"></a>Horiz <span class="ot">&lt;-</span> <span class="dv">30</span></span>
-<span id="cb33-52"><a href="#cb33-52" tabindex="-1"></a>DesiredGraphs <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Fit&quot;</span>, <span class="st">&quot;IRF&quot;</span>, <span class="st">&quot;TermPremia&quot;</span>) <span class="co"># &quot;Fit&quot;, &quot;IRF&quot;, &quot;FEVD&quot;, &quot;GIRF&quot;, &quot;GFEVD&quot;, &quot;TermPremia&quot;</span></span>
-<span id="cb33-53"><a href="#cb33-53" tabindex="-1"></a>WishGraphRiskFac <span class="ot">&lt;-</span> <span class="dv">0</span></span>
-<span id="cb33-54"><a href="#cb33-54" tabindex="-1"></a>WishGraphYields <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb33-55"><a href="#cb33-55" tabindex="-1"></a>WishOrthoJLLgraphs <span class="ot">&lt;-</span> <span class="dv">0</span></span>
-<span id="cb33-56"><a href="#cb33-56" tabindex="-1"></a></span>
-<span id="cb33-57"><a href="#cb33-57" tabindex="-1"></a><span class="co"># D) Bootstrap settings</span></span>
-<span id="cb33-58"><a href="#cb33-58" tabindex="-1"></a>WishBootstrap <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co">#  YES: 1; No = 0.</span></span>
-<span id="cb33-59"><a href="#cb33-59" tabindex="-1"></a>BootList <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">methodBS =</span> <span class="st">&#39;bs&#39;</span>, <span class="at">BlockLength =</span> <span class="dv">4</span>, <span class="at">ndraws =</span> <span class="dv">5</span>, <span class="at">pctg =</span>  <span class="dv">95</span>)</span>
-<span id="cb33-60"><a href="#cb33-60" tabindex="-1"></a><span class="co"># methodBS: bootstrap method. Available options: (i) &#39;bs&#39; ; (ii) &#39;wild&#39;; (iii) &#39;block&#39;</span></span>
-<span id="cb33-61"><a href="#cb33-61" tabindex="-1"></a><span class="co"># BlockLength: Block length, necessary input for the block bootstrap method</span></span>
-<span id="cb33-62"><a href="#cb33-62" tabindex="-1"></a><span class="co"># ndraws: number of bootstrap draws</span></span>
-<span id="cb33-63"><a href="#cb33-63" tabindex="-1"></a><span class="co"># pctg: confidence level</span></span>
-<span id="cb33-64"><a href="#cb33-64" tabindex="-1"></a></span>
-<span id="cb33-65"><a href="#cb33-65" tabindex="-1"></a><span class="co"># E) Out-of-sample forecast</span></span>
-<span id="cb33-66"><a href="#cb33-66" tabindex="-1"></a>WishForecast <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co">#  YES: 1; No = 0.</span></span>
-<span id="cb33-67"><a href="#cb33-67" tabindex="-1"></a>ForecastList <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">ForHoriz =</span> <span class="dv">12</span>,  <span class="at">t0Sample =</span> <span class="dv">1</span>, <span class="at">t0Forecast =</span> <span class="dv">162</span>, <span class="at">ForType =</span> <span class="st">&quot;Rolling&quot;</span>)</span>
-<span id="cb33-68"><a href="#cb33-68" tabindex="-1"></a><span class="co"># ForHoriz: forecast horizon</span></span>
-<span id="cb33-69"><a href="#cb33-69" tabindex="-1"></a><span class="co"># t0Sample:   initial sample date</span></span>
-<span id="cb33-70"><a href="#cb33-70" tabindex="-1"></a><span class="co"># t0Forecast:  last sample date for the first forecast</span></span>
-<span id="cb33-71"><a href="#cb33-71" tabindex="-1"></a><span class="co"># ForType: Available options are &quot;Rolling&quot; or &quot;Expanding&quot;</span></span>
-<span id="cb33-72"><a href="#cb33-72" tabindex="-1"></a></span>
-<span id="cb33-73"><a href="#cb33-73" tabindex="-1"></a><span class="do">#########################################################################################################</span></span>
-<span id="cb33-74"><a href="#cb33-74" tabindex="-1"></a><span class="do">############################### NO NEED TO MAKE CHANGES FROM HERE #######################################</span></span>
-<span id="cb33-75"><a href="#cb33-75" tabindex="-1"></a><span class="do">#########################################################################################################</span></span>
-<span id="cb33-76"><a href="#cb33-76" tabindex="-1"></a></span>
-<span id="cb33-77"><a href="#cb33-77" tabindex="-1"></a><span class="co"># 2) Minor preliminary work: get the sets of factor labels and  a vector of common maturities</span></span>
-<span id="cb33-78"><a href="#cb33-78" tabindex="-1"></a>FactorLabels <span class="ot">&lt;-</span> <span class="fu">LabFac</span>(N, DomVar, GlobalVar, Economies, ModelType)</span>
-<span id="cb33-79"><a href="#cb33-79" tabindex="-1"></a><span class="cf">if</span>(<span class="fu">any</span>(ModelType <span class="sc">==</span> <span class="fu">c</span>(<span class="st">&quot;GVAR single&quot;</span>, <span class="st">&quot;GVAR multi&quot;</span>))){ GVARlist<span class="sc">$</span>DataConnectedness <span class="ot">&lt;-</span> TradeFlows}</span>
+<span id="cb33-32"><a href="#cb33-32" tabindex="-1"></a><span class="co"># DataConnectedness: measure of connectedness across countries</span></span>
+<span id="cb33-33"><a href="#cb33-33" tabindex="-1"></a><span class="do">#################################### JLL-based models ###################################################</span></span>
+<span id="cb33-34"><a href="#cb33-34" tabindex="-1"></a>JLLlist <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">DomUnit =</span>  <span class="st">&quot;China&quot;</span>)</span>
+<span id="cb33-35"><a href="#cb33-35" tabindex="-1"></a><span class="co"># DomUnit: name of the economy of the economic system, or &quot;None&quot; for the model &quot;JLL No DomUnit&quot;</span></span>
+<span id="cb33-36"><a href="#cb33-36" tabindex="-1"></a><span class="do">###################################### BRW inputs  ######################################################</span></span>
+<span id="cb33-37"><a href="#cb33-37" tabindex="-1"></a>WishBC <span class="ot">&lt;-</span> <span class="dv">0</span> <span class="co"># Wish to estimate the model with the bias correction method of BRW (2012): #YES: 1, NO:0</span></span>
+<span id="cb33-38"><a href="#cb33-38" tabindex="-1"></a>BRWlist <span class="ot">&lt;-</span> <span class="fu">within</span>(<span class="fu">list</span>(<span class="at">flag_mean =</span> <span class="cn">TRUE</span>, <span class="at">gamma =</span> <span class="fl">0.05</span>, <span class="at">N_iter =</span> <span class="dv">250</span>, <span class="at">B =</span> <span class="dv">50</span>, <span class="at">checkBRW =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb33-39"><a href="#cb33-39" tabindex="-1"></a>                       <span class="at">B_check =</span> <span class="dv">1000</span>),  N_burn <span class="ot">&lt;-</span> <span class="fu">round</span>(N_iter <span class="sc">*</span> <span class="fl">0.15</span>))</span>
+<span id="cb33-40"><a href="#cb33-40" tabindex="-1"></a><span class="co"># flag_mean: TRUE = compute the mean; FALSE = compute the median</span></span>
+<span id="cb33-41"><a href="#cb33-41" tabindex="-1"></a><span class="co"># gamma: Adjustment parameter</span></span>
+<span id="cb33-42"><a href="#cb33-42" tabindex="-1"></a><span class="co"># N_iter:  Number of iteration to be conserved</span></span>
+<span id="cb33-43"><a href="#cb33-43" tabindex="-1"></a><span class="co"># N_burn:  Number of iteration to be discarded</span></span>
+<span id="cb33-44"><a href="#cb33-44" tabindex="-1"></a><span class="co"># B: Number of bootstrap samples</span></span>
+<span id="cb33-45"><a href="#cb33-45" tabindex="-1"></a><span class="co"># checkBRW: wishes to perform closeness check: TRUE or FALSE</span></span>
+<span id="cb33-46"><a href="#cb33-46" tabindex="-1"></a><span class="co"># B_check: If checkBRW is chosen as TRUE, then choose number of bootstrap samples used in the check</span></span>
+<span id="cb33-47"><a href="#cb33-47" tabindex="-1"></a></span>
+<span id="cb33-48"><a href="#cb33-48" tabindex="-1"></a><span class="co"># C) Decide on Settings for numerical outputs</span></span>
+<span id="cb33-49"><a href="#cb33-49" tabindex="-1"></a>WishFPremia <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co"># Wish to estimate the forward premia: YES: 1, NO:0</span></span>
+<span id="cb33-50"><a href="#cb33-50" tabindex="-1"></a>FPmatLim <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">60</span>,<span class="dv">120</span>) <span class="co">#  If the forward premia is desired, then choose the Min and max maturities of the</span></span>
+<span id="cb33-51"><a href="#cb33-51" tabindex="-1"></a>                      <span class="co"># forward premia. Otherwise set NA</span></span>
+<span id="cb33-52"><a href="#cb33-52" tabindex="-1"></a>Horiz <span class="ot">&lt;-</span> <span class="dv">30</span></span>
+<span id="cb33-53"><a href="#cb33-53" tabindex="-1"></a>DesiredGraphs <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Fit&quot;</span>, <span class="st">&quot;IRF&quot;</span>, <span class="st">&quot;TermPremia&quot;</span>) <span class="co"># &quot;Fit&quot;, &quot;IRF&quot;, &quot;FEVD&quot;, &quot;GIRF&quot;, &quot;GFEVD&quot;, &quot;TermPremia&quot;</span></span>
+<span id="cb33-54"><a href="#cb33-54" tabindex="-1"></a>WishGraphRiskFac <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb33-55"><a href="#cb33-55" tabindex="-1"></a>WishGraphYields <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb33-56"><a href="#cb33-56" tabindex="-1"></a>WishOrthoJLLgraphs <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb33-57"><a href="#cb33-57" tabindex="-1"></a></span>
+<span id="cb33-58"><a href="#cb33-58" tabindex="-1"></a><span class="co"># D) Bootstrap settings</span></span>
+<span id="cb33-59"><a href="#cb33-59" tabindex="-1"></a>WishBootstrap <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co">#  YES: 1; No = 0.</span></span>
+<span id="cb33-60"><a href="#cb33-60" tabindex="-1"></a>BootList <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">methodBS =</span> <span class="st">&#39;bs&#39;</span>, <span class="at">BlockLength =</span> <span class="dv">4</span>, <span class="at">ndraws =</span> <span class="dv">5</span>, <span class="at">pctg =</span>  <span class="dv">95</span>)</span>
+<span id="cb33-61"><a href="#cb33-61" tabindex="-1"></a><span class="co"># methodBS: bootstrap method. Available options: (i) &#39;bs&#39; ; (ii) &#39;wild&#39;; (iii) &#39;block&#39;</span></span>
+<span id="cb33-62"><a href="#cb33-62" tabindex="-1"></a><span class="co"># BlockLength: Block length, necessary input for the block bootstrap method</span></span>
+<span id="cb33-63"><a href="#cb33-63" tabindex="-1"></a><span class="co"># ndraws: number of bootstrap draws</span></span>
+<span id="cb33-64"><a href="#cb33-64" tabindex="-1"></a><span class="co"># pctg: confidence level</span></span>
+<span id="cb33-65"><a href="#cb33-65" tabindex="-1"></a></span>
+<span id="cb33-66"><a href="#cb33-66" tabindex="-1"></a><span class="co"># E) Out-of-sample forecast</span></span>
+<span id="cb33-67"><a href="#cb33-67" tabindex="-1"></a>WishForecast <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co">#  YES: 1; No = 0.</span></span>
+<span id="cb33-68"><a href="#cb33-68" tabindex="-1"></a>ForecastList <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">ForHoriz =</span> <span class="dv">12</span>,  <span class="at">t0Sample =</span> <span class="dv">1</span>, <span class="at">t0Forecast =</span> <span class="dv">162</span>, <span class="at">ForType =</span> <span class="st">&quot;Rolling&quot;</span>)</span>
+<span id="cb33-69"><a href="#cb33-69" tabindex="-1"></a><span class="co"># ForHoriz: forecast horizon</span></span>
+<span id="cb33-70"><a href="#cb33-70" tabindex="-1"></a><span class="co"># t0Sample:   initial sample date</span></span>
+<span id="cb33-71"><a href="#cb33-71" tabindex="-1"></a><span class="co"># t0Forecast:  last sample date for the first forecast</span></span>
+<span id="cb33-72"><a href="#cb33-72" tabindex="-1"></a><span class="co"># ForType: Available options are &quot;Rolling&quot; or &quot;Expanding&quot;</span></span>
+<span id="cb33-73"><a href="#cb33-73" tabindex="-1"></a></span>
+<span id="cb33-74"><a href="#cb33-74" tabindex="-1"></a><span class="do">#########################################################################################################</span></span>
+<span id="cb33-75"><a href="#cb33-75" tabindex="-1"></a><span class="do">############################### NO NEED TO MAKE CHANGES FROM HERE #######################################</span></span>
+<span id="cb33-76"><a href="#cb33-76" tabindex="-1"></a><span class="do">#########################################################################################################</span></span>
+<span id="cb33-77"><a href="#cb33-77" tabindex="-1"></a></span>
+<span id="cb33-78"><a href="#cb33-78" tabindex="-1"></a><span class="co"># 2) Minor preliminary work: get the sets of factor labels and  a vector of common maturities</span></span>
+<span id="cb33-79"><a href="#cb33-79" tabindex="-1"></a>FactorLabels <span class="ot">&lt;-</span> <span class="fu">LabFac</span>(N, DomVar, GlobalVar, Economies, ModelType)</span>
 <span id="cb33-80"><a href="#cb33-80" tabindex="-1"></a></span>
 <span id="cb33-81"><a href="#cb33-81" tabindex="-1"></a><span class="co"># 3) Prepare the inputs of the likelihood function</span></span>
 <span id="cb33-82"><a href="#cb33-82" tabindex="-1"></a>ATSMInputs <span class="ot">&lt;-</span> <span class="fu">InputsForOpt</span>(t0_sample, tF_sample, ModelType, Yields, GlobalMacroVar, DomesticMacroVar,</span>
@@ -1822,6 +1824,163 @@ this package for a detailed reproduction.</p>
 <span id="cb33-102"><a href="#cb33-102" tabindex="-1"></a>Forecasts <span class="ot">&lt;-</span> <span class="fu">ForecastYields</span>(ModelType, ModelParaList, InputsForOutputs, FactorLabels, Economies,</span>
 <span id="cb33-103"><a href="#cb33-103" tabindex="-1"></a>                            JLLlist, GVARlist, WishBC, BRWlist)</span></code></pre></div>
 </div>
+<div id="user-friendly-inspection-of-key-elements-in-the-selected-atsm-specification" class="section level2" number="4.2">
+<h2><span class="header-section-number">4.2</span> User-Friendly Inspection of Key Elements in the Selected ATSM Specification</h2>
+<p>Starting from version <span class="math inline">\(1.3.0\)</span>, the <em>MultiATSM</em> package provides additional ways to concisely inspect key elements of the selected ATSM. In particular, users can now gain an alternative perspective on the general model inputs, optimized model parameters, and root mean square error (RMSE) from the forecast analysis. For clarity, the variable names used hereafter align with those presented in Section <a href="#S:SectionTemplate">4.1</a>.</p>
+<div id="atsm-inputs" class="section level3" number="4.2.1">
+<h3><span class="header-section-number">4.2.1</span> ATSM inputs</h3>
+<p>The <em>ATSMInputs</em> variable is an object of class <em>ATSMModelInputs</em> that includes the <span class="math inline">\(S3\)</span> methods <code>print()</code> and <code>summary()</code>. The <code>print()</code> method provides an overview of both the model inputs and the economic system’s general features, while the <code>summary()</code> method offers statistical summaries of the risk factors and bond yields.</p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;Out_Example&quot;</span>)</span>
+<span id="cb34-2"><a href="#cb34-2" tabindex="-1"></a><span class="fu">print</span>(Out<span class="sc">$</span>ATSMInputs)</span></code></pre></div>
+<pre><code>## General Model Inputs: 
+## ------------------------------------------
+## Model Type: JPS multi 
+## Economic System: China, Brazil, Mexico 
+## Sample Span: 01-05-2005 - 01-12-2019 
+## Data Frequency: Monthly 
+## Common Maturities across Countries: 0.25 0.5 1 3 5 10 years 
+## ------------------------------------------
+## 
+## Key Structure of the Economic System: 
+## ------------------------------------------
+## Total amount of spanned factors in the system: 6 
+## Total amount of global unspanned factors in the system: 1 
+## Total amount of country-specific unspanned factors in the system: 6 
+## Total amount of risk factors in the system: 13 
+## ------------------------------------------</code></pre>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" tabindex="-1"></a><span class="fu">summary</span>(Out<span class="sc">$</span>ATSMInputs) </span></code></pre></div>
+<pre><code>## Summary Statistics from the Time Series Components:
+## ------------------------------------------------------
+## 1) Risk Factors:
+##                    Mean Std_Dev     Min    Max
+## Gl_Eco_Act        0.686   7.568 -15.964 19.073
+## Eco_Act China    10.786   4.994   3.915 23.541
+## Inflation China   2.629   1.959  -1.794  8.805
+## Level China       6.774   1.618   3.149 10.281
+## Slope China       2.729   0.569   1.723  4.583
+## Eco_Act Brazil    2.299   3.238  -3.813 10.779
+## Inflation Brazil  5.523   1.856   2.456 10.706
+## Level Brazil     27.716   7.058  11.870 45.595
+## Slope Brazil      3.361   1.309   0.627  6.409
+## Eco_Act Mexico    2.018   3.057  -8.765  9.792
+## Inflation Mexico  4.102   1.026   2.131  6.773
+## Level Mexico     15.116   4.028   8.698 24.416
+## Slope Mexico      4.088   0.855   2.180  6.738
+## 
+##  2) Bond Yields:
+##                Mean Std_Dev   Min    Max
+## Y3M_China     2.444   0.842 0.467  4.003
+## Y6M_China     2.512   0.806 0.615  4.209
+## Y12M_China    2.628   0.757 0.991  4.394
+## Y36M_China    3.044   0.658 1.252  4.510
+## Y60M_China    3.329   0.579 1.994  4.865
+## Y120M_China   3.732   0.545 2.622  5.127
+## Y3M_Brazil   11.052   3.332 4.660 19.810
+## Y6M_Brazil   11.062   3.275 4.490 19.640
+## Y12M_Brazil  11.169   3.148 4.460 19.190
+## Y36M_Brazil  11.516   2.816 4.840 18.320
+## Y60M_Brazil  11.741   2.542 5.320 17.800
+## Y120M_Brazil 11.886   2.354 5.720 17.430
+## Y3M_Mexico    5.784   1.960 2.399  9.973
+## Y6M_Mexico    5.839   1.936 2.425  9.888
+## Y12M_Mexico   5.953   1.864 2.714 10.208
+## Y36M_Mexico   6.410   1.608 3.790 10.368
+## Y60M_Mexico   6.805   1.385 4.279 10.348
+## Y120M_Mexico  7.416   1.263 4.544 10.774
+## ------------------------------------------------------</code></pre>
+</div>
+<div id="atsm-parameters" class="section level3" number="4.2.2">
+<h3><span class="header-section-number">4.2.2</span> ATSM parameters</h3>
+<p>The <code>Optimization()</code> function returns an object of class <em>‘ATSMModelOutputs’</em>, which includes the <code>summary()</code> <span class="math inline">\(S3\)</span> method. This method offers a parsimonious summary of key model outputs following
+optimization process, including the maximum log-likelihood value, the intercept and slope coefficients from the model’s cross-sectional dimension, and the count of physical-measure eigenvalues greater than one—an indicator of potential explosive behavior in the model’s time series dimension.</p>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" tabindex="-1"></a><span class="fu">summary</span>(Out<span class="sc">$</span>ModelParaList) </span></code></pre></div>
+<pre><code>## General Model Outputs: 
+## ------------------------------------------------------
+## 1) Maximum Log-likelihood value: 78.84124 
+## 2) Key Features from the Q-measure: 
+##  
+##  a) Long run risk-neutral mean (r0): 
+##      China  Brazil  Mexico
+## r0 0.00309 0.01549 0.00969
+##  
+##  b) Risk-neutral eigenvalues: 
+##          Eigen_1   Eigen_2
+## China  0.9891482 0.9891482
+## Brazil 0.9434462 0.9434462
+## Mexico 0.9815273 0.9815273
+##  
+##  c) Intercept matrix of loadings (Matrix A): 
+##                   [,1]
+## Y3M_China     0.001329
+## Y6M_China     0.000748
+## Y12M_China   -0.000254
+## Y36M_China   -0.002398
+## Y60M_China   -0.002248
+## Y120M_China   0.003270
+## Y3M_Brazil    0.003903
+## Y6M_Brazil    0.000353
+## Y12M_Brazil  -0.004157
+## Y36M_Brazil  -0.006630
+## Y60M_Brazil  -0.002171
+## Y120M_Brazil  0.010230
+## Y3M_Mexico    0.002391
+## Y6M_Mexico    0.001143
+## Y12M_Mexico  -0.000897
+## Y36M_Mexico  -0.004471
+## Y60M_Mexico  -0.003510
+## Y120M_Mexico  0.005880
+##  
+##  d) Slope Matrix of Loadings (Matrix B) : 
+##              Level China Slope China Level Brazil Slope Brazil Level Mexico
+## Y3M_China       0.004926   -0.003447     0.000000     0.000000     0.000000
+## Y6M_China       0.004838   -0.002825     0.000000     0.000000     0.000000
+## Y12M_China      0.004662   -0.001653     0.000000     0.000000     0.000000
+## Y36M_China      0.003963    0.002134     0.000000     0.000000     0.000000
+## Y60M_China      0.003309    0.004667     0.000000     0.000000     0.000000
+## Y120M_China     0.002008    0.007153     0.000000     0.000000     0.000000
+## Y3M_Brazil      0.000000    0.000000     0.004693    -0.005441     0.000000
+## Y6M_Brazil      0.000000    0.000000     0.004555    -0.003577     0.000000
+## Y12M_Brazil     0.000000    0.000000     0.004343    -0.000886     0.000000
+## Y36M_Brazil     0.000000    0.000000     0.003884     0.003461     0.000000
+## Y60M_Brazil     0.000000    0.000000     0.003630     0.004562     0.000000
+## Y120M_Brazil    0.000000    0.000000     0.003184     0.004937     0.000000
+## Y3M_Mexico      0.000000    0.000000     0.000000     0.000000     0.004830
+## Y6M_Mexico      0.000000    0.000000     0.000000     0.000000     0.004725
+## Y12M_Mexico     0.000000    0.000000     0.000000     0.000000     0.004529
+## Y36M_Mexico     0.000000    0.000000     0.000000     0.000000     0.003892
+## Y60M_Mexico     0.000000    0.000000     0.000000     0.000000     0.003423
+## Y120M_Mexico    0.000000    0.000000     0.000000     0.000000     0.002648
+##              Slope Mexico
+## Y3M_China        0.000000
+## Y6M_China        0.000000
+## Y12M_China       0.000000
+## Y36M_China       0.000000
+## Y60M_China       0.000000
+## Y120M_China      0.000000
+## Y3M_Brazil       0.000000
+## Y6M_Brazil       0.000000
+## Y12M_Brazil      0.000000
+## Y36M_Brazil      0.000000
+## Y60M_Brazil      0.000000
+## Y120M_Brazil     0.000000
+## Y3M_Mexico      -0.004018
+## Y6M_Mexico      -0.003210
+## Y12M_Mexico     -0.001757
+## Y36M_Mexico      0.002350
+## Y60M_Mexico      0.004630
+## Y120M_Mexico     0.006603
+## 
+##  3) Key Features from the P-measure: 
+##  - Number of physical-measure eigenvalues greater than one: 0 
+## ------------------------------------------------------</code></pre>
+</div>
+<div id="forecasts" class="section level3" number="4.2.3">
+<h3><span class="header-section-number">4.2.3</span> Forecasts</h3>
+<p>The <code>ForecastYields()</code> function returns an object of class <em>‘ATSMModelForecast’</em>, which can be visualized using the <code>plot()</code> <span class="math inline">\(S3\)</span> method. This method generates a graphical representation of the RMSEs across different countries and forecast horizons.</p>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" tabindex="-1"></a><span class="fu">plot</span>(Out<span class="sc">$</span>Forecasts) </span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASAAAAEgCAMAAAAjXV6yAAAAyVBMVEUAAAAAADoAAGYAOjoAOpAAZrY6AAA6ADo6AGY6OgA6Ojo6OmY6OpA6ZmY6ZpA6ZrY6kLY6kNtmAABmADpmAGZmOgBmOjpmOmZmOpBmZmZmZrZmkJBmkLZmkNtmtttmtv+QOgCQOjqQOmaQZmaQZpCQkDqQkJCQtpCQttuQ29uQ2/+t2Oa2ZgC2Zma2kDq225C2/9u2///bkDrbkGbbtpDbtrbb25Db29vb2//b/7bb////tmb/tpD/25D/27b/29v//7b//9v///9A/6V8AAAACXBIWXMAAA7DAAAOwwHHb6hkAAAKeElEQVR4nO2dC3fbRBSE1dK0AcLDSXmU0jqFAiVxKXYKhRiDrf//o/CuVqu1LelKqyvvtJk5HI5rW9KX2adWsibLqVZlqQHQRYME0SBBNEgQDRJEgwTRIEE0SBANEuQMWmRbTdKihMLhsQYtC5ZFNk0LUwqJxxi0/q781+t5QhQvKB72QYK8QbMMoUJXQuEpDVo9yzc/pK/QXjA8tg+6uMIBysF4bA3aXN6fo1Rpow0Qj2ti6/P7CMXlhcPj5kHZCQ4SFo/tg769zW+u8vVjCCIwnsAgGEHx+CaWGiQUEg9n0oJ4LiaIZ/OCYtaDlJplZlX/GQ5PzM61gK630tjXqDw0qKw6mYZBWVuz0AFKwXNtSXBqUCsQGs/dNiioym0GmZOe2bTLuc8RqvRRebIKRMegaptIILnEjsQTdoNIBslAR+IJSIYYtLQ237s63KY3UNcS68UT08QOSDoYdF5sc7BCtbm0c/3V2W0UUBaqK1AvnupvGEAiG9QoV4b7RdkZqB5FNEiHp4MpnQ1an0/z2WGB+RI7PSJQL576Gt2ZobNB2wa/fHC7/W//09XDLn2QKtAQnu7F07MP2lbZxSRi3jEGUC+efYOuY0g6GbR5UbtI3jiKBc4oA/Xi8QU2Ho95Y9u0TbNeHKwDN48aNXvWMwiKx76xbdrTzeVhk28eNUY1CIqndZhtHjUyNbUdH4GnHbB+1EinBDxFH1SYh3GtF4zH1qBF+50UR78GjMRTNrFZhlFgpWB4gj5oiUHkhcHjDDLNvoanfqJ4BOHwuD6o/pgNE7PRhcTTOoo1TMzGFhRPOA/6b79gGpY7jiUInvJUY7IdOA4bfaKJIhKPO1ldX/x6CTFoGEHx+PUgjN/WWEHxeINg7nkD4wlWFGEExUODBLVeF0skKB7e5Soo2qDVF/7l8vOXvqxX3zypZik3T76e1HzJbBpsrqOxeGIN+vdnf6/udsa79Ms3y1d/Bd/avPST4dfz1bNq03BzFY3GE12D1sEe31al9PbVzbPqgwo0v3nu+12z6VrZoNF4NAx6d7t6Vr0ODxXcCL5592f5pbENUuXRMGj5/Y9Xda93jvrPU9/mxzZIlYejmCAaJIgGCYo2yF0aXp9PzErxvat89dDOfIOfUras3qxO58rLXgGPWZGcaPHE1yCDkueLB7erR1fmCsTq0cdmEF1+5A9UHLLp4oT2uqDnyWeWSYlnQBMzRzLmWLqLq9XpT4Zw9nQPyPwKvgfQcB53QCWeIX3Q7GRz6SZbpiKdvjm73Z6Jv9kvsZN89elX9+fmks2Ju3Az1W9iFY/bsRLPEIPW558Ut6isHpo+6PT3F9u2dlIdqGjztjuY2vsOl0X7n52M0AdVPMsHv5lL10o8g0axpe/wTB90Ot9O3mfT1V6J2e7AN0TDs/0rRjHI8ZjfK25fKfEMMqjap+2D5quzvx/P94G2RWVfmPIzf4DpRkcyyLWh7QGKm9Q0eFQNWl/8cnZ7AGQ/8t1nMYiMaZD5f2GQBo+CQXb0KEBmpoHvAdn+e26/Nbt35VrlmAbls4lr8ho8GjVokZnVUXtU21nvdoruIzN7+/Ly+WUxVxvVIHOoqRYPTzUE0SBBYxjk5hsw934O4mENEkSDBNEgQTRIEA0SRIME0SBBNEgQDRJEgwTRIEE0SBANEkSDBNEgQTRIEA0SRIME0SBBNEgQDRJEgwTRIEHOIJw8r0I4PNYgpCeAGyHx2N+LIT1DPgfjYR8kyBuEEjZUCoWnNAgmrsoJhsf2QUh5XjkYj61BG6A8L6MNEI9rYihhVaVweNw8CCfPywiJx/ZBSHleORhPYBCMoHh8E0sNEgqJhzNpQTwXE8SzeUEx60FKzbJ4xEv9Zzg8MTvXAmp8nnTfHQ3d3qn/86RTAMXsaej20Q/cTgEUs9dhJJoGxW/jtuz2yPYj8Og8sl0TqGuJHYunj0FQaUy9eGKa/EFRpTaoJ9CIPA0kmgZFlVg/oF481d/QyBoqNjZCM1+sM1aUQX14FHM1dPK8OpRSV4MG5p31JBkwinXM81IFGsLTpSlFGRSbLzYG0CCe6xiSDgZ1zvPaq9JjAPXiOZJBUHlevXh8gQVVeRyD3tN8sYrncMeKBkHleaHx2DeQ8rzQeFqHWeaLSecxzBdjvpgkW4OQ8ryMkHjKJgaT5+UEwxP0QRh5XpUweJxBptlj5Hmh8bg+CCfPC42ndRRjvtjuPAgizysQBE95qjFByfNC43Enqzh5XjkYj18PwvhtjRUUjzcI5p43MJ5gRRFGUDw0SFDrdbFEguLhXa6Cog1ivli7mC8mifli3YGYLyYAMV/sLosGCaJBguIMCsK83PqVWamZJssYOwg7s6uSKhljkTWoCvMqju6ihJJljO2HnelljMU2MR8utsg+MwkfZZ5OqoyxvbAzvYyx6D6oDBf7w4fn2FShZBlj+2Fn8+Log3ni50FluJi33XIlyxjbDTvTyxiLH8V8uFiZ8FOE5iTLGNsJO9PLGIs3yO/MhS4ZvpQZYztZXnoZY1oGLcqYrmQZY/thZ7lOxpiSQa7CpswY2wk708sYUzJo5geCZBljO2Fn9lAqGWM81RBEgwSNZdAHkzHGGiSIBgmiQYJokCAaJIgGCaJBgmiQIBokiAYJokGCaJAgGiSIBgmiQYJokCAaJIgGCaJBgmiQIBokiAYJokGCnEE4eV6FcHisQUhPADdC4rG/F0N6hnwOxsM+SJA3CCVsqBQKT2kQTFyVEwyP7YOQ8rxyMB5bgzZAeV5GGyAe18RQwqpK4fC4eRBOnpcREo/tg5DyvHIwnsAgGEHx+CaWGiQUEg9n0oJ4LiaIZ/OCYtaDlJpl8YiX+s9weGJ2PhQoc2p8njQST7+dZ22l3n176YHbSDzHqkFhIekZdASeoxnU55HtSDx3z6CDutMtVwMmz2t8nv4P/YfK80Lj0TYoCxUT04DG025QrzwvGWKwQQl4Wp+j2DHPy33WFUU2iPli7QYN5ulH0sGgDyZfbAQe+wZSnhcaT9lJ98zzGtUgKB5n0HufLzYaj3kDKs8Ljce+gZTnhcbTOswyX0w6j2G+GPPFJNkahJTnZYTEUzYxmDwvJxieoA/CyPOqhMHjDDLNHiPPC43H9UE4eV5oPK2jGPPFdudBEHlegSB4ylONCUqeFxqPO1nFyfPKwXj8ehDGb2usoHi8QTD3vIHxBCuKMILioUGCWq+LJRIUD+9yFRRtEPPF2sV8MUnMF+sOxHwxAYj5YndZNEgQDRIUZ1CQ52WW/yZ2FdBkMSTIF2vKOlNCiqxBVb5YEeRlwoNMflCKfLGGrDMlpNgmVuZ5uaQu+1N3Y3+KfLH6rDMlpOg+yOV5+SCveRGYkyRfrCHrTAUpfh5U5Hn5IC9HkyRfrCHrTAUpfhQrdlsFebnIpST5Yg1ZZxpI8Qa5muqDvBxNknyxhqwzDaShBrkgL98jpskXq8s6U0IaapAL8irH1ET5YnVZZ0pIgw0yE8WpXSZ17T5Fvlhd1pkSEk81BNEgQWMZhJYvlscisQYJokGCaJAgGiSIBgmiQYJokCAaJIgGCaJBgmiQIBokiAYJ+h8OpEk7tZDCYQAAAABJRU5ErkJggg==" /><!-- --><img src="data:image/png;base64,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" /><!-- --></p>
+</div>
+</div>
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1>References</h1>
@@ -1829,14 +1988,17 @@ this package for a detailed reproduction.</p>
 <div id="ref-BauerRudebuschWu2012" class="csl-entry">
 Bauer, Michael D, Glenn D Rudebusch, and Jing Cynthia Wu. 2012. <span>“Correcting Estimation Bias in Dynamic Term Structure Models.”</span> <em>Journal of Business &amp; Economic Statistics</em> 30 (3): 454–67.
 </div>
-<div id="ref-CandelonMoura2024" class="csl-entry">
-Candelon, Bertrand, and Rubens Moura. Forthcoming. <span>“A Multicountry Model of the Term Structures of Interest Rates with a GVAR.”</span> <em>Journal of Financial Econometrics</em>, Forthcoming.
-</div>
 <div id="ref-CandelonMoura2023" class="csl-entry">
-———. 2023. <span>“Sovereign Yield Curves and the COVID-19 in Emerging Markets.”</span> <em>Economic Modelling</em>, 106453. https://doi.org/<a href="https://doi.org/10.1016/j.econmod.2023.106453">https://doi.org/10.1016/j.econmod.2023.106453</a>.
+Candelon, Bertrand, and Rubens Moura. 2023. <span>“Sovereign Yield Curves and the COVID-19 in Emerging Markets.”</span> <em>Economic Modelling</em>, 106453. https://doi.org/<a href="https://doi.org/10.1016/j.econmod.2023.106453">https://doi.org/10.1016/j.econmod.2023.106453</a>.
+</div>
+<div id="ref-CandelonMoura2024" class="csl-entry">
+———. 2024. <span>“A Multicountry Model of the Term Structures of Interest Rates with a GVAR.”</span> <em>Journal of Financial Econometrics</em> 22 (5): 1558–87.
 </div>
 <div id="ref-ChudikPesaran2016" class="csl-entry">
 Chudik, Alexander, and M Hashem Pesaran. 2016. <span>“Theory and Practice of GVAR Modelling.”</span> <em>Journal of Economic Surveys</em> 30 (1): 165–97.
+</div>
+<div id="ref-JoslinPriebschSingleton2014" class="csl-entry">
+Joslin, Scott, Marcel Priebsch, and Kenneth J. Singleton. 2014. <span>“Risk Premiums in Dynamic Term Structure Models with Unspanned Macro Risks.”</span> <em>Journal of Finance</em> 69 (3): 1197–1233.
 </div>
 <div id="ref-JotikasthiraLeLundblad2015" class="csl-entry">
 Jotikasthira, Chotibhak, Anh Le, and Christian Lundblad. 2015. <span>“Why Do Term Structures in Different Currencies Co-Move?”</span> <em>Journal of Financial Economics</em> 115: 58–83.
