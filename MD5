@@ -1,4 +1,4 @@
-973640892007968ff5c8c25881eaf874 *DESCRIPTION
+5ccd38bb41855c42f10cb008d526aa4e *DESCRIPTION
 41781eb8513c7bd8a6075921abe069be *NAMESPACE
 3f2b7b4c89c3882bcc307d436ab8fe37 *R/A0N__BnAn.R
 de29ad0eea6a3f903532d7a1388c97b6 *R/BR_jps_gro_R3.R
@@ -19,7 +19,7 @@ f243b6566aa628b836d87d4b2c6260d9 *R/CM_Trade_2023.R
 f10d27a9d8ab4c2d35d497d5036a4e16 *R/Classes_Methods_All.R
 2ae99fd5a0b83c99564f231d118b6298 *R/ConfidenceBoundsBootstrap.R
 51b8421dfc92eaad0c35aa07296a1c33 *R/DataForEstimation.R
-2ccedb952cfe306e8676ef5b2042463f *R/DatabasePrep.R
+5e07c0e29d7688492de23c65d8d1e1cf *R/DatabasePrep.R
 da0a465d97a9e76a8566759f2504a447 *R/FMN__Rotate.R
 836402e0e019e65d233197805bdb0f14 *R/Folder_Creation.R
 5672c0eb5658cad69909ac7aa06d3879 *R/ForecastYields.R
@@ -58,12 +58,12 @@ ba5a3c656d082b172024a46ec2d4f6be *data/CM_Trade.rda
 409bfbed218d7ad1e8d6fca7509cca12 *data/CM_Yields_2023.rda
 845ec7df9982c2e17579c37850631035 *data/JPSrep.rda
 fedf7f837330619d72c20e53a03a22bb *data/Out_Example.rda
-936b5dbbd120fd68f87cb70c82b6795d *inst/doc/Guidelines.R
-94f2980d39cedd972fc9d50d631baa3f *inst/doc/Guidelines.Rmd
-2097e239eb187f5b7fad87bc7fd802ca *inst/doc/Guidelines.html
+dce245b98bac2da726adbd0e4a382efc *inst/doc/Guidelines.R
+07141de28116659940ccb4ea7aa053fd *inst/doc/Guidelines.Rmd
+e1687978daeee3d0e58ea603778a0973 *inst/doc/Guidelines.html
 268df1ca7fc5c9992c2746bfea98e8bb *inst/doc/Paper-Replications.R
 4e91957522bfa13835fdaa32b1f1f691 *inst/doc/Paper-Replications.Rmd
-b2d5682873a4007d0a57b4f4b489ea4a *inst/doc/Paper-Replications.html
+a80cd0812f2d9ef2c20c7d8cde6efdb4 *inst/doc/Paper-Replications.html
 e099d2c58101a204aef7e45c57b41a7c *inst/extdata/MacroData.xlsx
 937bdf9e6284d4f68ac73e8d044464d4 *inst/extdata/TradeData.xlsx
 192d07dddeb0adeb68365e0a3a08efac *inst/extdata/YieldsData.xlsx
@@ -286,6 +286,6 @@ a6c6239dc3291f031aebe5ff8fa636f0 *man/rhoParas.Rd
 4cc911946e5e1d2b319eb2ff6158b384 *man/summary.ATSMModelOutputs.Rd
 eaf173560c8a95f97d2d5c18f57a3902 *man/x2bound.Rd
 0c8f75580a0f1e3b3fc653f0bf5ac042 *man/x2pos.Rd
-94f2980d39cedd972fc9d50d631baa3f *vignettes/Guidelines.Rmd
+07141de28116659940ccb4ea7aa053fd *vignettes/Guidelines.Rmd
 4e91957522bfa13835fdaa32b1f1f691 *vignettes/Paper-Replications.Rmd
 ce4440076ffdbd3c3d87dae79fe5c293 *vignettes/references.bib
