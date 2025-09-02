@@ -12,7 +12,7 @@
 
 <meta name="author" content="Rubens Moura" />
 
-<meta name="date" content="2025-05-10" />
+<meta name="date" content="2025-09-01" />
 
 <title>MultiATSM package - General Guidelines</title>
 
@@ -573,7 +573,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">MultiATSM package - General Guidelines</h1>
 <h4 class="author">Rubens Moura</h4>
-<h4 class="date">2025-05-10</h4>
+<h4 class="date">2025-09-01</h4>
 
 
 <div id="TOC">
@@ -1272,7 +1272,11 @@ strictly less than <span class="math inline">\(1\)</span> otherwise, it should b
 enforcing this stationary constraint may prolong model estimation,
 it can improve the convergence of the model.</li>
 </ul>
-<p><strong>6. Output label</strong></p>
+<p><strong>6. Selected folder to save outputs</strong></p>
+<ul>
+<li>Path where the selected graphical outputs will be saved. If set to <code>NULL</code>, the outputs are stored in the user’s <em>temporary directory</em> (accessible via <code>tempdir()</code>).</li>
+</ul>
+<p><strong>7. Output label</strong></p>
 <ul>
 <li>Character vector of length one, specifying the name used in the file
 that stores the model outputs.</li>
@@ -1297,8 +1301,11 @@ that stores the model outputs.</li>
 <span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a><span class="co"># 5) Risk-neutral stationary constraint</span></span>
 <span id="cb8-18"><a href="#cb8-18" tabindex="-1"></a>StationarityUnderQ <span class="ot">&lt;-</span> <span class="dv">0</span> <span class="co"># 1 = set stationary condition under the Q; 0 = no stationary condition</span></span>
 <span id="cb8-19"><a href="#cb8-19" tabindex="-1"></a></span>
-<span id="cb8-20"><a href="#cb8-20" tabindex="-1"></a><span class="co"># 6) Output label</span></span>
-<span id="cb8-21"><a href="#cb8-21" tabindex="-1"></a>OutputLabel <span class="ot">&lt;-</span> <span class="st">&quot;Model_demo&quot;</span></span></code></pre></div>
+<span id="cb8-20"><a href="#cb8-20" tabindex="-1"></a><span class="co"># 6) Path to save outputs</span></span>
+<span id="cb8-21"><a href="#cb8-21" tabindex="-1"></a>Folder2Save <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb8-22"><a href="#cb8-22" tabindex="-1"></a></span>
+<span id="cb8-23"><a href="#cb8-23" tabindex="-1"></a><span class="co"># 7) Output label</span></span>
+<span id="cb8-24"><a href="#cb8-24" tabindex="-1"></a>OutputLabel <span class="ot">&lt;-</span> <span class="st">&quot;Model_demo&quot;</span></span></code></pre></div>
 </div>
 <div id="model-specific-inputs-required-for-estimation" class="section level2" number="2.2">
 <h2><span class="header-section-number">2.2</span> Model-specific inputs required for estimation</h2>
@@ -1421,9 +1428,8 @@ the orthogonalized version should be additionally included</p>
 <span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a>WishOrthoJLLgraphs <span class="ot">&lt;-</span> <span class="dv">0</span> <span class="co"># YES: 1; No = 0.</span></span></code></pre></div>
 <p>The function <code>InputsForOutputs()</code> can provide some guidance for
 customizing the features of the wished outputs. Conditional to these
-settings, individual folders are created at the user’s <em>temporary
-directory</em> (which can be accessed using <code>tempdir()</code> ) to store the
-different types of the desired graphical outputs.</p>
+settings, individual folders are created at the selected <code>Folder2Save</code> to store the
+different types of the desired graphical outputs. The selected outputs are also printed to the user’ console.</p>
 <div id="bond-yield-decomposition" class="section level3" number="2.4.1">
 <h3><span class="header-section-number">2.4.1</span> Bond yield decomposition</h3>
 <p>In its current form, the <em>MultiATSM</em> package allows for the calculation
@@ -1522,7 +1528,7 @@ factor follows from the fact that the weights have a more pronounced
 effect on the middle range maturities of the curve. These concepts are
 graphically illustrated below.</p>
 <div class="figure"><span style="display:block;" id="fig:unnamed-chunk-22"></span>
-<img src="data:image/png;base64,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" alt="Yield loadings on the spanned factors" />
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASAAAAEgCAMAAAAjXV6yAAABCFBMVEUAAAAAADoAAGYAAP8AOmYAOpAAZmYAZrYA/wAzMzM6AAA6ADo6AGY6OmY6OpA6ZrY6kNtNTU1NTW5NTY5NbqtNjshmAABmADpmAGZmOgBmOjpmOmZmOpBmZmZmkJBmtrZmtttmtv9uTU1uTW5uTY5ubo5ubqtuq+SOTU2OTW6OTY6Obk2OyP+QOgCQOjqQOmaQkDqQkGaQtpCQ27aQ2/+rbk2rbm6rbo6ryKur5OSr5P+2ZgC2Zjq225C22/+2/9u2///Ijk3I///bkDrbtmbb25Db27bb2//b/7bb///kq27k////AAD/tmb/yI7/25D/27b/29v/5Kv//7b//8j//9v//+T///8/hN8gAAAACXBIWXMAAA7DAAAOwwHHb6hkAAALEklEQVR4nO3dC5vaxhUGYO26DvV667BpjNPGudDbpq1Jk5QmaTYXbJK264BpF2P9/3/SuQhJgIZzRjpzQ+d7Hi+3kUbzMjMSuxbKcs7RZKE3IPYwEBAGAsJAQBgICAMBYSAgDASEgYAwEBAGAsJAQBgICAMBYSAgDASEgYAwEBAGAsJAQBgICAMBcQO0mWTZ2PDa+ultu5WuHjUvaHr+IMtMbhW6uI4ToM1kmK+fTJtftNxAeEHsCleXs3z1cBoDkNqGf/1b3Gw+na5+9Zvzz4Z5Ph/m8ywbiM51/6fyhZl4Vwc2a1X9YCBXJv+p+2ggXU7ciO0Y5qJ6WTW0Aa2BFocpX1sOtlskHR5Ot/ce3a7fm4mfOy/kN7XBeO8g+w3US5Qr1PfLMr88SG2Tb7LzmVzBT5cz0b9F9ZvJeH8D6ICOZRdIbv+309Xb4omL7GxaAYkX5LQg3k1UNESxhFqhvm8xZtajc/EG/Sg2T7vOh+AGuBti6ka+U/LBciDepuX5TD+uXlhix1e51mIJvcJBrTZc5sM9IGgD3E3So6GYFbeT4vr992eyPUvdg8oXdD/HrbUYYnoJtcJqlGAi3p9cFd8ZYtAGuNnNr0eq395kv/htsde4Gahn3xqN16P7t9ULNpP0RSYLF0vIFdpN0nIfISdnNUmPnU/SyQfpykBA+guEDAMBYSAgDASEgYAwEBAGAsJAQBgICAMBYSAgDASEgYAwEBAGAsJAQBgICAMBYSAgDASEgYAwEBAGAsJAQBgICAMBQQD125CBgDAQEAYCwkBAGAgIAwFhICB+gRZwkdjiFWiRoJBnoPSEfAItyh8JxSPQYucmlfgDWhzcSSIBgNKKN6BF49344wtoYXwQeTwBLY4+jDlhgBIS8gN06JGMkBegJo1UhIIBpSLkA8hAkYaQByAjRFRC+yfZb+Me6AhDaCHDFxDsxCfQ4dcphBBCoNTjHEgb7H3LhPHrJxwF01UMcQ202LfZf1nGjVd7lHqcAt27t4Ca2zTIDr/hBG3XoasY4gho2xx4krGbhhrVaij0Q3an9a8/uXr35+L+m388ayoCp76JmNa3m6iPdpUjXdB6JNdbL01ePi4evLyyB9qvF9d2vBDt+MGZ1Vv/+i8v8rs/vFD37/74VyugpvVjW360HP2sYpd66+/+9HP++s/fyLtvvvynHmIPHjyAgIz9Fd01mguGQ6mn3vpX75ZAL68xc9DxsWwxuTQUDU+j09yDxL3jQIhpzmry3S8cC49pDnp5JXN9WEQFtwew2zvtlI6HZ38vdl3txcw9CLd/tN17V+Vj4mk8DtKdyASEPH6wP7rZLhEVj/2RNPLwqvXH9Li6T24NhD2KbwO0iJDH1Wexdh1oER+PI6BWPqL3hP4NY1NcALXzab2k20QCtJ184hNyAGTfyNrcHJ0QPZB1E3d3XbEJBQc62LNHJkQOZOvTeQ2OQw1k17rmA8OohIiBrNpmPG6OSSgcUIQfK5pCC2Tz+3ea9TgPKZCFD9maXIcSCN0qxOiKRigAEG7yiUWIEAjXJPTcHIkQHRCqQTa7rjiEyIBwPqhVWa3SdbwC2R75xCBEBeSgA2HX6jZEQG58YhDyCNTqo0VwIRogVx0Iu2qHIQFy6BNciALIqU9ooQSAwgoRALn2CSvUHci9T1ChzkDIj6ioUl1rcRE/QN1/uxpMqCuQJ59wQh2B/AywkPEBROMTqAt1A/LoE0rIPRDd+Aoi1AnIawfC1kcc50CkE3QAoS5A3n1CCHUA8j3A8JVSxjEQ/RGQbyHDKZn1kzMNQGF8vAs1n5K5c3JmZECehZpPh6qfnGkACubjWch4Ql1xT56S2cs0AVWnZNZOzjT0oIAdCFk7UaAelDcDhfXxKdRyDkJsoNvfcXgTaj4lc+fkzAag0B0IuQkUMZySCRwHBe9AuG2gSKsj6Rh8fAklDORHqA1QJD5+hNwA+fotvQehtIE8CLUAisjHg5ALIK9/BnMtlDyQayEHQL7/jupWiB7I/9+ZnQqdApBTIXug+HycClEDpfwfORpzIkDuuhAxULAO5EyIFijgAHMlZA0UZwfKnQmRAoWdod0IUQKF3oM5ESIECu3jRuikgFwI2QJF7eNCiAwoCh8HQqcGRC5EBRSLD7kQEVA8PtRCJwhEK2QJlIIPrRAJUGQ+pEIkp4VHB0QoRAEUnw+hEAFQjD50QicLRCXUHShSHyqhzkDR+hAJnTIQiVBXoJh9SIQ6AsXtQyHUDSh2HwKhTkDx+3QX6gKUgk9noQ5Aafh0jeGUTMRVMpPx6daFmk/JzNtdJTPSdBJqPh0KcZXMZDpQ3k2o+YQ6+CqZKfl0Emo+JRO8SmZaPl2Etq1/fnX1GH+VzNR8Ogg1z0HHr5KZoE97oeZTMvOju/kUfVoLGU7JPEGglkItjqQT9Wkp1CegVkL2QOn6tBLqF1ALIWugpH1aCPUNyFqod0C2QrZAyfvYCvUQyE7IEugUfOyESP5/UHKxEOonkIVQT4HwQn0FQgv1Fggr1F8gpFCPgXBCfQZCCfUaCCPUbyCEUM+B4PQdCOxCfQcChXoPBAkxECDEQIAQA+XHhRhI5ogQA6mYhRhIxyjEQEVMQgy0jUGIgco0CzFQlUYhBqqlSYiBgDAQEAYCwkBAGAgIAwFhICAMBAQDpNL6Uof+FySp0gJI50G7NyDEgqRVMhCwIAMBC/Z7BkaEgYAwEBAGAsJAQECg5mvQI3L3u6vi6z/kSea/foFesCpuWaM+mf2ZfZXqNGZDQyEgwzXo4chvKLj7vfoah+fPoMI7KYtb1qjySjfNqspX0tLUUAjIcP1nRK2Pt9v55stvLLa2VtyyRrXI9qtHLKp8/s7X8trEhoZCQIYriNtsruixV1f4d7Qq3qLG4p23rFJymBoKARmuQY+K/CYHWaEYaBZvaVXcvsZtadsqBZCpoQ570OtPrqsHbeYh+x70qj6n46vs0oNaz0FiL1bfwDZA9nPQ8+v6AyugtnOQ4Rr0iEpLH/m2vvkKP7uXxS1rrM3NllVKDlNDkcdB+9egh1MclMgFxd13LAaKLm5f43YKsq+ydhx0UC0fSQNhICAMBISBgDAQEAYC4hFodXE+Ezfr0f3b8rn/fr9X5uH04LnN5OOJWnJ1MThawfrJlGZL6/EKdDZVNxWQ9Dgotv/cfCCWGYo7NzXZxiyhAi3iFegD2cz5B3ZAql/MRRdaXYyBGjYTqIR9vAJ99PQ233z6uQBaXWRZNpQ/hwpE/Fhdfpadf/fwC/ncjRxLcz2g5tJzPRrk6snNJMvkeNMryNVCM/VA2jjoQl6BPv6b6AePfrx/ux6NVa+QOCWQnGHkrXi8FAZFd9hMZLfLl2dfyHKbyUCRlSsoFsp1/2rqkR3jFWg8H+fLoXib/yff6AKjAhqXz8n2ry7lxKzu5qrnSCgpJ58qV6AW0iWrwpTxC7QUA2WsxsFSDIqzXaD6rRhexQjbtlnR5HP9Xy+G9RWI2TvLdOGiu1HGL9D66X/emy3lCDmbHvSgndvLH4oJdw+omGTqK9CP1cyUPFD+7ecDOZPqTnSkB20mHxbjZhdoeaZB6ivIq3LJDzExRIYKSL7/4rBINmg9GgqPsxJIN3KebQ8Kb3Sn0ECbiZARS29XoBZSL20Xp95qz0BqFyXaKGaNs78LiZtsoPbYHz0pgdRztYOeYtetgdRuXvaiYgVaRM9HeTUCCRPrZ7Hangn/ASLxA0WrzKvZdn78E1gtiX/UsEj98xq+X6T+YTXNMBAQBgLCQEAYCAgDAWEgIP8HE9xgxuDE2u8AAAAASUVORK5CYII=" alt="Yield loadings on the spanned factors" />
 <p class="caption">
 Figure 3.1: Yield loadings on the spanned factors
 </p>
@@ -1719,110 +1725,115 @@ this package for a detailed reproduction.</p>
 <div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" tabindex="-1"></a><span class="do">########################################################################################################</span></span>
 <span id="cb32-2"><a href="#cb32-2" tabindex="-1"></a><span class="do">#################################### USER INPUTS #######################################################</span></span>
 <span id="cb32-3"><a href="#cb32-3" tabindex="-1"></a><span class="do">########################################################################################################</span></span>
-<span id="cb32-4"><a href="#cb32-4" tabindex="-1"></a><span class="co"># A) Load database data</span></span>
-<span id="cb32-5"><a href="#cb32-5" tabindex="-1"></a><span class="fu">LoadData</span>(<span class="st">&quot;CM_2024&quot;</span>)</span>
-<span id="cb32-6"><a href="#cb32-6" tabindex="-1"></a></span>
-<span id="cb32-7"><a href="#cb32-7" tabindex="-1"></a><span class="co"># B) GENERAL model inputs</span></span>
-<span id="cb32-8"><a href="#cb32-8" tabindex="-1"></a>ModelType <span class="ot">&lt;-</span> <span class="st">&quot;JPS multi&quot;</span> <span class="co"># available options: &quot;JPS original&quot;, &quot;JPS global&quot;, &quot;GVAR single&quot;, &quot;JPS multi&quot;,</span></span>
-<span id="cb32-9"><a href="#cb32-9" tabindex="-1"></a>                          <span class="co">#&quot;GVAR multi&quot;, &quot;JLL original&quot;, &quot;JLL No DomUnit&quot;, &quot;JLL joint Sigma&quot;.</span></span>
-<span id="cb32-10"><a href="#cb32-10" tabindex="-1"></a></span>
-<span id="cb32-11"><a href="#cb32-11" tabindex="-1"></a>Economies <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;China&quot;</span>, <span class="st">&quot;Brazil&quot;</span>, <span class="st">&quot;Mexico&quot;</span>) <span class="co"># Names of the economies from the economic system</span></span>
-<span id="cb32-12"><a href="#cb32-12" tabindex="-1"></a>GlobalVar <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Gl_Eco_Act&quot;</span>)<span class="co"># Global Variables</span></span>
-<span id="cb32-13"><a href="#cb32-13" tabindex="-1"></a>DomVar <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Eco_Act&quot;</span>, <span class="st">&quot;Inflation&quot;</span>) <span class="co"># Country-specific variables</span></span>
-<span id="cb32-14"><a href="#cb32-14" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="dv">2</span>  <span class="co"># Number of spanned factors per country</span></span>
-<span id="cb32-15"><a href="#cb32-15" tabindex="-1"></a></span>
-<span id="cb32-16"><a href="#cb32-16" tabindex="-1"></a>t0_sample <span class="ot">&lt;-</span> <span class="st">&quot;01-05-2005&quot;</span> <span class="co"># Format: &quot;dd-mm-yyyy&quot;</span></span>
-<span id="cb32-17"><a href="#cb32-17" tabindex="-1"></a>tF_sample <span class="ot">&lt;-</span> <span class="st">&quot;01-12-2019&quot;</span> <span class="co"># Format: &quot;dd-mm-yyyy&quot;</span></span>
-<span id="cb32-18"><a href="#cb32-18" tabindex="-1"></a></span>
-<span id="cb32-19"><a href="#cb32-19" tabindex="-1"></a>OutputLabel <span class="ot">&lt;-</span> <span class="st">&quot;Test&quot;</span> <span class="co"># label of the model for saving the file</span></span>
-<span id="cb32-20"><a href="#cb32-20" tabindex="-1"></a>DataFreq <span class="ot">&lt;-</span><span class="st">&quot;Monthly&quot;</span> <span class="co"># Frequency of the data</span></span>
-<span id="cb32-21"><a href="#cb32-21" tabindex="-1"></a></span>
-<span id="cb32-22"><a href="#cb32-22" tabindex="-1"></a>StatQ <span class="ot">&lt;-</span> <span class="dv">0</span> <span class="co"># Wish to impose stationary condition for the eigenvalues of each country: YES: 1,NO:0</span></span>
-<span id="cb32-23"><a href="#cb32-23" tabindex="-1"></a></span>
-<span id="cb32-24"><a href="#cb32-24" tabindex="-1"></a><span class="co"># B.1) SPECIFIC model inputs</span></span>
-<span id="cb32-25"><a href="#cb32-25" tabindex="-1"></a><span class="do">#################################### GVAR-based models ##################################################</span></span>
-<span id="cb32-26"><a href="#cb32-26" tabindex="-1"></a>GVARlist <span class="ot">&lt;-</span> <span class="fu">list</span>( <span class="at">VARXtype =</span> <span class="st">&quot;unconstrained&quot;</span>, <span class="at">W_type =</span> <span class="st">&quot;Sample Mean&quot;</span>, <span class="at">t_First_Wgvar =</span> <span class="st">&quot;2005&quot;</span>,</span>
-<span id="cb32-27"><a href="#cb32-27" tabindex="-1"></a>                  <span class="at">t_Last_Wgvar =</span> <span class="st">&quot;2019&quot;</span>, DataConnectedness <span class="ot">&lt;-</span> TradeFlows ) </span>
-<span id="cb32-28"><a href="#cb32-28" tabindex="-1"></a><span class="co"># VARXtype: Available options &quot;unconstrained&quot; or &quot;constrained&quot; (VARX)</span></span>
-<span id="cb32-29"><a href="#cb32-29" tabindex="-1"></a><span class="co"># W_type: Method to compute the transition matrix. Options:&quot;Time-varying&quot; or &quot;Sample Mean&quot;</span></span>
-<span id="cb32-30"><a href="#cb32-30" tabindex="-1"></a><span class="co"># t_First_Wgvar: First year of the sample (transition matrix)</span></span>
-<span id="cb32-31"><a href="#cb32-31" tabindex="-1"></a><span class="co"># t_Last_Wgvar:  Last year of the sample (transition matrix)</span></span>
-<span id="cb32-32"><a href="#cb32-32" tabindex="-1"></a><span class="co"># DataConnectedness: measure of connectedness across countries</span></span>
-<span id="cb32-33"><a href="#cb32-33" tabindex="-1"></a><span class="do">#################################### JLL-based models ###################################################</span></span>
-<span id="cb32-34"><a href="#cb32-34" tabindex="-1"></a>JLLlist <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">DomUnit =</span>  <span class="st">&quot;China&quot;</span>)</span>
-<span id="cb32-35"><a href="#cb32-35" tabindex="-1"></a><span class="co"># DomUnit: name of the economy of the economic system, or &quot;None&quot; for the model &quot;JLL No DomUnit&quot;</span></span>
-<span id="cb32-36"><a href="#cb32-36" tabindex="-1"></a><span class="do">###################################### BRW inputs  ######################################################</span></span>
-<span id="cb32-37"><a href="#cb32-37" tabindex="-1"></a>WishBC <span class="ot">&lt;-</span> <span class="dv">0</span> <span class="co"># Wish to estimate the model with the bias correction method of BRW (2012): #YES: 1, NO:0</span></span>
-<span id="cb32-38"><a href="#cb32-38" tabindex="-1"></a>BRWlist <span class="ot">&lt;-</span> <span class="fu">within</span>(<span class="fu">list</span>(<span class="at">flag_mean =</span> <span class="cn">TRUE</span>, <span class="at">gamma =</span> <span class="fl">0.05</span>, <span class="at">N_iter =</span> <span class="dv">250</span>, <span class="at">B =</span> <span class="dv">50</span>, <span class="at">checkBRW =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb32-39"><a href="#cb32-39" tabindex="-1"></a>                       <span class="at">B_check =</span> <span class="dv">1000</span>),  N_burn <span class="ot">&lt;-</span> <span class="fu">round</span>(N_iter <span class="sc">*</span> <span class="fl">0.15</span>))</span>
-<span id="cb32-40"><a href="#cb32-40" tabindex="-1"></a><span class="co"># flag_mean: TRUE = compute the mean; FALSE = compute the median</span></span>
-<span id="cb32-41"><a href="#cb32-41" tabindex="-1"></a><span class="co"># gamma: Adjustment parameter</span></span>
-<span id="cb32-42"><a href="#cb32-42" tabindex="-1"></a><span class="co"># N_iter:  Number of iteration to be conserved</span></span>
-<span id="cb32-43"><a href="#cb32-43" tabindex="-1"></a><span class="co"># N_burn:  Number of iteration to be discarded</span></span>
-<span id="cb32-44"><a href="#cb32-44" tabindex="-1"></a><span class="co"># B: Number of bootstrap samples</span></span>
-<span id="cb32-45"><a href="#cb32-45" tabindex="-1"></a><span class="co"># checkBRW: wishes to perform closeness check: TRUE or FALSE</span></span>
-<span id="cb32-46"><a href="#cb32-46" tabindex="-1"></a><span class="co"># B_check: If checkBRW is chosen as TRUE, then choose number of bootstrap samples used in the check</span></span>
-<span id="cb32-47"><a href="#cb32-47" tabindex="-1"></a></span>
-<span id="cb32-48"><a href="#cb32-48" tabindex="-1"></a><span class="co"># C) Decide on Settings for numerical outputs</span></span>
-<span id="cb32-49"><a href="#cb32-49" tabindex="-1"></a>WishFPremia <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co"># Wish to estimate the forward premia: YES: 1, NO:0</span></span>
-<span id="cb32-50"><a href="#cb32-50" tabindex="-1"></a>FPmatLim <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">60</span>,<span class="dv">120</span>) <span class="co">#  If the forward premia is desired, then choose the Min and max maturities of the</span></span>
-<span id="cb32-51"><a href="#cb32-51" tabindex="-1"></a>                      <span class="co"># forward premia. Otherwise set NA</span></span>
-<span id="cb32-52"><a href="#cb32-52" tabindex="-1"></a>Horiz <span class="ot">&lt;-</span> <span class="dv">30</span></span>
-<span id="cb32-53"><a href="#cb32-53" tabindex="-1"></a>DesiredGraphs <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Fit&quot;</span>, <span class="st">&quot;IRF&quot;</span>, <span class="st">&quot;TermPremia&quot;</span>) <span class="co"># &quot;Fit&quot;, &quot;IRF&quot;, &quot;FEVD&quot;, &quot;GIRF&quot;, &quot;GFEVD&quot;, &quot;TermPremia&quot;</span></span>
-<span id="cb32-54"><a href="#cb32-54" tabindex="-1"></a>WishGraphRiskFac <span class="ot">&lt;-</span> <span class="dv">0</span></span>
-<span id="cb32-55"><a href="#cb32-55" tabindex="-1"></a>WishGraphYields <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb32-56"><a href="#cb32-56" tabindex="-1"></a>WishOrthoJLLgraphs <span class="ot">&lt;-</span> <span class="dv">0</span></span>
-<span id="cb32-57"><a href="#cb32-57" tabindex="-1"></a></span>
-<span id="cb32-58"><a href="#cb32-58" tabindex="-1"></a><span class="co"># D) Bootstrap settings</span></span>
-<span id="cb32-59"><a href="#cb32-59" tabindex="-1"></a>WishBootstrap <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co">#  YES: 1; No = 0.</span></span>
-<span id="cb32-60"><a href="#cb32-60" tabindex="-1"></a>BootList <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">methodBS =</span> <span class="st">&#39;bs&#39;</span>, <span class="at">BlockLength =</span> <span class="dv">4</span>, <span class="at">ndraws =</span> <span class="dv">5</span>, <span class="at">pctg =</span>  <span class="dv">95</span>)</span>
-<span id="cb32-61"><a href="#cb32-61" tabindex="-1"></a><span class="co"># methodBS: bootstrap method. Available options: (i) &#39;bs&#39; ; (ii) &#39;wild&#39;; (iii) &#39;block&#39;</span></span>
-<span id="cb32-62"><a href="#cb32-62" tabindex="-1"></a><span class="co"># BlockLength: Block length, necessary input for the block bootstrap method</span></span>
-<span id="cb32-63"><a href="#cb32-63" tabindex="-1"></a><span class="co"># ndraws: number of bootstrap draws</span></span>
-<span id="cb32-64"><a href="#cb32-64" tabindex="-1"></a><span class="co"># pctg: confidence level</span></span>
-<span id="cb32-65"><a href="#cb32-65" tabindex="-1"></a></span>
-<span id="cb32-66"><a href="#cb32-66" tabindex="-1"></a><span class="co"># E) Out-of-sample forecast</span></span>
-<span id="cb32-67"><a href="#cb32-67" tabindex="-1"></a>WishForecast <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co">#  YES: 1; No = 0.</span></span>
-<span id="cb32-68"><a href="#cb32-68" tabindex="-1"></a>ForecastList <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">ForHoriz =</span> <span class="dv">12</span>,  <span class="at">t0Sample =</span> <span class="dv">1</span>, <span class="at">t0Forecast =</span> <span class="dv">162</span>, <span class="at">ForType =</span> <span class="st">&quot;Rolling&quot;</span>)</span>
-<span id="cb32-69"><a href="#cb32-69" tabindex="-1"></a><span class="co"># ForHoriz: forecast horizon</span></span>
-<span id="cb32-70"><a href="#cb32-70" tabindex="-1"></a><span class="co"># t0Sample:   initial sample date</span></span>
-<span id="cb32-71"><a href="#cb32-71" tabindex="-1"></a><span class="co"># t0Forecast:  last sample date for the first forecast</span></span>
-<span id="cb32-72"><a href="#cb32-72" tabindex="-1"></a><span class="co"># ForType: Available options are &quot;Rolling&quot; or &quot;Expanding&quot;</span></span>
-<span id="cb32-73"><a href="#cb32-73" tabindex="-1"></a></span>
-<span id="cb32-74"><a href="#cb32-74" tabindex="-1"></a><span class="do">#########################################################################################################</span></span>
-<span id="cb32-75"><a href="#cb32-75" tabindex="-1"></a><span class="do">############################### NO NEED TO MAKE CHANGES FROM HERE #######################################</span></span>
+<span id="cb32-4"><a href="#cb32-4" tabindex="-1"></a><span class="fu">library</span>(MultiATSM)</span>
+<span id="cb32-5"><a href="#cb32-5" tabindex="-1"></a><span class="co"># A) Load database data</span></span>
+<span id="cb32-6"><a href="#cb32-6" tabindex="-1"></a><span class="fu">LoadData</span>(<span class="st">&quot;CM_2024&quot;</span>)</span>
+<span id="cb32-7"><a href="#cb32-7" tabindex="-1"></a></span>
+<span id="cb32-8"><a href="#cb32-8" tabindex="-1"></a><span class="co"># B) GENERAL model inputs</span></span>
+<span id="cb32-9"><a href="#cb32-9" tabindex="-1"></a>ModelType <span class="ot">&lt;-</span> <span class="st">&quot;JPS original&quot;</span> <span class="co"># available options: &quot;JPS original&quot;, &quot;JPS global&quot;, &quot;GVAR single&quot;, &quot;JPS multi&quot;,</span></span>
+<span id="cb32-10"><a href="#cb32-10" tabindex="-1"></a>                          <span class="co">#&quot;GVAR multi&quot;, &quot;JLL original&quot;, &quot;JLL No DomUnit&quot;, &quot;JLL joint Sigma&quot;.</span></span>
+<span id="cb32-11"><a href="#cb32-11" tabindex="-1"></a></span>
+<span id="cb32-12"><a href="#cb32-12" tabindex="-1"></a>Economies <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;China&quot;</span>, <span class="st">&quot;Brazil&quot;</span>) <span class="co"># Names of the economies from the economic system</span></span>
+<span id="cb32-13"><a href="#cb32-13" tabindex="-1"></a>GlobalVar <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Gl_Eco_Act&quot;</span>)<span class="co"># Global Variables</span></span>
+<span id="cb32-14"><a href="#cb32-14" tabindex="-1"></a>DomVar <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Eco_Act&quot;</span>) <span class="co"># Country-specific variables</span></span>
+<span id="cb32-15"><a href="#cb32-15" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="dv">2</span>  <span class="co"># Number of spanned factors per country</span></span>
+<span id="cb32-16"><a href="#cb32-16" tabindex="-1"></a></span>
+<span id="cb32-17"><a href="#cb32-17" tabindex="-1"></a>t0_sample <span class="ot">&lt;-</span> <span class="st">&quot;01-12-2007&quot;</span> <span class="co"># Format: &quot;dd-mm-yyyy&quot;</span></span>
+<span id="cb32-18"><a href="#cb32-18" tabindex="-1"></a>tF_sample <span class="ot">&lt;-</span> <span class="st">&quot;01-12-2019&quot;</span> <span class="co"># Format: &quot;dd-mm-yyyy&quot;</span></span>
+<span id="cb32-19"><a href="#cb32-19" tabindex="-1"></a></span>
+<span id="cb32-20"><a href="#cb32-20" tabindex="-1"></a>OutputLabel <span class="ot">&lt;-</span> <span class="st">&quot;Test&quot;</span> <span class="co"># label of the model for saving the file</span></span>
+<span id="cb32-21"><a href="#cb32-21" tabindex="-1"></a>DataFreq <span class="ot">&lt;-</span><span class="st">&quot;Monthly&quot;</span> <span class="co"># Frequency of the data</span></span>
+<span id="cb32-22"><a href="#cb32-22" tabindex="-1"></a></span>
+<span id="cb32-23"><a href="#cb32-23" tabindex="-1"></a>Folder2Save <span class="ot">&lt;-</span> <span class="cn">NULL</span> <span class="co"># Folder to save the required graphical outputs. NULL -&gt; temporary directory</span></span>
+<span id="cb32-24"><a href="#cb32-24" tabindex="-1"></a>StatQ <span class="ot">&lt;-</span> <span class="dv">0</span> <span class="co"># Wish to impose stationary condition for the eigenvalues of each country: YES: 1,NO:0</span></span>
+<span id="cb32-25"><a href="#cb32-25" tabindex="-1"></a></span>
+<span id="cb32-26"><a href="#cb32-26" tabindex="-1"></a><span class="co"># B.1) SPECIFIC model inputs</span></span>
+<span id="cb32-27"><a href="#cb32-27" tabindex="-1"></a><span class="do">#################################### GVAR-based models ##################################################</span></span>
+<span id="cb32-28"><a href="#cb32-28" tabindex="-1"></a>GVARlist <span class="ot">&lt;-</span> <span class="fu">list</span>( <span class="at">VARXtype =</span> <span class="st">&quot;unconstrained&quot;</span>, <span class="at">W_type =</span> <span class="st">&quot;Sample Mean&quot;</span>, <span class="at">t_First_Wgvar =</span> <span class="st">&quot;2005&quot;</span>,</span>
+<span id="cb32-29"><a href="#cb32-29" tabindex="-1"></a>                  <span class="at">t_Last_Wgvar =</span> <span class="st">&quot;2019&quot;</span>, DataConnectedness <span class="ot">&lt;-</span> TradeFlows ) </span>
+<span id="cb32-30"><a href="#cb32-30" tabindex="-1"></a><span class="co"># VARXtype: Available options &quot;unconstrained&quot; or &quot;constrained&quot; (VARX)</span></span>
+<span id="cb32-31"><a href="#cb32-31" tabindex="-1"></a><span class="co"># W_type: Method to compute the transition matrix. Options:&quot;Time-varying&quot; or &quot;Sample Mean&quot;</span></span>
+<span id="cb32-32"><a href="#cb32-32" tabindex="-1"></a><span class="co"># t_First_Wgvar: First year of the sample (transition matrix)</span></span>
+<span id="cb32-33"><a href="#cb32-33" tabindex="-1"></a><span class="co"># t_Last_Wgvar:  Last year of the sample (transition matrix)</span></span>
+<span id="cb32-34"><a href="#cb32-34" tabindex="-1"></a><span class="co"># DataConnectedness: measure of connectedness across countries</span></span>
+<span id="cb32-35"><a href="#cb32-35" tabindex="-1"></a><span class="do">#################################### JLL-based models ###################################################</span></span>
+<span id="cb32-36"><a href="#cb32-36" tabindex="-1"></a>JLLlist <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">DomUnit =</span>  <span class="st">&quot;China&quot;</span>)</span>
+<span id="cb32-37"><a href="#cb32-37" tabindex="-1"></a><span class="co"># DomUnit: name of the economy of the economic system, or &quot;None&quot; for the model &quot;JLL No DomUnit&quot;</span></span>
+<span id="cb32-38"><a href="#cb32-38" tabindex="-1"></a><span class="do">###################################### BRW inputs  ######################################################</span></span>
+<span id="cb32-39"><a href="#cb32-39" tabindex="-1"></a>WishBC <span class="ot">&lt;-</span> <span class="dv">0</span> <span class="co"># Wish to estimate the model with the bias correction method of BRW (2012): #YES: 1, NO:0</span></span>
+<span id="cb32-40"><a href="#cb32-40" tabindex="-1"></a>BRWlist <span class="ot">&lt;-</span> <span class="fu">within</span>(<span class="fu">list</span>(<span class="at">flag_mean =</span> <span class="cn">TRUE</span>, <span class="at">gamma =</span> <span class="fl">0.05</span>, <span class="at">N_iter =</span> <span class="dv">250</span>, <span class="at">B =</span> <span class="dv">50</span>, <span class="at">checkBRW =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb32-41"><a href="#cb32-41" tabindex="-1"></a>                       <span class="at">B_check =</span> <span class="dv">1000</span>),  N_burn <span class="ot">&lt;-</span> <span class="fu">round</span>(N_iter <span class="sc">*</span> <span class="fl">0.15</span>))</span>
+<span id="cb32-42"><a href="#cb32-42" tabindex="-1"></a><span class="co"># flag_mean: TRUE = compute the mean; FALSE = compute the median</span></span>
+<span id="cb32-43"><a href="#cb32-43" tabindex="-1"></a><span class="co"># gamma: Adjustment parameter</span></span>
+<span id="cb32-44"><a href="#cb32-44" tabindex="-1"></a><span class="co"># N_iter:  Number of iteration to be conserved</span></span>
+<span id="cb32-45"><a href="#cb32-45" tabindex="-1"></a><span class="co"># N_burn:  Number of iteration to be discarded</span></span>
+<span id="cb32-46"><a href="#cb32-46" tabindex="-1"></a><span class="co"># B: Number of bootstrap samples</span></span>
+<span id="cb32-47"><a href="#cb32-47" tabindex="-1"></a><span class="co"># checkBRW: wishes to perform closeness check: TRUE or FALSE</span></span>
+<span id="cb32-48"><a href="#cb32-48" tabindex="-1"></a><span class="co"># B_check: If checkBRW is chosen as TRUE, then choose number of bootstrap samples used in the check</span></span>
+<span id="cb32-49"><a href="#cb32-49" tabindex="-1"></a></span>
+<span id="cb32-50"><a href="#cb32-50" tabindex="-1"></a><span class="co"># C) Decide on Settings for numerical outputs</span></span>
+<span id="cb32-51"><a href="#cb32-51" tabindex="-1"></a>WishFPremia <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co"># Wish to estimate the forward premia: YES: 1, NO:0</span></span>
+<span id="cb32-52"><a href="#cb32-52" tabindex="-1"></a>FPmatLim <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">60</span>,<span class="dv">120</span>) <span class="co">#  If the forward premia is desired, then choose the Min and max maturities of the</span></span>
+<span id="cb32-53"><a href="#cb32-53" tabindex="-1"></a>                      <span class="co"># forward premia. Otherwise set NA</span></span>
+<span id="cb32-54"><a href="#cb32-54" tabindex="-1"></a>Horiz <span class="ot">&lt;-</span> <span class="dv">30</span></span>
+<span id="cb32-55"><a href="#cb32-55" tabindex="-1"></a>DesiredGraphs <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Fit&quot;</span>, <span class="st">&quot;IRF&quot;</span>, <span class="st">&quot;TermPremia&quot;</span>) <span class="co"># &quot;Fit&quot;, &quot;IRF&quot;, &quot;FEVD&quot;, &quot;GIRF&quot;, &quot;GFEVD&quot;, &quot;TermPremia&quot;</span></span>
+<span id="cb32-56"><a href="#cb32-56" tabindex="-1"></a>WishGraphRiskFac <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb32-57"><a href="#cb32-57" tabindex="-1"></a>WishGraphYields <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb32-58"><a href="#cb32-58" tabindex="-1"></a>WishOrthoJLLgraphs <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb32-59"><a href="#cb32-59" tabindex="-1"></a></span>
+<span id="cb32-60"><a href="#cb32-60" tabindex="-1"></a><span class="co"># D) Bootstrap settings</span></span>
+<span id="cb32-61"><a href="#cb32-61" tabindex="-1"></a>WishBootstrap <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co">#  YES: 1; No = 0.</span></span>
+<span id="cb32-62"><a href="#cb32-62" tabindex="-1"></a>BootList <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">methodBS =</span> <span class="st">&#39;bs&#39;</span>, <span class="at">BlockLength =</span> <span class="dv">4</span>, <span class="at">ndraws =</span> <span class="dv">4</span>, <span class="at">pctg =</span>  <span class="dv">95</span>)</span>
+<span id="cb32-63"><a href="#cb32-63" tabindex="-1"></a><span class="co"># methodBS: bootstrap method. Available options: (i) &#39;bs&#39; ; (ii) &#39;wild&#39;; (iii) &#39;block&#39;</span></span>
+<span id="cb32-64"><a href="#cb32-64" tabindex="-1"></a><span class="co"># BlockLength: Block length, necessary input for the block bootstrap method</span></span>
+<span id="cb32-65"><a href="#cb32-65" tabindex="-1"></a><span class="co"># ndraws: number of bootstrap draws</span></span>
+<span id="cb32-66"><a href="#cb32-66" tabindex="-1"></a><span class="co"># pctg: confidence level</span></span>
+<span id="cb32-67"><a href="#cb32-67" tabindex="-1"></a></span>
+<span id="cb32-68"><a href="#cb32-68" tabindex="-1"></a><span class="co"># E) Out-of-sample forecast</span></span>
+<span id="cb32-69"><a href="#cb32-69" tabindex="-1"></a>WishForecast <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co">#  YES: 1; No = 0.</span></span>
+<span id="cb32-70"><a href="#cb32-70" tabindex="-1"></a>ForecastList <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">ForHoriz =</span> <span class="dv">12</span>,  <span class="at">t0Sample =</span> <span class="dv">1</span>, <span class="at">t0Forecast =</span> <span class="dv">131</span>, <span class="at">ForType =</span> <span class="st">&quot;Rolling&quot;</span>)</span>
+<span id="cb32-71"><a href="#cb32-71" tabindex="-1"></a><span class="co"># ForHoriz: forecast horizon</span></span>
+<span id="cb32-72"><a href="#cb32-72" tabindex="-1"></a><span class="co"># t0Sample:   initial sample date</span></span>
+<span id="cb32-73"><a href="#cb32-73" tabindex="-1"></a><span class="co"># t0Forecast:  last sample date for the first forecast</span></span>
+<span id="cb32-74"><a href="#cb32-74" tabindex="-1"></a><span class="co"># ForType: Available options are &quot;Rolling&quot; or &quot;Expanding&quot;</span></span>
+<span id="cb32-75"><a href="#cb32-75" tabindex="-1"></a></span>
 <span id="cb32-76"><a href="#cb32-76" tabindex="-1"></a><span class="do">#########################################################################################################</span></span>
-<span id="cb32-77"><a href="#cb32-77" tabindex="-1"></a></span>
-<span id="cb32-78"><a href="#cb32-78" tabindex="-1"></a><span class="co"># 2) Minor preliminary work: get the sets of factor labels and  a vector of common maturities</span></span>
-<span id="cb32-79"><a href="#cb32-79" tabindex="-1"></a>FactorLabels <span class="ot">&lt;-</span> <span class="fu">LabFac</span>(N, DomVar, GlobalVar, Economies, ModelType)</span>
-<span id="cb32-80"><a href="#cb32-80" tabindex="-1"></a></span>
-<span id="cb32-81"><a href="#cb32-81" tabindex="-1"></a><span class="co"># 3) Prepare the inputs of the likelihood function</span></span>
-<span id="cb32-82"><a href="#cb32-82" tabindex="-1"></a>ATSMInputs <span class="ot">&lt;-</span> <span class="fu">InputsForOpt</span>(t0_sample, tF_sample, ModelType, Yields, GlobalMacroVar, DomesticMacroVar,</span>
-<span id="cb32-83"><a href="#cb32-83" tabindex="-1"></a>                           FactorLabels, Economies, DataFreq, GVARlist, JLLlist, WishBC, BRWlist)</span>
+<span id="cb32-77"><a href="#cb32-77" tabindex="-1"></a><span class="do">## NO NEED TO MAKE CHANGES FROM HERE: </span></span>
+<span id="cb32-78"><a href="#cb32-78" tabindex="-1"></a><span class="do">## The sections below automatically process the inputs provided above, run the model </span></span>
+<span id="cb32-79"><a href="#cb32-79" tabindex="-1"></a><span class="do">## estimation, generate the numerical and graphical outputs, and save results.</span></span>
+<span id="cb32-80"><a href="#cb32-80" tabindex="-1"></a><span class="do">#########################################################################################################</span></span>
+<span id="cb32-81"><a href="#cb32-81" tabindex="-1"></a></span>
+<span id="cb32-82"><a href="#cb32-82" tabindex="-1"></a><span class="co"># 2) Minor preliminary work: get the sets of factor labels and  a vector of common maturities</span></span>
+<span id="cb32-83"><a href="#cb32-83" tabindex="-1"></a>FactorLabels <span class="ot">&lt;-</span> <span class="fu">LabFac</span>(N, DomVar, GlobalVar, Economies, ModelType)</span>
 <span id="cb32-84"><a href="#cb32-84" tabindex="-1"></a></span>
-<span id="cb32-85"><a href="#cb32-85" tabindex="-1"></a><span class="co"># 4) Optimization of the ATSM (Point Estimates)</span></span>
-<span id="cb32-86"><a href="#cb32-86" tabindex="-1"></a>ModelParaList <span class="ot">&lt;-</span> <span class="fu">Optimization</span>(ATSMInputs, StatQ, DataFreq, FactorLabels, Economies, ModelType)</span>
-<span id="cb32-87"><a href="#cb32-87" tabindex="-1"></a></span>
-<span id="cb32-88"><a href="#cb32-88" tabindex="-1"></a><span class="co"># 5) Numerical and graphical outputs</span></span>
-<span id="cb32-89"><a href="#cb32-89" tabindex="-1"></a><span class="co"># a) Prepare list of inputs for graphs and numerical outputs</span></span>
-<span id="cb32-90"><a href="#cb32-90" tabindex="-1"></a>InputsForOutputs <span class="ot">&lt;-</span> <span class="fu">InputsForOutputs</span>(ModelType, Horiz, DesiredGraphs, OutputLabel, StatQ, DataFreq,</span>
-<span id="cb32-91"><a href="#cb32-91" tabindex="-1"></a>                                    WishGraphYields, WishGraphRiskFac, WishOrthoJLLgraphs, WishFPremia,</span>
-<span id="cb32-92"><a href="#cb32-92" tabindex="-1"></a>                                    FPmatLim, WishBootstrap, BootList, WishForecast, ForecastList)</span>
-<span id="cb32-93"><a href="#cb32-93" tabindex="-1"></a></span>
-<span id="cb32-94"><a href="#cb32-94" tabindex="-1"></a><span class="co"># b) Fit, IRF, FEVD, GIRF, GFEVD, and Term Premia</span></span>
-<span id="cb32-95"><a href="#cb32-95" tabindex="-1"></a>NumericalOutputs <span class="ot">&lt;-</span> <span class="fu">NumOutputs</span>(ModelType, ModelParaList, InputsForOutputs, FactorLabels, Economies)</span>
-<span id="cb32-96"><a href="#cb32-96" tabindex="-1"></a></span>
-<span id="cb32-97"><a href="#cb32-97" tabindex="-1"></a><span class="co"># c) Confidence intervals (bootstrap analysis)</span></span>
-<span id="cb32-98"><a href="#cb32-98" tabindex="-1"></a>BootstrapAnalysis <span class="ot">&lt;-</span> <span class="fu">Bootstrap</span>(ModelType, ModelParaList, NumericalOutputs, Economies, InputsForOutputs,</span>
-<span id="cb32-99"><a href="#cb32-99" tabindex="-1"></a>                               FactorLabels, JLLlist, GVARlist, WishBC, BRWlist)</span>
-<span id="cb32-100"><a href="#cb32-100" tabindex="-1"></a></span>
-<span id="cb32-101"><a href="#cb32-101" tabindex="-1"></a><span class="co"># 6) Out-of-sample forecasting</span></span>
-<span id="cb32-102"><a href="#cb32-102" tabindex="-1"></a>Forecasts <span class="ot">&lt;-</span> <span class="fu">ForecastYields</span>(ModelType, ModelParaList, InputsForOutputs, FactorLabels, Economies,</span>
-<span id="cb32-103"><a href="#cb32-103" tabindex="-1"></a>                            JLLlist, GVARlist, WishBC, BRWlist)</span></code></pre></div>
+<span id="cb32-85"><a href="#cb32-85" tabindex="-1"></a><span class="co"># 3) Prepare the inputs of the likelihood function</span></span>
+<span id="cb32-86"><a href="#cb32-86" tabindex="-1"></a>ATSMInputs <span class="ot">&lt;-</span> <span class="fu">InputsForOpt</span>(t0_sample, tF_sample, ModelType, Yields, GlobalMacroVar, DomesticMacroVar,</span>
+<span id="cb32-87"><a href="#cb32-87" tabindex="-1"></a>                           FactorLabels, Economies, DataFreq, GVARlist, JLLlist, WishBC, BRWlist)</span>
+<span id="cb32-88"><a href="#cb32-88" tabindex="-1"></a></span>
+<span id="cb32-89"><a href="#cb32-89" tabindex="-1"></a><span class="co"># 4) Optimization of the ATSM (Point Estimates)</span></span>
+<span id="cb32-90"><a href="#cb32-90" tabindex="-1"></a>ModelParaList <span class="ot">&lt;-</span> <span class="fu">Optimization</span>(ATSMInputs, StatQ, DataFreq, FactorLabels, Economies, ModelType)</span>
+<span id="cb32-91"><a href="#cb32-91" tabindex="-1"></a></span>
+<span id="cb32-92"><a href="#cb32-92" tabindex="-1"></a><span class="co"># 5) Numerical and graphical outputs</span></span>
+<span id="cb32-93"><a href="#cb32-93" tabindex="-1"></a><span class="co"># a) Prepare list of inputs for graphs and numerical outputs</span></span>
+<span id="cb32-94"><a href="#cb32-94" tabindex="-1"></a>InputsForOutputs <span class="ot">&lt;-</span> <span class="fu">InputsForOutputs</span>(ModelType, Horiz, DesiredGraphs, OutputLabel, StatQ, DataFreq,</span>
+<span id="cb32-95"><a href="#cb32-95" tabindex="-1"></a>                                    WishGraphYields, WishGraphRiskFac, WishOrthoJLLgraphs, WishFPremia,</span>
+<span id="cb32-96"><a href="#cb32-96" tabindex="-1"></a>                                    FPmatLim, WishBootstrap, BootList, WishForecast, ForecastList)</span>
+<span id="cb32-97"><a href="#cb32-97" tabindex="-1"></a></span>
+<span id="cb32-98"><a href="#cb32-98" tabindex="-1"></a><span class="co"># b) Fit, IRF, FEVD, GIRF, GFEVD, and Term Premia</span></span>
+<span id="cb32-99"><a href="#cb32-99" tabindex="-1"></a>NumericalOutputs <span class="ot">&lt;-</span> <span class="fu">NumOutputs</span>(ModelType, ModelParaList, InputsForOutputs, FactorLabels, Economies,   </span>
+<span id="cb32-100"><a href="#cb32-100" tabindex="-1"></a>                               Folder2Save)</span>
+<span id="cb32-101"><a href="#cb32-101" tabindex="-1"></a></span>
+<span id="cb32-102"><a href="#cb32-102" tabindex="-1"></a><span class="co"># c) Confidence intervals (bootstrap analysis)</span></span>
+<span id="cb32-103"><a href="#cb32-103" tabindex="-1"></a>BootstrapAnalysis <span class="ot">&lt;-</span> <span class="fu">Bootstrap</span>(ModelType, ModelParaList, NumericalOutputs, Economies, InputsForOutputs,</span>
+<span id="cb32-104"><a href="#cb32-104" tabindex="-1"></a>                               FactorLabels, JLLlist, GVARlist, WishBC, BRWlist, Folder2Save)</span>
+<span id="cb32-105"><a href="#cb32-105" tabindex="-1"></a></span>
+<span id="cb32-106"><a href="#cb32-106" tabindex="-1"></a><span class="co"># 6) Out-of-sample forecasting</span></span>
+<span id="cb32-107"><a href="#cb32-107" tabindex="-1"></a>Forecasts <span class="ot">&lt;-</span> <span class="fu">ForecastYields</span>(ModelType, ModelParaList, InputsForOutputs, FactorLabels, Economies,</span>
+<span id="cb32-108"><a href="#cb32-108" tabindex="-1"></a>                            JLLlist, GVARlist, WishBC, BRWlist, Folder2Save)</span></code></pre></div>
 </div>
 <div id="user-friendly-inspection-of-key-elements-in-the-selected-atsm-specification" class="section level2" number="4.2">
 <h2><span class="header-section-number">4.2</span> User-Friendly Inspection of Key Elements in the Selected ATSM Specification</h2>
-<p>Starting from version <span class="math inline">\(1.3.0\)</span>, the <em>MultiATSM</em> package provides additional ways to concisely inspect key elements of the selected ATSM. In particular, users can now gain an alternative perspective on the general model inputs, optimized model parameters, and root mean square error (RMSE) from the forecast analysis. For clarity, the variable names used hereafter align with those presented in Section <a href="#S:SectionTemplate">4.1</a>.</p>
+<p>Starting from version <span class="math inline">\(1.3.0\)</span>, the <em>MultiATSM</em> package provides additional ways to concisely inspect key elements of the selected ATSM. In particular, users can now gain an alternative perspective on the general model inputs, optimized model parameters, graphocal outputs and root mean square error (RMSE) from the forecast analysis. For clarity, the variable names used hereafter align with those presented in Section <a href="#S:SectionTemplate">4.1</a>.</p>
 <div id="atsm-inputs" class="section level3" number="4.2.1">
 <h3><span class="header-section-number">4.2.1</span> ATSM inputs</h3>
 <p>The <em>ATSMInputs</em> variable is an object of class <em>ATSMModelInputs</em> that includes the <span class="math inline">\(S3\)</span> methods <code>print()</code> and <code>summary()</code>. The <code>print()</code> method provides an overview of both the model inputs and the economic system’s general features, while the <code>summary()</code> method offers statistical summaries of the risk factors and bond yields.</p>
@@ -1830,151 +1841,147 @@ this package for a detailed reproduction.</p>
 <span id="cb33-2"><a href="#cb33-2" tabindex="-1"></a><span class="fu">print</span>(Out<span class="sc">$</span>ATSMInputs)</span></code></pre></div>
 <pre><code>## General Model Inputs: 
 ## ------------------------------------------
-## Model Type: JPS multi 
-## Economic System: China, Brazil, Mexico 
-## Sample Span: 01-05-2005 - 01-12-2019 
+## Model Type: JPS original 
+## Economic System: China, Brazil 
+## Sample Span: 01-12-2007 - 01-12-2019 
 ## Data Frequency: Monthly 
 ## Common Maturities across Countries: 0.25 0.5 1 3 5 10 years 
 ## ------------------------------------------
 ## 
 ## Key Structure of the Economic System: 
 ## ------------------------------------------
-## Total amount of spanned factors in the system: 6 
+## Total amount of spanned factors in the system: 4 
 ## Total amount of global unspanned factors in the system: 1 
-## Total amount of country-specific unspanned factors in the system: 6 
-## Total amount of risk factors in the system: 13 
+## Total amount of country-specific unspanned factors in the system: 2 
+## Total amount of risk factors in the system: 7 
 ## ------------------------------------------</code></pre>
 <div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" tabindex="-1"></a><span class="fu">summary</span>(Out<span class="sc">$</span>ATSMInputs) </span></code></pre></div>
 <pre><code>## Summary Statistics from the Time Series Components:
 ## ------------------------------------------------------
 ## 1) Risk Factors:
-##                    Mean Std_Dev     Min    Max
-## Gl_Eco_Act        0.686   7.568 -15.964 19.073
-## Eco_Act China    10.786   4.994   3.915 23.541
-## Inflation China   2.629   1.959  -1.794  8.805
-## Level China       6.774   1.618   3.149 10.281
-## Slope China       2.729   0.569   1.723  4.583
-## Eco_Act Brazil    2.299   3.238  -3.813 10.779
-## Inflation Brazil  5.523   1.856   2.456 10.706
-## Level Brazil     27.716   7.058  11.870 45.595
-## Slope Brazil      3.361   1.309   0.627  6.409
-## Eco_Act Mexico    2.018   3.057  -8.765  9.792
-## Inflation Mexico  4.102   1.026   2.131  6.773
-## Level Mexico     15.116   4.028   8.698 24.416
-## Slope Mexico      4.088   0.855   2.180  6.738
+## 
+##  Model China 
+##                 Mean Std_Dev     Min    Max
+## Gl_Eco_Act    -1.127   6.819 -15.964 19.073
+## Eco_Act China  9.364   4.275   3.915 23.541
+## Level China    7.058   1.557   3.149 10.281
+## Slope China    2.654   0.457   1.723  3.884
+## 
+##  Model Brazil 
+##                  Mean Std_Dev     Min    Max
+## Gl_Eco_Act     -1.127   6.819 -15.964 19.073
+## Eco_Act Brazil  1.692   3.082  -3.813 10.779
+## Level Brazil   26.019   5.956  11.870 38.702
+## Slope Brazil    3.576   1.274   0.627  6.409
 ## 
 ##  2) Bond Yields:
-##                Mean Std_Dev   Min    Max
-## Y3M_China     2.444   0.842 0.467  4.003
-## Y6M_China     2.512   0.806 0.615  4.209
-## Y12M_China    2.628   0.757 0.991  4.394
-## Y36M_China    3.044   0.658 1.252  4.510
-## Y60M_China    3.329   0.579 1.994  4.865
-## Y120M_China   3.732   0.545 2.622  5.127
-## Y3M_Brazil   11.052   3.332 4.660 19.810
-## Y6M_Brazil   11.062   3.275 4.490 19.640
-## Y12M_Brazil  11.169   3.148 4.460 19.190
-## Y36M_Brazil  11.516   2.816 4.840 18.320
-## Y60M_Brazil  11.741   2.542 5.320 17.800
-## Y120M_Brazil 11.886   2.354 5.720 17.430
-## Y3M_Mexico    5.784   1.960 2.399  9.973
-## Y6M_Mexico    5.839   1.936 2.425  9.888
-## Y12M_Mexico   5.953   1.864 2.714 10.208
-## Y36M_Mexico   6.410   1.608 3.790 10.368
-## Y60M_Mexico   6.805   1.385 4.279 10.348
-## Y120M_Mexico  7.416   1.263 4.544 10.774
+## 
+##  Model China 
+##              Mean Std_Dev   Min   Max
+## Y3M_China   2.615   0.805 0.467 4.003
+## Y6M_China   2.671   0.777 0.615 4.209
+## Y12M_China  2.774   0.726 0.991 4.394
+## Y36M_China  3.133   0.628 1.252 4.510
+## Y60M_China  3.384   0.518 1.994 4.469
+## Y120M_China 3.752   0.496 2.622 4.848
+## 
+##  Model Brazil 
+##                Mean Std_Dev  Min   Max
+## Y3M_Brazil   10.160   2.650 4.66 14.72
+## Y6M_Brazil   10.233   2.697 4.49 15.18
+## Y12M_Brazil  10.423   2.691 4.46 15.86
+## Y36M_Brazil  10.898   2.477 4.84 16.52
+## Y60M_Brazil  11.209   2.262 5.32 16.85
+## Y120M_Brazil 11.412   2.113 5.72 17.25
 ## ------------------------------------------------------</code></pre>
 </div>
 <div id="atsm-parameters" class="section level3" number="4.2.2">
 <h3><span class="header-section-number">4.2.2</span> ATSM parameters</h3>
 <p>The <code>Optimization()</code> function returns an object of class <em>‘ATSMModelOutputs’</em>, which includes the <code>summary()</code> <span class="math inline">\(S3\)</span> method. This method offers a parsimonious summary of key model outputs following
 optimization process, including the maximum log-likelihood value, the intercept and slope coefficients from the model’s cross-sectional dimension, and the count of physical-measure eigenvalues greater than one—an indicator of potential explosive behavior in the model’s time series dimension.</p>
-<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" tabindex="-1"></a><span class="fu">summary</span>(Out<span class="sc">$</span>ModelParaList) </span></code></pre></div>
-<pre><code>## General Model Outputs: 
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" tabindex="-1"></a><span class="fu">summary</span>(Out<span class="sc">$</span>ModelPara) </span></code></pre></div>
+<pre><code>## Model China 
+## General Model Outputs: 
 ## ------------------------------------------------------
-## 1) Maximum Log-likelihood value: 78.84124 
-## 2) Key Features from the Q-measure: 
-##  
-##  a) Long run risk-neutral mean (r0): 
-##      China  Brazil  Mexico
-## r0 0.00309 0.01549 0.00969
-##  
-##  b) Risk-neutral eigenvalues: 
-##          Eigen_1   Eigen_2
-## China  0.9891482 0.9891482
-## Brazil 0.9434462 0.9434462
-## Mexico 0.9815273 0.9815273
-##  
+## 1) Maximum Log-likelihood value: 26.87461 
+## 
+##  2) Key Features from the Q-measure: 
+##  a) Long run risk-neutral mean (r0): 0.00443 
+##  b) Risk-neutral eigenvalues: 0.98829 0.98829 
+## 
+##  c) Intercept matrix of loadings (Matrix A): 
+##                  [,1]
+## Y3M_China    0.000285
+## Y6M_China    0.000163
+## Y12M_China  -0.000046
+## Y36M_China  -0.000483
+## Y60M_China  -0.000451
+## Y120M_China  0.000551
+## 
+##  d) Slope Matrix of Loadings (Matrix B) : 
+##             Level China Slope China
+## Y3M_China      0.005050   -0.003269
+## Y6M_China      0.004909   -0.002686
+## Y12M_China     0.004645   -0.001598
+## Y36M_China     0.003778    0.001879
+## Y60M_China     0.003145    0.004296
+## Y120M_China    0.002170    0.007596
+## 
+##  3) Key Features from the P-measure: 
+##  - Number of physical-measure eigenvalues greater than one: 0 
+## ------------------------------------------------------
+## Model Brazil 
+## General Model Outputs: 
+## ------------------------------------------------------
+## 1) Maximum Log-likelihood value: 23.16511 
+## 
+##  2) Key Features from the Q-measure: 
+##  a) Long run risk-neutral mean (r0): 0.01471 
+##  b) Risk-neutral eigenvalues: 0.9458 0.9458 
+## 
 ##  c) Intercept matrix of loadings (Matrix A): 
 ##                   [,1]
-## Y3M_China     0.001329
-## Y6M_China     0.000748
-## Y12M_China   -0.000254
-## Y36M_China   -0.002398
-## Y60M_China   -0.002248
-## Y120M_China   0.003270
-## Y3M_Brazil    0.003903
-## Y6M_Brazil    0.000353
-## Y12M_Brazil  -0.004157
-## Y36M_Brazil  -0.006630
-## Y60M_Brazil  -0.002171
-## Y120M_Brazil  0.010230
-## Y3M_Mexico    0.002391
-## Y6M_Mexico    0.001143
-## Y12M_Mexico  -0.000897
-## Y36M_Mexico  -0.004471
-## Y60M_Mexico  -0.003510
-## Y120M_Mexico  0.005880
-##  
+## Y3M_Brazil    0.004903
+## Y6M_Brazil    0.000585
+## Y12M_Brazil  -0.004982
+## Y36M_Brazil  -0.008231
+## Y60M_Brazil  -0.002715
+## Y120M_Brazil  0.012650
+## 
 ##  d) Slope Matrix of Loadings (Matrix B) : 
-##              Level China Slope China Level Brazil Slope Brazil Level Mexico
-## Y3M_China       0.004926   -0.003447     0.000000     0.000000     0.000000
-## Y6M_China       0.004838   -0.002825     0.000000     0.000000     0.000000
-## Y12M_China      0.004662   -0.001653     0.000000     0.000000     0.000000
-## Y36M_China      0.003963    0.002134     0.000000     0.000000     0.000000
-## Y60M_China      0.003309    0.004667     0.000000     0.000000     0.000000
-## Y120M_China     0.002008    0.007153     0.000000     0.000000     0.000000
-## Y3M_Brazil      0.000000    0.000000     0.004693    -0.005441     0.000000
-## Y6M_Brazil      0.000000    0.000000     0.004555    -0.003577     0.000000
-## Y12M_Brazil     0.000000    0.000000     0.004343    -0.000886     0.000000
-## Y36M_Brazil     0.000000    0.000000     0.003884     0.003461     0.000000
-## Y60M_Brazil     0.000000    0.000000     0.003630     0.004562     0.000000
-## Y120M_Brazil    0.000000    0.000000     0.003184     0.004937     0.000000
-## Y3M_Mexico      0.000000    0.000000     0.000000     0.000000     0.004830
-## Y6M_Mexico      0.000000    0.000000     0.000000     0.000000     0.004725
-## Y12M_Mexico     0.000000    0.000000     0.000000     0.000000     0.004529
-## Y36M_Mexico     0.000000    0.000000     0.000000     0.000000     0.003892
-## Y60M_Mexico     0.000000    0.000000     0.000000     0.000000     0.003423
-## Y120M_Mexico    0.000000    0.000000     0.000000     0.000000     0.002648
-##              Slope Mexico
-## Y3M_China        0.000000
-## Y6M_China        0.000000
-## Y12M_China       0.000000
-## Y36M_China       0.000000
-## Y60M_China       0.000000
-## Y120M_China      0.000000
-## Y3M_Brazil       0.000000
-## Y6M_Brazil       0.000000
-## Y12M_Brazil      0.000000
-## Y36M_Brazil      0.000000
-## Y60M_Brazil      0.000000
-## Y120M_Brazil     0.000000
-## Y3M_Mexico      -0.004018
-## Y6M_Mexico      -0.003210
-## Y12M_Mexico     -0.001757
-## Y36M_Mexico      0.002350
-## Y60M_Mexico      0.004630
-## Y120M_Mexico     0.006603
+##              Level Brazil Slope Brazil
+## Y3M_Brazil       0.004413    -0.005629
+## Y6M_Brazil       0.004388    -0.003795
+## Y12M_Brazil      0.004334    -0.001108
+## Y36M_Brazil      0.004092     0.003337
+## Y60M_Brazil      0.003851     0.004447
+## Y120M_Brazil     0.003316     0.004703
 ## 
 ##  3) Key Features from the P-measure: 
 ##  - Number of physical-measure eigenvalues greater than one: 0 
 ## ------------------------------------------------------</code></pre>
 </div>
-<div id="forecasts" class="section level3" number="4.2.3">
-<h3><span class="header-section-number">4.2.3</span> Forecasts</h3>
+<div id="graphical-outputs" class="section level3" number="4.2.3">
+<h3><span class="header-section-number">4.2.3</span> Graphical outputs</h3>
+<p>The <code>NumOutputs()</code> function returns an object of class <em>ATSMNumOutputs</em>, which includes an <code>autoplot()</code> <span class="math inline">\(S3\)</span> method. This method allows users to inspect the empirical properties of the chosen specification by displaying graphical outputs in the console, regardless of whether they were saved to <em>Folder2Save</em>. The user must specify a plot type: <code>RiskFactors</code>, <code>Fit</code>, <code>TermPremia</code>, or one of <code>IRF</code>, <code>FEVD</code>, <code>GIRF</code>, <code>GFEVD</code> (each suffixed with <code>_Factors</code> or <code>_Yields</code>). For JLL-based models, an additional <code>_Ortho</code> suffix generates orthogonalized outputs. The examples below illustrate the responses of the Brazilian and Chinese yield curves to a global economic activity shock:</p>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" tabindex="-1"></a>GIRF_all <span class="ot">&lt;-</span> <span class="fu">autoplot</span>(Out<span class="sc">$</span>NumOut, <span class="at">type =</span> <span class="st">&quot;GIRF_Yields&quot;</span>)</span>
+<span id="cb39-2"><a href="#cb39-2" tabindex="-1"></a>GIRF_all<span class="sc">$</span>Brazil<span class="sc">$</span>Gl_Eco_Act</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" tabindex="-1"></a>GIRF_all<span class="sc">$</span>China<span class="sc">$</span>Gl_Eco_Act</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>Additionally, the <code>autoplot()</code> <span class="math inline">\(S3\)</span> method for <em>ATSMModelBoot</em> objects—generated by the <code>Bootstrap()</code> function—allows users to assess the statistical significance of the results. The example below shows the responses of 12-month bond yields to several shocks.</p>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" tabindex="-1"></a>GIRF_all_Boot <span class="ot">&lt;-</span> <span class="fu">autoplot</span>(Out<span class="sc">$</span>Bootstrap, Out<span class="sc">$</span>NumOut, <span class="at">type =</span> <span class="st">&quot;GIRF_Yields_Boot&quot;</span>)</span>
+<span id="cb41-2"><a href="#cb41-2" tabindex="-1"></a>GIRF_all_Boot<span class="sc">$</span>China<span class="sc">$</span>Y12M_China</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" tabindex="-1"></a>GIRF_all_Boot<span class="sc">$</span>Brazil<span class="sc">$</span>Y12M_Brazil</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>In this context, the <code>autoplot()</code> method requires two additional inputs beyond the <em>ATSMModelBoot</em> object. First, it takes an <em>ATSMNumOutputs</em> object to provide the point estimates of the selected output. Second, the user must specify the plot type, which follows the same structure as for <em>ATSMNumOutputs</em> objects, but with the added <code>_Boot</code> suffix. It is worth noting that, in this example, the point estimates (black lines) occasionally lie outside the confidence bands. This is not surprising, as the bootstrap was carried out with only a few draws (4).</p>
+</div>
+<div id="forecasts" class="section level3" number="4.2.4">
+<h3><span class="header-section-number">4.2.4</span> Forecasts</h3>
 <p>The <code>ForecastYields()</code> function returns an object of class <em>‘ATSMModelForecast’</em>, which can be visualized using the <code>plot()</code> <span class="math inline">\(S3\)</span> method. This method generates a graphical representation of the RMSEs across different countries and forecast horizons.</p>
-<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" tabindex="-1"></a><span class="fu">plot</span>(Out<span class="sc">$</span>Forecasts) </span></code></pre></div>
-<p><img src="data:image/png;base64,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" /><!-- --><img src="data:image/png;base64,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" /><!-- --><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASAAAAEgCAMAAAAjXV6yAAAAwFBMVEUAAAAAADoAAGYAOjoAOpAAZrY6AAA6ADo6AGY6OgA6Ojo6OpA6ZmY6ZpA6ZrY6kNtmAABmADpmAGZmOjpmOmZmOpBmZmZmZrZmkJBmkLZmkNtmtttmtv+QOgCQOjqQOmaQZmaQZpCQkDqQkJCQtpCQttuQ29uQ2/+t2Oa2ZgC2Zma2kDq225C2/9u2///bkDrbkGbbtpDbtrbb25Db29vb2//b/7bb////tmb/tpD/25D/27b/29v//7b//9v////csmEDAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAKqUlEQVR4nO2dDXvbNBSFs7FuhQJpB4xRUmDAyDJG0sEgIZD4//8rLFmS5fjjWvJVdNjuefasqRvbb471ZdnxmRWiQc1yA6BLDCIkBhESgwiJQYTEIEJiECExiJAYRMgYtJmVmudF8YXDow3aVSyb2SIvjBUSjzLo8LX97fU6I4oTFI+0QYScQasZQoGuhcJjDdrfFsfv8xdoJxge3QbdLHGACjAeXYKOdw/XKEVaCYnHVLHD9UOEw+WEw2PGQbMLHCQsHt0GfbUt7pfF4SkEERiPZxCMoHhcFcsN4guJR0bShORcjJCczROKmQ9iqpYzre6/4fCEbXw29KGCgV6V4thWUp6YjU8FMjYzGMRzwAZ5zmXQzNcrjZKpBM3aGuJJX8X8w+P9n8+gUxJOg84AFLbtmAMWbpA66Vktxp/7jAXqKTukQVA8SQ3qRslnUAxPmEFhRTq9QWN5BsvOFIN2ersPlu11kgEx84wgGWHQdbWV1gzV8U6P9fdX29FA5h3xQMw8I0gm9GLmGNaHki7Sk48YG89okhEGHa4Xxap9wNwRu1y31+nRZCA2ntEkIwwqK/zu0bb8d/rX/eMxdb41Kp1qEA8Pn0GqyG7mEb1GqCkBjXQUj13KyWMMOn7XOUlO9BqNLbMaFMrTKMTsBpVVW1XrTWseuL/X8Ej4DYrhaW+Ysw0qq/bieNeu8q1e4wxAaDyD3Wyr13B1fsamof0j8AwDdvca+ZSBp2qDKvMwrvWC8egStBm+k+Ls14CReGwVW4EcMCsYHq8N2mEQOWHwGINUte/g6R6YnUE4PKYN6t5nz8AsuZB4BnuxnoFZakHx+OOgf08PTM/0wrkEwWNPNeZlx9Gu9JkGikg85mT1cPPLHUSnoQTF4+aDML5bowXF4wyCuecNjMebUYQRFI8YRGjwulgmQfHIXa6Eog3af+5e7j574Y71/stn9Sjl/tkX8443qVW91XmUiifWoH9+cvfqliPenZu+2b3803vX8YUbDL9e72/rVf3VWZSMJ7oEHbwtvq2P0tuX97f1H2rQ4v5b1+6qVQ/MBiXj4TDo3XZ/W7/2d+XdCH5894d9U2qDWHk4DNp988Oy63Vjr38/d3U+tUGsPNKLERKDCIlBhKIMMpeFD9dzNUv8YFnsH+tRr/c1yvYS+4cEs10ej5qNnHPyxJUghVIUm0fb/ZOluvqwf/Kx6kB3H7m9tZeklOMpVpqJkSeyiqlLMsocTXez3F/+qAhXz2ug1pKksjzqK/ede4/miW2DVhfHOzPQUgXp8s3VtjwLf+MB1UvKk8+Sf6Or4lwVaTVzutATqGyzp4bHVBhGnliDDtefVLen7B+rHV3+9l1Z1y72HpBboqbadem/KFZz9RHULYjmB9vFQcOze/Sr+qyMPNG92M6Zrdqgy3U5cF8tfCC3RC1URf9496zEKn8zNx/a5TyqeNR3FctXjDzxZ/Nu37oNWu+v/nq6bgDZJfpShMLf6XJcklZAistcyGFQtWuzTUYeNoMONz9fbRtAdoldWP6u6nuiElTtRf1fGcTFM9Eg3XtUIKvZvGgA2SXqqOgf86o9r+r8kyVrG2R3XbYqVZXn4plagjZ6ZlT9stONtQ9kl5S9RvmqHKGUry4S9WJ212qguODkkVMNQmIQIW6DqqvnOPd9TuaREkRIDCIkBhESgwiJQYTEIEJiECExiJAYREgMIiQGERKDCIlBhMQgQmIQITGIkBhESAwiJAYREoMIiUGExCBCYhAhYxBOnlclHB5tENITwJWQePT3xZCeIV+A8UgbRMgZhBI2ZIXCYw2CiasyguHRbRBSnlcBxqNLEFKelxISj6liKGFVVjg8ZhyEk+elhMSj2yCkPK8CjMczCEZQPK6K5QbxhcQjI2lCci5GSM7mCYXNB/U8MTdy1wPbSpgvFvgRYj4sl0G9z5MO3VDEbkfblN6g/kc3n9sgf7ejd34Gg8KfSD5+20H1pYOEXj2qNIStk9Ags4dpJJwGBQK1inQugwZJmvW+a+NQcVVJeKbnarzv8VnnMqheZxQ4QAkaQTLFoAx5Xmw8o0lGGISU5xXE013FAq2ZEDySI88riKf7M/Ans0zM82I9YlN4ZlEkIwyKzfNKATSJ51UMybhGOjDPy3OGGSiOJ7lBwXle7S2zGhSZL5bIIKg8LzQevQApzwuNZ7CblXwx6rRB8sUkX4ySLkFIeV5KSDy2isHkeRnB8HhtEEaeVy0MHmMQTp4XGo9pg3DyvNB4BnsxyRdrjoMg8rw8QfDYUw2YPC80HnOyipPnVYDxuPkgjO/WaEHxOINg7nkD4/FmFGEExSMGERq8LpZJUDxylyuhaIMkX2xYki9GSfLFxgNJvhgBJPliH7LEIEJiEKFgg7wsLzN1VYUu5IoYa2WdMUeMhZegOsur2pfO63jAGekVyWOyzpgjxiKqmMsW28w+VXEeNk4nV8TYSdYZc8RYTBtks8V+d9k5ZSnKGDF2mnW2Pt37FJ4Yg1y2mKu9mitbxFgz64w5YiyqF3PZYjbgp4r3yRYx1sg6Y44YizLI7bR6oUqqH+BVv+tMEWONKC/miDEGgza6TOaMGDvNOuOMGJtukOlAckaMNbLOmCPGphu00tOji5wRY42sM+aIMTnVICQGEUpg0PsVMSYliJAYREgMIiQGERKDCIlBhMQgQmIQITGIkBhESAwiJAYREoMIiUGExCBCYhAhMYiQGERIDCIkBhESgwiJQYTEIELGIJw8r0o4PNogpCeAKyHx6O+LIT1DvgDjkTaIkDMIJWzICoXHGgQTV2UEw6PbIKQ8rwKMR5cgpDwvJSQeU8VQwqqscHjMOAgnz0sJiUe3QUh5XgUYj2cQjKB4XBXLDeILiUdG0oTkXIyQnM0TipkPCquW3Q/ZJYTDE7PxwHWqhzXH2ITAE8M8dh1DQTxde7qS8iQ1qP3s7zTlKCXPmQ1KUo6S8qRsg3qfIT/0iHQ0HvuQt/c1HWoyTyKDJqUiQPGIQZMMOn3ANV3nRxTmCQaF8/AYxJIvNtoa2iBOnqkHbND9sXleYdbQySxIPHoBUp4XGo9eMDrP66TON7bMaBASj22kx+V5uXW8Q8VvEBSPMeh/ny+WjEctgMrzQuPRC5DyvNB4BrtZyRejhumSLyb5YpR0CULK81JC4rFVDCbPywiGx2uDMPK8amHwGINw8rzQeEwbhJPnhcYz2ItJvlhzHASR5+UJgseeasDkeaHxmJNVnDyvAozHzQdhfLdGC4rHGQRzzxsYjzejCCMoHjGI0OB1sUyC4pG7XAlFGyT5YsOSfDFKki82HkjyxQggyRf7kCUGERKDCAUb5OV5VUFe6odKtMiRL9YXdsbIFF6C6nyxKshLJwhddKR3nSNfrCfsjJEpoorZPC+T8aK/5a7SYLLki3WHnTEyxbRBJs/LBXmtq0idPPliPWFnbEwxBpk8LxfkZWDy5Iv1hJ2xMUX1YlWeVx3kZUKZ8uSL9YSdcTFFGWTSmFyQl4HJky/WE3bGxTTBIBPk5RrETPliXWFnjEwTDDJBXrZLzZUv1hV2xsg0xaAqyMv0BtnyxbrCzhiZ5FSDkBhEKIFBaPliSvFMUoIIiUGExCBCYhAhMYiQGERIDCIkBhESgwiJQYTEIEJiECExiNB//8NiZfXyX+0AAAAASUVORK5CYII=" /><!-- --></p>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" tabindex="-1"></a><span class="fu">plot</span>(Out<span class="sc">$</span>Forecasts) </span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --><img src="data:image/png;base64,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" /><!-- --></p>
 </div>
 </div>
 </div>

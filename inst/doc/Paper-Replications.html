@@ -12,7 +12,7 @@
 
 <meta name="author" content="Rubens Moura" />
 
-<meta name="date" content="2025-05-10" />
+<meta name="date" content="2025-09-01" />
 
 <title>Paper Replications</title>
 
@@ -573,7 +573,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Paper Replications</h1>
 <h4 class="author">Rubens Moura</h4>
-<h4 class="date">2025-05-10</h4>
+<h4 class="date">2025-09-01</h4>
 
 
 <div id="TOC">
@@ -1061,68 +1061,70 @@ se
 <span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a></span>
 <span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a>OutputLabel <span class="ot">&lt;-</span> <span class="st">&quot;CM_jfec&quot;</span></span>
 <span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a>DataFreq <span class="ot">&lt;-</span><span class="st">&quot;Monthly&quot;</span></span>
-<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a></span>
-<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a>StatQ <span class="ot">&lt;-</span> <span class="dv">0</span></span>
-<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a></span>
-<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a><span class="co"># B.1) SPECIFIC model inputs</span></span>
-<span id="cb3-21"><a href="#cb3-21" tabindex="-1"></a><span class="do">#################################### GVAR-based models ##################################################</span></span>
-<span id="cb3-22"><a href="#cb3-22" tabindex="-1"></a>GVARlist <span class="ot">&lt;-</span> <span class="fu">list</span>( <span class="at">VARXtype =</span> <span class="st">&quot;unconstrained&quot;</span>, <span class="at">W_type =</span> <span class="st">&quot;Sample Mean&quot;</span>, <span class="at">t_First_Wgvar =</span> <span class="st">&quot;2004&quot;</span>,</span>
-<span id="cb3-23"><a href="#cb3-23" tabindex="-1"></a>                  <span class="at">t_Last_Wgvar =</span> <span class="st">&quot;2019&quot;</span>, DataConnectedness <span class="ot">&lt;-</span> TradeFlows )</span>
-<span id="cb3-24"><a href="#cb3-24" tabindex="-1"></a><span class="do">#################################### JLL-based models ###################################################</span></span>
-<span id="cb3-25"><a href="#cb3-25" tabindex="-1"></a>JLLlist <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">DomUnit =</span>  <span class="st">&quot;China&quot;</span>)</span>
-<span id="cb3-26"><a href="#cb3-26" tabindex="-1"></a><span class="do">###################################### BRW inputs  ######################################################</span></span>
-<span id="cb3-27"><a href="#cb3-27" tabindex="-1"></a>WishBC <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb3-28"><a href="#cb3-28" tabindex="-1"></a>BRWlist <span class="ot">&lt;-</span> <span class="fu">within</span>(<span class="fu">list</span>(<span class="at">flag_mean =</span> <span class="cn">TRUE</span>, <span class="at">gamma =</span> <span class="fl">0.001</span>, <span class="at">N_iter =</span> <span class="dv">200</span>, <span class="at">B =</span> <span class="dv">50</span>, <span class="at">checkBRW =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb3-29"><a href="#cb3-29" tabindex="-1"></a>                       <span class="at">B_check =</span> <span class="dv">1000</span>),  N_burn <span class="ot">&lt;-</span> <span class="fu">round</span>(N_iter <span class="sc">*</span> <span class="fl">0.15</span>))</span>
-<span id="cb3-30"><a href="#cb3-30" tabindex="-1"></a></span>
-<span id="cb3-31"><a href="#cb3-31" tabindex="-1"></a><span class="co"># C) Decide on Settings for numerical outputs</span></span>
-<span id="cb3-32"><a href="#cb3-32" tabindex="-1"></a>WishFPremia <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb3-33"><a href="#cb3-33" tabindex="-1"></a>FPmatLim <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">24</span>,<span class="dv">36</span>)</span>
-<span id="cb3-34"><a href="#cb3-34" tabindex="-1"></a></span>
-<span id="cb3-35"><a href="#cb3-35" tabindex="-1"></a>Horiz <span class="ot">&lt;-</span> <span class="dv">25</span></span>
-<span id="cb3-36"><a href="#cb3-36" tabindex="-1"></a>DesiredGraphs <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;GIRF&quot;</span>, <span class="st">&quot;GFEVD&quot;</span>, <span class="st">&quot;TermPremia&quot;</span>)</span>
-<span id="cb3-37"><a href="#cb3-37" tabindex="-1"></a>WishGraphRiskFac <span class="ot">&lt;-</span> <span class="dv">0</span></span>
-<span id="cb3-38"><a href="#cb3-38" tabindex="-1"></a>WishGraphYields <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb3-39"><a href="#cb3-39" tabindex="-1"></a>WishOrthoJLLgraphs <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb3-40"><a href="#cb3-40" tabindex="-1"></a></span>
-<span id="cb3-41"><a href="#cb3-41" tabindex="-1"></a><span class="co"># D) Bootstrap settings</span></span>
-<span id="cb3-42"><a href="#cb3-42" tabindex="-1"></a>WishBootstrap <span class="ot">&lt;-</span> <span class="dv">0</span> <span class="co">#  Set it to 1, if bootstrap is desired</span></span>
-<span id="cb3-43"><a href="#cb3-43" tabindex="-1"></a>BootList <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">methodBS =</span> <span class="st">&#39;bs&#39;</span>, <span class="at">BlockLength =</span> <span class="dv">4</span>, <span class="at">ndraws =</span> <span class="dv">1000</span>, <span class="at">pctg =</span>  <span class="dv">95</span>)</span>
-<span id="cb3-44"><a href="#cb3-44" tabindex="-1"></a></span>
-<span id="cb3-45"><a href="#cb3-45" tabindex="-1"></a><span class="co"># E) Out-of-sample forecast</span></span>
-<span id="cb3-46"><a href="#cb3-46" tabindex="-1"></a>WishForecast <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb3-47"><a href="#cb3-47" tabindex="-1"></a>ForecastList <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">ForHoriz =</span> <span class="dv">12</span>,  <span class="at">t0Sample =</span> <span class="dv">1</span>, <span class="at">t0Forecast =</span> <span class="dv">100</span>, <span class="at">ForType =</span> <span class="st">&quot;Rolling&quot;</span>)</span>
-<span id="cb3-48"><a href="#cb3-48" tabindex="-1"></a></span>
-<span id="cb3-49"><a href="#cb3-49" tabindex="-1"></a><span class="do">#########################################################################################################</span></span>
-<span id="cb3-50"><a href="#cb3-50" tabindex="-1"></a><span class="do">############################### NO NEED TO MAKE CHANGES FROM HERE #######################################</span></span>
-<span id="cb3-51"><a href="#cb3-51" tabindex="-1"></a><span class="do">#########################################################################################################</span></span>
-<span id="cb3-52"><a href="#cb3-52" tabindex="-1"></a></span>
-<span id="cb3-53"><a href="#cb3-53" tabindex="-1"></a><span class="co"># 2) Minor preliminary work: get the sets of factor labels and  a vector of common maturities</span></span>
-<span id="cb3-54"><a href="#cb3-54" tabindex="-1"></a>FactorLabels <span class="ot">&lt;-</span> <span class="fu">LabFac</span>(N, DomVar, GlobalVar, Economies, ModelType)</span>
-<span id="cb3-55"><a href="#cb3-55" tabindex="-1"></a></span>
-<span id="cb3-56"><a href="#cb3-56" tabindex="-1"></a><span class="co"># 3) Prepare the inputs of the likelihood function</span></span>
-<span id="cb3-57"><a href="#cb3-57" tabindex="-1"></a>ATSMInputs <span class="ot">&lt;-</span> <span class="fu">InputsForOpt</span>(t0_sample, tF_sample, ModelType, Yields, GlobalMacroVar, DomesticMacroVar,</span>
-<span id="cb3-58"><a href="#cb3-58" tabindex="-1"></a>                           FactorLabels, Economies, DataFreq, GVARlist, JLLlist, WishBC, BRWlist)</span>
-<span id="cb3-59"><a href="#cb3-59" tabindex="-1"></a></span>
-<span id="cb3-60"><a href="#cb3-60" tabindex="-1"></a><span class="co"># 4) Optimization of the ATSM (Point Estimates)</span></span>
-<span id="cb3-61"><a href="#cb3-61" tabindex="-1"></a>ModelParaList <span class="ot">&lt;-</span> <span class="fu">Optimization</span>(ATSMInputs, StatQ, DataFreq, FactorLabels, Economies, ModelType)</span>
-<span id="cb3-62"><a href="#cb3-62" tabindex="-1"></a></span>
-<span id="cb3-63"><a href="#cb3-63" tabindex="-1"></a><span class="co"># 5) Numerical and graphical outputs</span></span>
-<span id="cb3-64"><a href="#cb3-64" tabindex="-1"></a><span class="co"># a) Prepare list of inputs for graphs and numerical outputs</span></span>
-<span id="cb3-65"><a href="#cb3-65" tabindex="-1"></a>InputsForOutputs <span class="ot">&lt;-</span> <span class="fu">InputsForOutputs</span>(ModelType, Horiz, DesiredGraphs, OutputLabel, StatQ, DataFreq,</span>
-<span id="cb3-66"><a href="#cb3-66" tabindex="-1"></a>                                    WishGraphYields, WishGraphRiskFac, WishOrthoJLLgraphs, WishFPremia,</span>
-<span id="cb3-67"><a href="#cb3-67" tabindex="-1"></a>                                    FPmatLim, WishBootstrap, BootList, WishForecast, ForecastList)</span>
-<span id="cb3-68"><a href="#cb3-68" tabindex="-1"></a></span>
-<span id="cb3-69"><a href="#cb3-69" tabindex="-1"></a><span class="co"># b) Fit, IRF, FEVD, GIRF, GFEVD, and Term Premia</span></span>
-<span id="cb3-70"><a href="#cb3-70" tabindex="-1"></a>NumericalOutputs <span class="ot">&lt;-</span> <span class="fu">NumOutputs</span>(ModelType, ModelParaList, InputsForOutputs, FactorLabels, Economies)</span>
-<span id="cb3-71"><a href="#cb3-71" tabindex="-1"></a></span>
-<span id="cb3-72"><a href="#cb3-72" tabindex="-1"></a><span class="co"># c) Confidence intervals (bootstrap analysis)</span></span>
-<span id="cb3-73"><a href="#cb3-73" tabindex="-1"></a>BootstrapAnalysis <span class="ot">&lt;-</span> <span class="fu">Bootstrap</span>(ModelType, ModelParaList, NumericalOutputs, Economies, InputsForOutputs,</span>
-<span id="cb3-74"><a href="#cb3-74" tabindex="-1"></a>                               FactorLabels, JLLlist, GVARlist, WishBC, BRWlist)</span>
-<span id="cb3-75"><a href="#cb3-75" tabindex="-1"></a></span>
-<span id="cb3-76"><a href="#cb3-76" tabindex="-1"></a><span class="co"># 6) Out-of-sample forecasting</span></span>
-<span id="cb3-77"><a href="#cb3-77" tabindex="-1"></a>Forecasts <span class="ot">&lt;-</span> <span class="fu">ForecastYields</span>(ModelType, ModelParaList, InputsForOutputs, FactorLabels, Economies,</span>
-<span id="cb3-78"><a href="#cb3-78" tabindex="-1"></a>                            JLLlist, GVARlist, WishBC, BRWlist)</span></code></pre></div>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a>Folder2Save <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a></span>
+<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a>StatQ <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a></span>
+<span id="cb3-21"><a href="#cb3-21" tabindex="-1"></a><span class="co"># B.1) SPECIFIC model inputs</span></span>
+<span id="cb3-22"><a href="#cb3-22" tabindex="-1"></a><span class="do">#################################### GVAR-based models ##################################################</span></span>
+<span id="cb3-23"><a href="#cb3-23" tabindex="-1"></a>GVARlist <span class="ot">&lt;-</span> <span class="fu">list</span>( <span class="at">VARXtype =</span> <span class="st">&quot;unconstrained&quot;</span>, <span class="at">W_type =</span> <span class="st">&quot;Sample Mean&quot;</span>, <span class="at">t_First_Wgvar =</span> <span class="st">&quot;2004&quot;</span>,</span>
+<span id="cb3-24"><a href="#cb3-24" tabindex="-1"></a>                  <span class="at">t_Last_Wgvar =</span> <span class="st">&quot;2019&quot;</span>, DataConnectedness <span class="ot">&lt;-</span> TradeFlows )</span>
+<span id="cb3-25"><a href="#cb3-25" tabindex="-1"></a><span class="do">#################################### JLL-based models ###################################################</span></span>
+<span id="cb3-26"><a href="#cb3-26" tabindex="-1"></a>JLLlist <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">DomUnit =</span>  <span class="st">&quot;China&quot;</span>)</span>
+<span id="cb3-27"><a href="#cb3-27" tabindex="-1"></a><span class="do">###################################### BRW inputs  ######################################################</span></span>
+<span id="cb3-28"><a href="#cb3-28" tabindex="-1"></a>WishBC <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb3-29"><a href="#cb3-29" tabindex="-1"></a>BRWlist <span class="ot">&lt;-</span> <span class="fu">within</span>(<span class="fu">list</span>(<span class="at">flag_mean =</span> <span class="cn">TRUE</span>, <span class="at">gamma =</span> <span class="fl">0.001</span>, <span class="at">N_iter =</span> <span class="dv">200</span>, <span class="at">B =</span> <span class="dv">50</span>, <span class="at">checkBRW =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb3-30"><a href="#cb3-30" tabindex="-1"></a>                       <span class="at">B_check =</span> <span class="dv">1000</span>),  N_burn <span class="ot">&lt;-</span> <span class="fu">round</span>(N_iter <span class="sc">*</span> <span class="fl">0.15</span>))</span>
+<span id="cb3-31"><a href="#cb3-31" tabindex="-1"></a></span>
+<span id="cb3-32"><a href="#cb3-32" tabindex="-1"></a><span class="co"># C) Decide on Settings for numerical outputs</span></span>
+<span id="cb3-33"><a href="#cb3-33" tabindex="-1"></a>WishFPremia <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb3-34"><a href="#cb3-34" tabindex="-1"></a>FPmatLim <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">24</span>,<span class="dv">36</span>)</span>
+<span id="cb3-35"><a href="#cb3-35" tabindex="-1"></a></span>
+<span id="cb3-36"><a href="#cb3-36" tabindex="-1"></a>Horiz <span class="ot">&lt;-</span> <span class="dv">25</span></span>
+<span id="cb3-37"><a href="#cb3-37" tabindex="-1"></a>DesiredGraphs <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;GIRF&quot;</span>, <span class="st">&quot;GFEVD&quot;</span>, <span class="st">&quot;TermPremia&quot;</span>)</span>
+<span id="cb3-38"><a href="#cb3-38" tabindex="-1"></a>WishGraphRiskFac <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb3-39"><a href="#cb3-39" tabindex="-1"></a>WishGraphYields <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb3-40"><a href="#cb3-40" tabindex="-1"></a>WishOrthoJLLgraphs <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb3-41"><a href="#cb3-41" tabindex="-1"></a></span>
+<span id="cb3-42"><a href="#cb3-42" tabindex="-1"></a><span class="co"># D) Bootstrap settings</span></span>
+<span id="cb3-43"><a href="#cb3-43" tabindex="-1"></a>WishBootstrap <span class="ot">&lt;-</span> <span class="dv">0</span> <span class="co">#  Set it to 1, if bootstrap is desired</span></span>
+<span id="cb3-44"><a href="#cb3-44" tabindex="-1"></a>BootList <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">methodBS =</span> <span class="st">&#39;bs&#39;</span>, <span class="at">BlockLength =</span> <span class="dv">4</span>, <span class="at">ndraws =</span> <span class="dv">1000</span>, <span class="at">pctg =</span>  <span class="dv">95</span>)</span>
+<span id="cb3-45"><a href="#cb3-45" tabindex="-1"></a></span>
+<span id="cb3-46"><a href="#cb3-46" tabindex="-1"></a><span class="co"># E) Out-of-sample forecast</span></span>
+<span id="cb3-47"><a href="#cb3-47" tabindex="-1"></a>WishForecast <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb3-48"><a href="#cb3-48" tabindex="-1"></a>ForecastList <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">ForHoriz =</span> <span class="dv">12</span>,  <span class="at">t0Sample =</span> <span class="dv">1</span>, <span class="at">t0Forecast =</span> <span class="dv">100</span>, <span class="at">ForType =</span> <span class="st">&quot;Rolling&quot;</span>)</span>
+<span id="cb3-49"><a href="#cb3-49" tabindex="-1"></a></span>
+<span id="cb3-50"><a href="#cb3-50" tabindex="-1"></a><span class="do">#########################################################################################################</span></span>
+<span id="cb3-51"><a href="#cb3-51" tabindex="-1"></a><span class="do">############################### NO NEED TO MAKE CHANGES FROM HERE #######################################</span></span>
+<span id="cb3-52"><a href="#cb3-52" tabindex="-1"></a><span class="do">#########################################################################################################</span></span>
+<span id="cb3-53"><a href="#cb3-53" tabindex="-1"></a></span>
+<span id="cb3-54"><a href="#cb3-54" tabindex="-1"></a><span class="co"># 2) Minor preliminary work: get the sets of factor labels and  a vector of common maturities</span></span>
+<span id="cb3-55"><a href="#cb3-55" tabindex="-1"></a>FactorLabels <span class="ot">&lt;-</span> <span class="fu">LabFac</span>(N, DomVar, GlobalVar, Economies, ModelType)</span>
+<span id="cb3-56"><a href="#cb3-56" tabindex="-1"></a></span>
+<span id="cb3-57"><a href="#cb3-57" tabindex="-1"></a><span class="co"># 3) Prepare the inputs of the likelihood function</span></span>
+<span id="cb3-58"><a href="#cb3-58" tabindex="-1"></a>ATSMInputs <span class="ot">&lt;-</span> <span class="fu">InputsForOpt</span>(t0_sample, tF_sample, ModelType, Yields, GlobalMacroVar, DomesticMacroVar,</span>
+<span id="cb3-59"><a href="#cb3-59" tabindex="-1"></a>                           FactorLabels, Economies, DataFreq, GVARlist, JLLlist, WishBC, BRWlist)</span>
+<span id="cb3-60"><a href="#cb3-60" tabindex="-1"></a></span>
+<span id="cb3-61"><a href="#cb3-61" tabindex="-1"></a><span class="co"># 4) Optimization of the ATSM (Point Estimates)</span></span>
+<span id="cb3-62"><a href="#cb3-62" tabindex="-1"></a>ModelParaList <span class="ot">&lt;-</span> <span class="fu">Optimization</span>(ATSMInputs, StatQ, DataFreq, FactorLabels, Economies, ModelType)</span>
+<span id="cb3-63"><a href="#cb3-63" tabindex="-1"></a></span>
+<span id="cb3-64"><a href="#cb3-64" tabindex="-1"></a><span class="co"># 5) Numerical and graphical outputs</span></span>
+<span id="cb3-65"><a href="#cb3-65" tabindex="-1"></a><span class="co"># a) Prepare list of inputs for graphs and numerical outputs</span></span>
+<span id="cb3-66"><a href="#cb3-66" tabindex="-1"></a>InputsForOutputs <span class="ot">&lt;-</span> <span class="fu">InputsForOutputs</span>(ModelType, Horiz, DesiredGraphs, OutputLabel, StatQ, DataFreq,</span>
+<span id="cb3-67"><a href="#cb3-67" tabindex="-1"></a>                                    WishGraphYields, WishGraphRiskFac, WishOrthoJLLgraphs, WishFPremia,</span>
+<span id="cb3-68"><a href="#cb3-68" tabindex="-1"></a>                                    FPmatLim, WishBootstrap, BootList, WishForecast, ForecastList)</span>
+<span id="cb3-69"><a href="#cb3-69" tabindex="-1"></a></span>
+<span id="cb3-70"><a href="#cb3-70" tabindex="-1"></a><span class="co"># b) Fit, IRF, FEVD, GIRF, GFEVD, and Term Premia</span></span>
+<span id="cb3-71"><a href="#cb3-71" tabindex="-1"></a>NumericalOutputs <span class="ot">&lt;-</span> <span class="fu">NumOutputs</span>(ModelType, ModelParaList, InputsForOutputs, FactorLabels, </span>
+<span id="cb3-72"><a href="#cb3-72" tabindex="-1"></a>                               Economies, Folder2Save)</span>
+<span id="cb3-73"><a href="#cb3-73" tabindex="-1"></a></span>
+<span id="cb3-74"><a href="#cb3-74" tabindex="-1"></a><span class="co"># c) Confidence intervals (bootstrap analysis)</span></span>
+<span id="cb3-75"><a href="#cb3-75" tabindex="-1"></a>BootstrapAnalysis <span class="ot">&lt;-</span> <span class="fu">Bootstrap</span>(ModelType, ModelParaList, NumericalOutputs, Economies, InputsForOutputs,</span>
+<span id="cb3-76"><a href="#cb3-76" tabindex="-1"></a>                               FactorLabels, JLLlist, GVARlist, WishBC, BRWlist, Folder2Save)</span>
+<span id="cb3-77"><a href="#cb3-77" tabindex="-1"></a></span>
+<span id="cb3-78"><a href="#cb3-78" tabindex="-1"></a><span class="co"># 6) Out-of-sample forecasting</span></span>
+<span id="cb3-79"><a href="#cb3-79" tabindex="-1"></a>Forecasts <span class="ot">&lt;-</span> <span class="fu">ForecastYields</span>(ModelType, ModelParaList, InputsForOutputs, FactorLabels, Economies,</span>
+<span id="cb3-80"><a href="#cb3-80" tabindex="-1"></a>                            JLLlist, GVARlist, WishBC, BRWlist, Folder2Save)</span></code></pre></div>
 </div>
 <div id="candelon-and-moura-2023" class="section level1" number="3">
 <h1><span class="header-section-number">3</span> Candelon and Moura (2023)</h1>
@@ -1143,56 +1145,58 @@ se
 <span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a></span>
 <span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a>OutputLabel <span class="ot">&lt;-</span> <span class="st">&quot;CM_EM&quot;</span></span>
 <span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a>DataFreq <span class="ot">&lt;-</span><span class="st">&quot;Weekly&quot;</span></span>
-<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a></span>
-<span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a>StatQ <span class="ot">&lt;-</span> <span class="dv">0</span></span>
-<span id="cb4-19"><a href="#cb4-19" tabindex="-1"></a></span>
-<span id="cb4-20"><a href="#cb4-20" tabindex="-1"></a><span class="co"># B.1) SPECIFIC model inputs</span></span>
-<span id="cb4-21"><a href="#cb4-21" tabindex="-1"></a><span class="do">#################################### GVAR-based models ##################################################</span></span>
-<span id="cb4-22"><a href="#cb4-22" tabindex="-1"></a>GVARlist <span class="ot">&lt;-</span> <span class="fu">list</span>( <span class="at">VARXtype =</span> <span class="st">&quot;constrained: COVID&quot;</span>, <span class="at">W_type =</span> <span class="st">&quot;Sample Mean&quot;</span>, <span class="at">t_First_Wgvar =</span> <span class="st">&quot;2015&quot;</span>,</span>
-<span id="cb4-23"><a href="#cb4-23" tabindex="-1"></a>                  <span class="at">t_Last_Wgvar =</span> <span class="st">&quot;2020&quot;</span>, <span class="at">DataConnectedness =</span> Trade_Flows)</span>
-<span id="cb4-24"><a href="#cb4-24" tabindex="-1"></a><span class="do">###################################### BRW inputs  ######################################################</span></span>
-<span id="cb4-25"><a href="#cb4-25" tabindex="-1"></a>WishBC <span class="ot">&lt;-</span> <span class="dv">0</span></span>
-<span id="cb4-26"><a href="#cb4-26" tabindex="-1"></a></span>
-<span id="cb4-27"><a href="#cb4-27" tabindex="-1"></a><span class="co"># C) Decide on Settings for numerical outputs</span></span>
-<span id="cb4-28"><a href="#cb4-28" tabindex="-1"></a>WishFPremia <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb4-29"><a href="#cb4-29" tabindex="-1"></a>FPmatLim <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">47</span>,<span class="dv">48</span>)</span>
-<span id="cb4-30"><a href="#cb4-30" tabindex="-1"></a></span>
-<span id="cb4-31"><a href="#cb4-31" tabindex="-1"></a>Horiz <span class="ot">&lt;-</span> <span class="dv">12</span></span>
-<span id="cb4-32"><a href="#cb4-32" tabindex="-1"></a>DesiredGraphs <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;GIRF&quot;</span>, <span class="st">&quot;GFEVD&quot;</span>, <span class="st">&quot;TermPremia&quot;</span>)</span>
-<span id="cb4-33"><a href="#cb4-33" tabindex="-1"></a>WishGraphRiskFac <span class="ot">&lt;-</span> <span class="dv">0</span></span>
-<span id="cb4-34"><a href="#cb4-34" tabindex="-1"></a>WishGraphYields <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb4-35"><a href="#cb4-35" tabindex="-1"></a>WishOrthoJLLgraphs <span class="ot">&lt;-</span> <span class="dv">0</span></span>
-<span id="cb4-36"><a href="#cb4-36" tabindex="-1"></a></span>
-<span id="cb4-37"><a href="#cb4-37" tabindex="-1"></a><span class="co"># D) Bootstrap settings</span></span>
-<span id="cb4-38"><a href="#cb4-38" tabindex="-1"></a>WishBootstrap <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co">#  YES: 1; No = 0.</span></span>
-<span id="cb4-39"><a href="#cb4-39" tabindex="-1"></a>BootList <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">methodBS =</span> <span class="st">&#39;bs&#39;</span>, <span class="at">BlockLength =</span> <span class="dv">4</span>, <span class="at">ndraws =</span> <span class="dv">100</span>, <span class="at">pctg =</span>  <span class="dv">95</span>)</span>
-<span id="cb4-40"><a href="#cb4-40" tabindex="-1"></a></span>
-<span id="cb4-41"><a href="#cb4-41" tabindex="-1"></a><span class="do">#########################################################################################################</span></span>
-<span id="cb4-42"><a href="#cb4-42" tabindex="-1"></a><span class="do">############################### NO NEED TO MAKE CHANGES FROM HERE #######################################</span></span>
-<span id="cb4-43"><a href="#cb4-43" tabindex="-1"></a><span class="do">#########################################################################################################</span></span>
-<span id="cb4-44"><a href="#cb4-44" tabindex="-1"></a></span>
-<span id="cb4-45"><a href="#cb4-45" tabindex="-1"></a><span class="co"># 2) Minor preliminary work: get the sets of factor labels and  a vector of common maturities</span></span>
-<span id="cb4-46"><a href="#cb4-46" tabindex="-1"></a>FactorLabels <span class="ot">&lt;-</span> <span class="fu">LabFac</span>(N, DomVar, GlobalVar, Economies, ModelType)</span>
-<span id="cb4-47"><a href="#cb4-47" tabindex="-1"></a></span>
-<span id="cb4-48"><a href="#cb4-48" tabindex="-1"></a><span class="co"># 3) Prepare the inputs of the likelihood function</span></span>
-<span id="cb4-49"><a href="#cb4-49" tabindex="-1"></a>ATSMInputs <span class="ot">&lt;-</span> <span class="fu">InputsForOpt</span>(t0_sample, tF_sample, ModelType, Yields, GlobalMacro, DomMacro, FactorLabels,</span>
-<span id="cb4-50"><a href="#cb4-50" tabindex="-1"></a>                           Economies, DataFreq, GVARlist)</span>
-<span id="cb4-51"><a href="#cb4-51" tabindex="-1"></a></span>
-<span id="cb4-52"><a href="#cb4-52" tabindex="-1"></a><span class="co"># 4) Optimization of the ATSM (Point Estimates)</span></span>
-<span id="cb4-53"><a href="#cb4-53" tabindex="-1"></a>ModelParaList <span class="ot">&lt;-</span> <span class="fu">Optimization</span>(ATSMInputs, StatQ, DataFreq, FactorLabels, Economies, ModelType)</span>
-<span id="cb4-54"><a href="#cb4-54" tabindex="-1"></a></span>
-<span id="cb4-55"><a href="#cb4-55" tabindex="-1"></a><span class="co"># 5) Numerical and graphical outputs</span></span>
-<span id="cb4-56"><a href="#cb4-56" tabindex="-1"></a><span class="co"># a) Prepare list of inputs for graphs and numerical outputs</span></span>
-<span id="cb4-57"><a href="#cb4-57" tabindex="-1"></a>InputsForOutputs <span class="ot">&lt;-</span> <span class="fu">InputsForOutputs</span>(ModelType, Horiz, DesiredGraphs, OutputLabel, StatQ, DataFreq,</span>
-<span id="cb4-58"><a href="#cb4-58" tabindex="-1"></a>                                    WishGraphYields, WishGraphRiskFac, WishOrthoJLLgraphs, WishFPremia,</span>
-<span id="cb4-59"><a href="#cb4-59" tabindex="-1"></a>                                    FPmatLim, WishBootstrap, BootList)</span>
-<span id="cb4-60"><a href="#cb4-60" tabindex="-1"></a></span>
-<span id="cb4-61"><a href="#cb4-61" tabindex="-1"></a><span class="co"># b) Fit, IRF, FEVD, GIRF, GFEVD, and Term Premia</span></span>
-<span id="cb4-62"><a href="#cb4-62" tabindex="-1"></a>NumericalOutputs <span class="ot">&lt;-</span> <span class="fu">NumOutputs</span>(ModelType, ModelParaList, InputsForOutputs, FactorLabels, Economies)</span>
-<span id="cb4-63"><a href="#cb4-63" tabindex="-1"></a></span>
-<span id="cb4-64"><a href="#cb4-64" tabindex="-1"></a><span class="co"># c) Confidence intervals (bootstrap analysis)</span></span>
-<span id="cb4-65"><a href="#cb4-65" tabindex="-1"></a>BootstrapAnalysis <span class="ot">&lt;-</span> <span class="fu">Bootstrap</span>(ModelType, ModelParaList, NumericalOutputs, Economies, InputsForOutputs,</span>
-<span id="cb4-66"><a href="#cb4-66" tabindex="-1"></a>                               FactorLabels, <span class="at">JLLlist =</span> <span class="cn">NULL</span>, GVARlist)</span></code></pre></div>
+<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a>F2S <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a></span>
+<span id="cb4-19"><a href="#cb4-19" tabindex="-1"></a>StatQ <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb4-20"><a href="#cb4-20" tabindex="-1"></a></span>
+<span id="cb4-21"><a href="#cb4-21" tabindex="-1"></a><span class="co"># B.1) SPECIFIC model inputs</span></span>
+<span id="cb4-22"><a href="#cb4-22" tabindex="-1"></a><span class="do">#################################### GVAR-based models ##################################################</span></span>
+<span id="cb4-23"><a href="#cb4-23" tabindex="-1"></a>GVARlist <span class="ot">&lt;-</span> <span class="fu">list</span>( <span class="at">VARXtype =</span> <span class="st">&quot;constrained: COVID&quot;</span>, <span class="at">W_type =</span> <span class="st">&quot;Sample Mean&quot;</span>, <span class="at">t_First_Wgvar =</span> <span class="st">&quot;2015&quot;</span>,</span>
+<span id="cb4-24"><a href="#cb4-24" tabindex="-1"></a>                  <span class="at">t_Last_Wgvar =</span> <span class="st">&quot;2020&quot;</span>, <span class="at">DataConnectedness =</span> Trade_Flows)</span>
+<span id="cb4-25"><a href="#cb4-25" tabindex="-1"></a><span class="do">###################################### BRW inputs  ######################################################</span></span>
+<span id="cb4-26"><a href="#cb4-26" tabindex="-1"></a>WishBC <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb4-27"><a href="#cb4-27" tabindex="-1"></a></span>
+<span id="cb4-28"><a href="#cb4-28" tabindex="-1"></a><span class="co"># C) Decide on Settings for numerical outputs</span></span>
+<span id="cb4-29"><a href="#cb4-29" tabindex="-1"></a>WishFPremia <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb4-30"><a href="#cb4-30" tabindex="-1"></a>FPmatLim <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">47</span>,<span class="dv">48</span>)</span>
+<span id="cb4-31"><a href="#cb4-31" tabindex="-1"></a></span>
+<span id="cb4-32"><a href="#cb4-32" tabindex="-1"></a>Horiz <span class="ot">&lt;-</span> <span class="dv">12</span></span>
+<span id="cb4-33"><a href="#cb4-33" tabindex="-1"></a>DesiredGraphs <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;GIRF&quot;</span>, <span class="st">&quot;GFEVD&quot;</span>, <span class="st">&quot;TermPremia&quot;</span>)</span>
+<span id="cb4-34"><a href="#cb4-34" tabindex="-1"></a>WishGraphRiskFac <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb4-35"><a href="#cb4-35" tabindex="-1"></a>WishGraphYields <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb4-36"><a href="#cb4-36" tabindex="-1"></a>WishOrthoJLLgraphs <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb4-37"><a href="#cb4-37" tabindex="-1"></a></span>
+<span id="cb4-38"><a href="#cb4-38" tabindex="-1"></a><span class="co"># D) Bootstrap settings</span></span>
+<span id="cb4-39"><a href="#cb4-39" tabindex="-1"></a>WishBootstrap <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co">#  YES: 1; No = 0.</span></span>
+<span id="cb4-40"><a href="#cb4-40" tabindex="-1"></a>BootList <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">methodBS =</span> <span class="st">&#39;bs&#39;</span>, <span class="at">BlockLength =</span> <span class="dv">4</span>, <span class="at">ndraws =</span> <span class="dv">100</span>, <span class="at">pctg =</span>  <span class="dv">95</span>)</span>
+<span id="cb4-41"><a href="#cb4-41" tabindex="-1"></a></span>
+<span id="cb4-42"><a href="#cb4-42" tabindex="-1"></a><span class="do">#########################################################################################################</span></span>
+<span id="cb4-43"><a href="#cb4-43" tabindex="-1"></a><span class="do">############################### NO NEED TO MAKE CHANGES FROM HERE #######################################</span></span>
+<span id="cb4-44"><a href="#cb4-44" tabindex="-1"></a><span class="do">#########################################################################################################</span></span>
+<span id="cb4-45"><a href="#cb4-45" tabindex="-1"></a></span>
+<span id="cb4-46"><a href="#cb4-46" tabindex="-1"></a><span class="co"># 2) Minor preliminary work: get the sets of factor labels and  a vector of common maturities</span></span>
+<span id="cb4-47"><a href="#cb4-47" tabindex="-1"></a>FactorLabels <span class="ot">&lt;-</span> <span class="fu">LabFac</span>(N, DomVar, GlobalVar, Economies, ModelType)</span>
+<span id="cb4-48"><a href="#cb4-48" tabindex="-1"></a></span>
+<span id="cb4-49"><a href="#cb4-49" tabindex="-1"></a><span class="co"># 3) Prepare the inputs of the likelihood function</span></span>
+<span id="cb4-50"><a href="#cb4-50" tabindex="-1"></a>ATSMInputs <span class="ot">&lt;-</span> <span class="fu">InputsForOpt</span>(t0_sample, tF_sample, ModelType, Yields, GlobalMacro, DomMacro, FactorLabels,</span>
+<span id="cb4-51"><a href="#cb4-51" tabindex="-1"></a>                           Economies, DataFreq, GVARlist)</span>
+<span id="cb4-52"><a href="#cb4-52" tabindex="-1"></a></span>
+<span id="cb4-53"><a href="#cb4-53" tabindex="-1"></a><span class="co"># 4) Optimization of the ATSM (Point Estimates)</span></span>
+<span id="cb4-54"><a href="#cb4-54" tabindex="-1"></a>ModelParaList <span class="ot">&lt;-</span> <span class="fu">Optimization</span>(ATSMInputs, StatQ, DataFreq, FactorLabels, Economies, ModelType)</span>
+<span id="cb4-55"><a href="#cb4-55" tabindex="-1"></a></span>
+<span id="cb4-56"><a href="#cb4-56" tabindex="-1"></a><span class="co"># 5) Numerical and graphical outputs</span></span>
+<span id="cb4-57"><a href="#cb4-57" tabindex="-1"></a><span class="co"># a) Prepare list of inputs for graphs and numerical outputs</span></span>
+<span id="cb4-58"><a href="#cb4-58" tabindex="-1"></a>InputsForOutputs <span class="ot">&lt;-</span> <span class="fu">InputsForOutputs</span>(ModelType, Horiz, DesiredGraphs, OutputLabel, StatQ, DataFreq,</span>
+<span id="cb4-59"><a href="#cb4-59" tabindex="-1"></a>                                    WishGraphYields, WishGraphRiskFac, WishOrthoJLLgraphs, WishFPremia,</span>
+<span id="cb4-60"><a href="#cb4-60" tabindex="-1"></a>                                    FPmatLim, WishBootstrap, BootList)</span>
+<span id="cb4-61"><a href="#cb4-61" tabindex="-1"></a></span>
+<span id="cb4-62"><a href="#cb4-62" tabindex="-1"></a><span class="co"># b) Fit, IRF, FEVD, GIRF, GFEVD, and Term Premia</span></span>
+<span id="cb4-63"><a href="#cb4-63" tabindex="-1"></a>NumericalOutputs <span class="ot">&lt;-</span> <span class="fu">NumOutputs</span>(ModelType, ModelParaList, InputsForOutputs, FactorLabels, </span>
+<span id="cb4-64"><a href="#cb4-64" tabindex="-1"></a>                               Economies, F2S)</span>
+<span id="cb4-65"><a href="#cb4-65" tabindex="-1"></a></span>
+<span id="cb4-66"><a href="#cb4-66" tabindex="-1"></a><span class="co"># c) Confidence intervals (bootstrap analysis)</span></span>
+<span id="cb4-67"><a href="#cb4-67" tabindex="-1"></a>BootstrapAnalysis <span class="ot">&lt;-</span> <span class="fu">Bootstrap</span>(ModelType, ModelParaList, NumericalOutputs, Economies, InputsForOutputs,</span>
+<span id="cb4-68"><a href="#cb4-68" tabindex="-1"></a>                               FactorLabels, <span class="at">JLLlist =</span> <span class="cn">NULL</span>, GVARlist, WishBC, BRWlist, F2S)</span></code></pre></div>
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1>References</h1>

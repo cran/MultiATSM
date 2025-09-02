@@ -1,0 +1,17 @@
+BR_jps_gro_R3: BR_jps_out
+CM_DomMacroFactors: DomesticMacroVar
+CM_DomMacro_2023: DomMacro
+CM_Factors: RiskFactors
+CM_Factors_2023: RiskFactors
+CM_Factors_GVAR: FactorsGVAR
+CM_GlobalMacroFactors: GlobalMacroVar
+CM_GlobalMacro_2023: GlobalMacro
+CM_Trade: TradeFlows
+CM_Trade_2023: Trade_Flows
+CM_Yields: Yields
+CM_Yields_2023: Yields
+InpForOutEx
+JPSrep: ModelPara
+NumOutEx
+Out_Example: Out
+ParaSetEx: ModelParaEx
