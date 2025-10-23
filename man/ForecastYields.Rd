@@ -12,46 +12,56 @@ ForecastYields(
   Economies,
   JLLlist = NULL,
   GVARlist = NULL,
-  WishBRW,
+  WishBRW = FALSE,
   BRWlist = NULL,
   Folder2save = NULL,
   verbose = TRUE
 )
 }
 \arguments{
-\item{ModelType}{A character vector indicating the model type to be estimated.}
+\item{ModelType}{character. Model type to be estimated. Permissible choices: "JPS original", "JPS global", "GVAR single", "JPS multi", "GVAR multi", "JLL original", "JLL No DomUnit", "JLL joint Sigma".}
 
-\item{ModelPara}{A list containing the point estimates of the model parameters. For details, refer to the outputs from the \code{\link{Optimization}} function.}
+\item{ModelPara}{list. Point estimates of the model parameters. See outputs from \code{\link{Optimization}}.}
 
-\item{InputsForOutputs}{A list containing the necessary inputs for generating IRFs, GIRFs, FEVDs, GFEVDs and Term Premia.}
+\item{InputsForOutputs}{list. Inputs for generating IRFs, GIRFs, FEVDs, GFEVDs, and Term Premia.}
 
-\item{FactorLabels}{A list of character vectors with labels for all variables in the model.}
+\item{FactorLabels}{list. Labels for all variables present in the model, as returned by \code{\link{LabFac}}.}
 
-\item{Economies}{A character vector containing the names of the economies included in the system.}
+\item{Economies}{character vector. Names of the \code{C} economies included in the system.}
 
-\item{JLLlist}{A list of necessary inputs for the estimation of JLL-based models (see the \code{\link{JLL}} function).}
+\item{JLLlist}{list. Inputs for JLL model estimation (see \code{\link{JLL}}). Default is NULL.}
 
-\item{GVARlist}{A list containing the necessary inputs for the estimation of GVAR-based models (see the \code{\link{GVAR}} function).}
+\item{GVARlist}{list. Inputs for GVAR model estimation (see \code{\link{GVAR}}). Default is NULL.}
 
-\item{WishBRW}{Whether to estimate the physical parameter model with bias correction, based on the method by Bauer, Rudebusch and Wu (2012) (see \code{\link{Bias_Correc_VAR}} function). Default is set to 0.}
+\item{WishBRW}{logical. Whether to estimate the physical parameter model with bias correction (see \code{\link{Bias_Correc_VAR}}). Default is FALSE.}
 
-\item{BRWlist}{List of necessary inputs for performing the bias-corrected estimation (see \code{\link{Bias_Correc_VAR}} function).}
+\item{BRWlist}{list. Inputs for bias-corrected estimation (see \code{\link{Bias_Correc_VAR}}).}
 
-\item{Folder2save}{Folder path where the outputs will be stored. Default option saves the outputs in a temporary directory.}
+\item{Folder2save}{character. Folder path where outputs will be stored. Default saves outputs in a temporary directory.}
 
-\item{verbose}{Logical flag controlling function messaging. Default is TRUE.}
+\item{verbose}{logical. Print progress messages. Default is TRUE.}
 }
 \value{
 An object of class 'ATSMModelForecast' containing the following elements:
 \enumerate{
-\item Out-of-sample forecasts of bond yields per forecast horizon
-\item Out-of-sample forecast errors of bond yields per forecast horizon
-\item Root mean square errors per forecast horizon
+  \item Out-of-sample forecasts of bond yields per forecast horizon
+  \item Out-of-sample forecast errors of bond yields per forecast horizon
+  \item Root mean square errors per forecast horizon
 }
 }
 \description{
 Generates forecasts of bond yields for all model types
 }
+\section{Permissible options - forecast list (\code{InputsForOutputs} input)}{
+
+\itemize{
+   \item \code{ForHoriz}: forecast horizon. Must be a positive integer.
+   \item \code{t0Sample}:   initial sample date. Must be a positive integer smaller than the time series dimension of the model (\code{Td})
+   \item \code{t0Forecast}:  last sample date for the first forecast. Note that \code{Td > t0Forecast + ForHoriz}.
+   \item \code{ForType}: \code{"Rolling"} (rolling window forecast) or \code{"Expanding"} (for expanding window forecast)
+}
+}
+
 \section{Available Methods}{
 
 - `plot(object)`
@@ -65,10 +75,14 @@ data("InpForOutEx")
 ModelType <- "JPS original"
 Economy <- "Brazil"
 FacLab <- LabFac(N = 1, DomVar = "Eco_Act", GlobalVar = "Gl_Eco_Act", Economy, ModelType)
-InpForOutEx[[ModelType]]$Forecasting <- list(WishForecast = 1, ForHoriz = 12,  t0Sample = 1,
-                                            t0Forecast = 143, ForType = "Expanding")
+ # Adjust Forecasting setting
+InpForOutEx[[ModelType]]$Forecasting <- list(
+  WishForecast = 1, ForHoriz = 12, t0Sample = 1,
+  t0Forecast = 143, ForType = "Expanding"
+)
 
-Forecast <- ForecastYields(ModelType, ModelParaEx, InpForOutEx, FacLab, Economy,
-                          WishBRW = 0, verbose = TRUE)
+Forecast <- ForecastYields(ModelType, ParaSetEx, InpForOutEx, FacLab, Economy,
+  WishBRW = FALSE, verbose = TRUE
+)
 }
 }

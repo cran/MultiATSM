@@ -21,56 +21,55 @@
 #' @param GVARinputs if the model chosen is the "GVAR single" or "GVAR multi", the "GVARinputs" should be specified (see "GVAR" function)
 #' @param JLLinputs if the model chosen is JLL-based. "JLLinputs" should contain (i) DomUnit, (ii) WishSigmas, (iii) SigmaNonOrtho, (iv) JLLModelType (See JLL function)
 #' @param BS_outputs Generates simplified output list in the bootstrap setting. Default is set to FALSE.
-#' @param nargout if nargout == 1: provides only the values of the likelihood; if nargout == 2: complete ATSM outputs
+#' @param ExportListOut export the complete ATSM outputs. Default is TRUE.
 #'
 #' @references
-#' This function is modified version of the "A0N_MLEdensity_WOE" function by Le and Singleton (2018).\cr
-#'  "A Small Package of Matlab Routines for the Estimation of Some Term Structure Models." \cr
-#'  (Euro Area Business Cycle Network Training School - Term Structure Modelling).
-#'  Available at: https://cepr.org/40029
+#' \itemize{
+#'  \item Candelon, C. and Moura, R. (2024). “A Multicountry Model of the Term Structures of Interest Rates with a GVAR.”
+#'  Journal of Financial Econometrics 22 (5): 1558–87.
+#'  \item Jotikasthira, C; Le, A. and Lundblad, C (2015). “Why Do Term Structures in Different Currencies Co-Move?”
+#'  Journal of Financial Economics 115: 58–83.
+#'  \item Joslin, S,; Priebsch, M. and Singleton, K. (2014). “Risk Premiums in Dynamic Term Structure Models with Unspanned Macro Risks.”
+#'  Journal of Finance 69 (3): 1197–1233.
+#'  \item Joslin, S., Singleton, K. and Zhu, H. (2011). "A new perspective on Gaussian dynamic term structure models".
+#'  The Review of Financial Studies.
+#'  \item Le, A. and Singleton, K. (2018). "A Small Package of Matlab Routines for the Estimation of Some Term Structure Models."
+#'  Euro Area Business Cycle Network Training School - Term Structure Modelling.
+#' }
 #'
 #' @keywords internal
 
 MLEdensity <- function(K1XQ, r0, SSZ, K0Z, K1Z, se, Gy.0, mat, Y, Z, P, Wpca, We, WpcaFull, dt, Economies,
-                       FactorLabels, ModelType, GVARinputs = NULL, JLLinputs = NULL, BS_outputs = FALSE, nargout) {
-
+                       FactorLabels, ModelType, GVARinputs = NULL, JLLinputs = NULL, BS_outputs = FALSE,
+                       ExportListOut = TRUE) {
   # 0) Initialize some variables
   N <- length(FactorLabels$Spanned)
-  if (ModelType == 'JLL joint Sigma') SSZ <- Update_SSZ_JLL(SSZ, Z, N, JLLinputs)
-
-  # x is a column vector that contains all model parameters.
-  x <- rbind(matrix(K1XQ), matrix(SSZ), r0, se, matrix(K0Z), matrix(K1Z))
-
-  # Test for the optimization feasibility
-  if (any(is.nan(x)) || any(is.infinite(x)) || any(Im(x) != 0)) {
-    T_dim <- ncol(Z)
-    y <- 1e6 * rep(1, times = T_dim - 1)
-    out <- list()
-  } else {
+  if (ModelType == "JLL joint Sigma") SSZ <- Update_SSZ_JLL(SSZ, Z, N, JLLinputs)
 
   # 1) Compute loadings:
   # Slope coefficients (Bn's)
-    LoadBs <- Get_Bs(mat, dt, K1XQ, SSZ, Wpca, FactorLabels, Economies, ModelType)
+  LoadBs <- Get_Bs(mat, dt, K1XQ, SSZ, Wpca, FactorLabels, Economies, ModelType)
   # Intercepts (An's):
-    if (is.null(r0) || length(r0) == 0) r0 <- Get_r0(Y, P, N, mat, dt, LoadBs, Wpca, We, Economies, ModelType)
-    LoadAs <- Get_As(LoadBs, Wpca, r0, dt, Economies, ModelType)
+  if (is.null(r0) || length(r0) == 0) r0 <- Get_r0(Y, P, N, mat, dt, LoadBs, Wpca, We, Economies, ModelType)
+  LoadAs <- Get_As(LoadBs, Wpca, r0, dt, Economies, ModelType)
 
   # 2) Build Log-likelihood density function
-    llkOut <- Get_llk(P, Y, Z, N, mat, We, Wpca, K0Z, K1Z, SSZ, LoadBs, LoadAs, ModelType)
-    y <- llkOut$y
-    se <- llkOut$se
+  llkOut <- Get_llk(P, Y, Z, N, mat, We, Wpca, K0Z, K1Z, SSZ, LoadBs, LoadAs, ModelType)
+  y <- llkOut$y
+  se <- llkOut$se
 
   # 3) Variance-yields
-    VarYields <- Get_SigmaYields(Y, N, mat, WpcaFull, se, ModelType)
+  VarYields <- Get_SigmaYields(Y, N, mat, WpcaFull, se, ModelType)
 
   # 4) Output to export
-    if (nargout > 1) {
-      out <- OptOutputs(Y, Z, mat, N, dt, Wpca, K1XQ, SSZ, LoadAs, LoadBs, r0, se, K0Z, K1Z, Gy.0, VarYields,
-                        y, GVARinputs, JLLinputs, Economies, ModelType, BS_outputs)
-    }
+  if (ExportListOut) {
+    out <- OptOutputs(
+      Y, Z, mat, N, dt, Wpca, K1XQ, SSZ, LoadAs, LoadBs, r0, se, K0Z, K1Z, Gy.0, VarYields,
+      y, GVARinputs, JLLinputs, Economies, ModelType, BS_outputs
+    )
   }
 
-  if (nargout == 1) {
+  if (!ExportListOut) {
     return(y)
   } else {
     return(out)
@@ -87,7 +86,6 @@ MLEdensity <- function(K1XQ, r0, SSZ, K0Z, K1Z, se, Gy.0, mat, Y, Z, P, Wpca, We
 #' @keywords internal
 
 IdxSpanned <- function(G, M, N, C) {
-
   K <- C * (N + M) + G
   vector <- 1:K
 
@@ -97,7 +95,7 @@ IdxSpanned <- function(G, M, N, C) {
   return(IDX_F)
 }
 ##############################################################################################################
-#' Compute r0 for the various models
+#' Compute long-run risk neutral mean (r0) for the various models
 #'
 #' @param Y matrix of yields used in estimation (J x T or CJ x T)
 #' @param P complete set of spanned factors (N x T or CN x T)
@@ -112,8 +110,7 @@ IdxSpanned <- function(G, M, N, C) {
 #'
 #' @keywords internal
 
-Get_r0 <- function(Y, P, N, mat, dt, B_list, Wpca, We, Economies, ModelType){
-
+Get_r0 <- function(Y, P, N, mat, dt, B_list, Wpca, We, Economies, ModelType) {
   # General procedure:
   # (i) A0 = (I - Bx(W*Bx)^(-1)*W)*Ax0;
   # (ii) A1 = (I - Bx(W*Bx)^(-1)*W)*Axr;
@@ -126,20 +123,24 @@ Get_r0 <- function(Y, P, N, mat, dt, B_list, Wpca, We, Economies, ModelType){
   tt <- 2:T_dim
 
   BnP <- B_list$BnP
-  betan <- B_list$betan
+  B_adj <- B_list$B_adj
 
   # 1) Get r0 for the models estimated on a country-by-country basis
-  if (any(ModelType == c("JPS original", "JPS global", 'GVAR single'))) {
-    A0 <- (diag(J) - BnP %*% Wpca) %*% betan
+  if (any(ModelType == c("JPS original", "JPS global", "GVAR single"))) {
+    A0 <- (diag(J) - BnP %*% Wpca) %*% B_adj
     A1 <- (diag(J) - BnP %*% Wpca) %*% matrix(1, J, 1) / dt
 
     #  r0 = APer'*vt/(APer'*APer)
     A_per <- t(A1) %*% (t(We) %*% We)
-    r0 <- solve(A_per %*% A1, # Numerator from equation r0 equation
-                A_per %*% (rowMeans(Y[, tt] - BnP %*% P[, tt]) - A0)) # Denominator from r0 equation
-  } else {
+    num <- A_per %*% A1 # Numerator from equation r0 equation
+    den <- A_per %*% (rowMeans(Y[, tt] - BnP %*% P[, tt]) - A0) # Denominator from r0 equation
 
-  # 2) Get r0 for the models estimated on a jointly basis
+    check_numeric(num, "num")
+    check_numeric(den, "den")
+
+    r0 <- solve(num, den)
+  } else {
+    # 2) Get r0 for the models estimated on a jointly basis
     C <- length(Economies)
     r0 <- numeric(C)
 
@@ -154,20 +155,27 @@ Get_r0 <- function(Y, P, N, mat, dt, B_list, Wpca, We, Economies, ModelType){
 
       BnPCS <- matrix(BnP[(idxB + 1):idxBB, (idxA + 1):idxAA], nrow = J)
       WpcaCS <- Wpca[(idxA + 1):idxAA, (idxB + 1):idxBB]
-      betanCS <- betan[(idxB + 1):idxBB]
+      B_adjCS <- B_adj[(idxB + 1):idxBB]
       WeCS <- We[(idxC + 1):idxCC, (idxB + 1):idxBB]
       YCS <- Y[(idxB + 1):idxBB, ]
       PCS <- P[(idxA + 1):idxAA, ]
 
-      A0 <- (diag(J) - BnPCS %*% WpcaCS) %*% betanCS
+      A0 <- (diag(J) - BnPCS %*% WpcaCS) %*% B_adjCS
       A1 <- (diag(J) - BnPCS %*% WpcaCS) %*% matrix(1, J, 1) / dt
 
       # r0 = APer'*vt/(APer'*APer)
       A_per <- t(A1) %*% (t(WeCS) %*% WeCS)
       PCS_adj <- if (N == 1) PCS[tt] else PCS[, tt]
 
-      r0[i] <- solve(A_per %*% A1, # Numerator from r0 equation
-                     A_per %*% (rowMeans(YCS[, tt] - BnPCS %*% PCS_adj) - A0))  # Denominator from r0 equation
+      num <- A_per %*% A1 # Numerator from r0 equation
+      den <- A_per %*% (rowMeans(YCS[, tt] - BnPCS %*% PCS_adj) - A0) # Denominator from r0 equation
+
+      check_numeric(num, "num")
+      check_numeric(den, "den")
+
+      r0[i] <- solve(num, den)
+
+      check_numeric(r0, "r0")
 
       idxA <- idxAA
       idxB <- idxBB
@@ -192,7 +200,6 @@ Get_r0 <- function(Y, P, N, mat, dt, B_list, Wpca, We, Economies, ModelType){
 #' @keywords internal
 
 Get_Bs <- function(mat, dt, K1XQ, SSZ, Wpca, FactorLabels, Economy, ModelType) {
-
   Lab_SingleQ <- c("JPS original", "JPS global", "GVAR single")
 
   N <- length(FactorLabels$Spanned)
@@ -202,17 +209,20 @@ Get_Bs <- function(mat, dt, K1XQ, SSZ, Wpca, FactorLabels, Economy, ModelType) {
   # Yields are affine function of the vector Pt,i.e., Y(t) = AnP +BnP*P(t).
   # Further, we define Z(t) as an affine function of P(t) such that: Z(t) = phi0+ phi1*P(t).
   # As such, we can write P(t) = phi1^(-1)*(Z(t) - phi0).
-  BnX <- A0N__BnAn(round(mat / dt), K1XQ, ModelType, Economies = Economy)$BnX / dt
+  BnX_Unadj <- Get__BnXAnX(round(mat / dt), K1XQ, ModelType, Economies = Economy)$BnX
+  BnX <- BnX_Unadj / dt
+  check_numeric(BnX, "BnX")
+
   # We multiply by "1/dt" to produce annualized results.
 
-  if (any(ModelType == Lab_SingleQ)) {
-    if (N==1){ BnP <- matrix(BnX) %*% solve(Wpca %*% BnX)}
-    else{ BnP <- BnX %*% solve(Wpca %*% BnX) }
+  if (any(ModelType == Lab_SingleQ & N == 1)) {
+    BnP <- matrix(BnX) %*% InvMat_Robust(Wpca %*% BnX)
   } else {
-    BnP <- BnX %*% solve(Wpca %*% BnX)
+    BnP <- BnX %*% InvMat_Robust(Wpca %*% BnX)
   }
+  check_numeric(BnP, "BnP")
 
-  # 2) Covariance matrix of latent states X:
+  # 2) Covariance matrix of latent factors X:
   if (any(ModelType == Lab_SingleQ)) {
     AllLabels <- GetLabels_sepQ(Economy, ModelType, FactorLabels)
     dimnames(SSZ) <- list(AllLabels, AllLabels)
@@ -225,26 +235,29 @@ Get_Bs <- function(mat, dt, K1XQ, SSZ, Wpca, FactorLabels, Economy, ModelType) {
   }
 
   WBX <- Wpca %*% BnX # WBX = W * BnX
-  SSP <- SSZ[idxSpa, idxSpa]
+  SSP <- SSZ[idxSpa, idxSpa] # SSP -> Covariance matrix from observed (spanned) factors
 
   if (is.null(dim(SSP))) {
     SSX <- matrix(Inf, nrow = 1, ncol = 1) # Initialize with Inf
   } else {
     SSX <- matrix(Inf, nrow = nrow(SSP), ncol = ncol(SSP)) # Try to assign the correct value
   }
-  SSX <- solve(WBX, SSP, tol = 1e-50) %*% solve(t(WBX))
 
-  # 3) Optimal estimate of r0. NOTE: We set r0=0, because when r0=0, An = Betan.
+  SSX <- safe_solve(WBX, SSP) %*% safe_solve(t(WBX))
+  check_numeric(SSX, "SSX")
+
+  # 3) Optimal estimate of r0. NOTE: We set r0=0, because when r0=0, An = B_adj.
   if (any(ModelType == Lab_SingleQ)) {
     r0 <- 0
   } else {
     r0 <- rep(0, times = C)
   }
 
-  betan <- A0N__BnAn(round(mat / dt), K1XQ, ModelType, r0 = r0, SSX = SSX, Economies = Economy)$betan
-  betan <- t(t(betan / dt))
+  B_adj <- Get__BnXAnX(round(mat / dt), K1XQ, ModelType, r0, SSX, Economies = Economy)$B_adj
+  B_adj <- t(t(B_adj / dt))
+  check_numeric(B_adj, "B_adj")
 
-  out <- list(BnP = BnP, BnX = BnX, betan = betan, SSP = SSP, SSX = SSX, idxSpa = idxSpa)
+  out <- list(BnP = BnP, BnX = BnX, B_adj = B_adj, SSP = SSP, SSX = SSX, idxSpa = idxSpa)
 
   return(out)
 }
@@ -261,18 +274,17 @@ Get_Bs <- function(mat, dt, K1XQ, SSZ, Wpca, FactorLabels, Economy, ModelType) {
 #' @keywords internal
 
 Get_As <- function(LoadBs, Wpca, r0, dt, Economies, ModelType) {
-
-  betan <- LoadBs$betan
+  B_adj <- LoadBs$B_adj
   BnP <- LoadBs$BnP
 
   if (any(ModelType == c("JPS original", "JPS global", "GVAR single"))) {
-    AnX <- betan + as.numeric(r0 / dt)
+    AnX <- B_adj + as.numeric(r0 / dt)
   } else {
     C <- length(Economies)
-    J <- nrow(betan) / C
+    J <- nrow(B_adj) / C
 
     Q <- do.call(rbind, lapply(1:C, function(i) matrix(rep(r0[i], times = J) / dt, nrow = J, ncol = 1)))
-    AnX <- betan + Q
+    AnX <- B_adj + Q
   }
 
   AnP <- AnX - BnP %*% (Wpca %*% AnX) # AnP = AnX - BnX*(W*BnX)^(-1)*W*AnX
@@ -289,10 +301,9 @@ Get_As <- function(LoadBs, Wpca, r0, dt, Economies, ModelType) {
 #' @keywords internal
 
 GetLabels_sepQ <- function(Economy, ModelType, FactorLabels) {
-
   if (ModelType == "JPS original") {
     AllLabels <- c(FactorLabels$Global, FactorLabels$Tables[[Economy]])
-  } else if (any(ModelType == c("JPS global", 'GVAR single'))) {
+  } else if (any(ModelType == c("JPS global", "GVAR single"))) {
     AllLabels <- c(FactorLabels$Global, FactorLabels$Tables$AllCountries)
   }
 
@@ -318,7 +329,6 @@ GetLabels_sepQ <- function(Economy, ModelType, FactorLabels) {
 #' @keywords internal
 
 Get_llk <- function(P, Y, Z, N, mat, We, Wpca, K0Z, K1Z, SSZ, LoadBs, LoadAs, ModelType) {
-
   T_dim <- dim(P)[2]
   t <- 2:T_dim
   J <- length(mat)
@@ -329,61 +339,53 @@ Get_llk <- function(P, Y, Z, N, mat, We, Wpca, K0Z, K1Z, SSZ, LoadBs, LoadAs, Mo
 
   # 1) density of yields pricing errors:
   MatOnes <- matrix(1, ncol = ncol(P), nrow = 1)
-  Pe <- We %*% (BnP %*% P + AnP%*%MatOnes)
+  Pe <- We %*% (BnP %*% P + AnP %*% MatOnes)
 
   eQ <- Peo[, t] - Pe[, t]
 
   # 2) Standard deviation of the measurement error.
   if (any(ModelType == c("JPS original", "JPS global", "GVAR single"))) {
-      se <- sqrt(mean(as.vector(eQ^2)))
-    } else {
-      C <- nrow(P) / N
-      se <- numeric(C)
-      idx0 <- 0
-      for (i in 1:C) {
-        idx1 <- idx0 + J - N
-        se[i] <- sqrt(mean(as.vector(eQ[(idx0 + 1):idx1, ]^2))) # Standard deviation of the measurement error (scalar).
-        idx0 <- idx1
-      }
+    se <- sqrt(mean(as.vector(eQ^2)))
+  } else {
+    C <- nrow(P) / N
+    se <- numeric(C)
+    idx0 <- 0
+    for (i in 1:C) {
+      idx1 <- idx0 + J - N
+      se[i] <- sqrt(mean(as.vector(eQ[(idx0 + 1):idx1, ]^2))) # Standard deviation of the measurement error (scalar).
+      idx0 <- idx1
     }
+  }
 
   # 3) The log-likelihood function:
-  if (any(is.nan(se))) {
-    y <- 1e6 * matrix(1, T_dim - 1, 1)
+  # Cross-sectional density (i.e. density for the portfolios observed with measurement error)
+  if (any(ModelType == c("JPS original", "JPS global", "GVAR single"))) {
+    y <- GaussianDensity(eQ, se^2 * diag(J - N))
   } else {
-
-    # Cross-sectional density (i.e. density for the portfolios observed with measurement error)
-    if (any(ModelType == c("JPS original", "JPS global", "GVAR single"))) {
-      y <- GaussianDensity(eQ, se^2 * diag(J - N))
-    } else {
-      aa <- se
-      idx0 <- 0
-      for (h in 1:C) {
-        idx1 <- idx0 + J - N
-        se[(idx0 + 1):idx1] <- rep(aa[h], times = J - N)
-        idx0 <- idx1
-      }
-
-      se <- se[seq(1, C * J - C * N, by = J - N)] # Recast se
-      y <- GaussianDensity(eQ, se^2 * diag(C * J - C * N))
+    aa <- se
+    idx0 <- 0
+    for (h in 1:C) {
+      idx1 <- idx0 + J - N
+      se[(idx0 + 1):idx1] <- rep(aa[h], times = J - N)
+      idx0 <- idx1
     }
 
-    # Time series density:
-    MatOne_Z <- matrix(1, nrow = 1, ncol = ncol(Z) - 1)
-    eP <- Z[, -1] - K1Z %*% Z[ , 1:(T_dim - 1)] - K0Z%*%MatOne_Z
-
-    y <- y + GaussianDensity(eP, SSZ) # Cross-sectional density + time-series density (final likelihood function, except for the Jacobian term)
-
-    # Jacobian: (so that the density is for the observed yields (and the non-yields variables Z)
-    #           and not the yields portfolios which depend on W).
-    y <- y + 0.5 * log(abs(det(Wpca %*% t(Wpca))))
+    se <- se[seq(1, C * J - C * N, by = J - N)] # Recast se
+    y <- GaussianDensity(eQ, se^2 * diag(C * J - C * N))
   }
 
-  if (any(is.nan(y)) || any(is.infinite(y)) || any(Im(y) != 0)) {
-    y <- 1e6 * rep(1, times = T_dim - 1)
-  } else {
-    y <- -t(as.vector(y)) # necessary for minimization
-  }
+
+
+  # Time series density:
+  MatOne_Z <- matrix(1, nrow = 1, ncol = ncol(Z) - 1)
+  eP <- Z[, -1] - K1Z %*% Z[, 1:(T_dim - 1)] - K0Z %*% MatOne_Z
+
+  y <- y + GaussianDensity(eP, SSZ) # Cross-sectional density + time-series density (final likelihood function, except for the Jacobian term)
+
+  # Jacobian: (so that the density is for the observed yields (and the non-yields variables Z)
+  #           and not the yields portfolios which depend on W).
+  y <- y + 0.5 * log(abs(det(Wpca %*% t(Wpca))))
+  y <- -t(as.vector(y)) # necessary for minimization
 
   return(list(y = y, se = se))
 }
@@ -391,20 +393,21 @@ Get_llk <- function(P, Y, Z, N, mat, We, Wpca, K0Z, K1Z, SSZ, LoadBs, LoadAs, Mo
 #' computes the density function of a gaussian process
 #'
 #' @param res matrix of residuals (N x T)
-#' @param SS covariance matrices or array of covariance matrices (N x N)
+#' @param SSZ covariance matrices or array of covariance matrices (N x N)
 #'
 #' @keywords internal
 #'
 #' @return y vector of density (1 x T)
 
-GaussianDensity <- function(res, SS) {
+GaussianDensity <- function(res, SSZ) {
+  N <- nrow(res)
 
- N <- nrow(res)
+  check_numeric(SSZ, "SSZ")
 
- SSres <- chol2inv(chol(SS)) %*% res
- logabsdetSS <- 0.5 * (2 * sum(log(abs(diag(chol(SS %*% t(SS)))))))
+  SSres <- chol2inv(chol(SSZ)) %*% res
+  logabsdetSSZ <- 0.5 * (2 * sum(log(abs(diag(chol(SSZ %*% t(SSZ)))))))
 
- y <- -0.5 * N * log(2 * pi) - 0.5 * logabsdetSS - 0.5 * abs(colSums(res * SSres))
+  y <- -0.5 * N * log(2 * pi) - 0.5 * logabsdetSSZ - 0.5 * abs(colSums(res * SSres))
 
   return(y)
 }
@@ -421,7 +424,6 @@ GaussianDensity <- function(res, SS) {
 #' @keywords internal
 
 Get_SigmaYields <- function(YieldsTS, N, mat, WpcaFull, se, ModelType) {
-
   J <- length(mat)
 
   # Single-country models
@@ -431,14 +433,13 @@ Get_SigmaYields <- function(YieldsTS, N, mat, WpcaFull, se, ModelType) {
     SIGMA_yields <- solve(WpcaFull) %*% Sigma_e %*% t(solve(WpcaFull))
     VarYields <- diag(SIGMA_yields)
   } else {
-
     # Multicountry models
     C <- length(se)
 
-    Sigma_e_AllRows <- rep(0, times = N * C)  # Pre-allocate the vector with N*C zeros
+    Sigma_e_AllRows <- rep(0, times = N * C) # Pre-allocate the vector with N*C zeros
     for (i in 1:C) {
-      Sigma_e_CS <- c(rep(0, N), rep(se[i]^2, J - N))  # Variances of portfolio WITHOUT and WITH errors
-      Sigma_e_AllRows[((i - 1) * J + 1):(i * J)] <- Sigma_e_CS  # Update the correct segment
+      Sigma_e_CS <- c(rep(0, N), rep(se[i]^2, J - N)) # Variances of portfolio WITHOUT and WITH errors
+      Sigma_e_AllRows[((i - 1) * J + 1):(i * J)] <- Sigma_e_CS # Update the correct segment
     }
 
     Sigma_e_AllCountries <- diag(C * J) * Sigma_e_AllRows
@@ -462,7 +463,6 @@ Get_SigmaYields <- function(YieldsTS, N, mat, WpcaFull, se, ModelType) {
 #' @keywords internal
 
 Update_SSZ_JLL <- function(SSZ, Z, N, JLLinputs) {
-
   Sigma_Ye <- t(chol(SSZ)) # in this case, SSZ is the Variance-covariance matrix of the ORTHOGONALIZED dynamics
   JLLinputs$WishSigmas <- 0 # Avoid recomputing the variance-covariance matrices
   JLLPara <- JLL(Z, N, JLLinputs)
@@ -501,19 +501,21 @@ Update_SSZ_JLL <- function(SSZ, Z, N, JLLinputs) {
 
 OptOutputs <- function(Y, Z, mat, N, dt, Wpca, K1XQ, SSZ, LoadAs, LoadBs, r0, se, K0Z, K1Z, Gy.0, VarYields,
                        y, GVARinputs, JLLinputs, Economies, ModelType, BS_out = FALSE) {
-
   # a) Build LIST 1
   # a.1) List "input"
-  inputs <- list(Y = Y, AllFactors = Z, mat = mat, N = N, dt = dt, Wpca = Wpca)
-  if (ModelType  %in% c("GVAR single", "GVAR multi")) {
-    inputs$Wgvar <- GVARinputs$Wgvar
+  Inputs <- list(Y = Y, AllFactors = Z, mat = mat, N = N, dt = dt, Wpca = Wpca)
+  if (ModelType %in% c("GVAR single", "GVAR multi")) {
+    Inputs$Wgvar <- GVARinputs$Wgvar
   } else if (ModelType %in% c("JLL original", "JLL No DomUnit", "JLL joint Sigma")) {
-    inputs$DomUnit <- JLLinputs$DomUnit
+    Inputs$DomUnit <- JLLinputs$DomUnit
   }
 
-  # a.2) List "ests"
-  ests <- list(K1XQ = K1XQ, SSZ = SSZ, SSP = LoadBs$SSP, r0 = r0, se = se, K0Z = K0Z, K1Z = K1Z,
-               Gy.0 = Gy.0, VarYields = VarYields)
+  # a.2) List for the full set of parameter estimates
+  Max_llk <- mean(-y)
+  ModEst <- list(Max_llk = Max_llk)
+
+  ModEst$Q <- list(K1XQ = K1XQ, r0 = r0, se = se, VarYields = VarYields)
+  ModEst$P <- list(SSZ = SSZ, K0Z = K0Z, K1Z = K1Z, Gy.0 = Gy.0)
 
   if (any(ModelType == c("JLL original", "JLL No DomUnit", "JLL joint Sigma"))) {
     JLLinputs$WishSigmas <- 1
@@ -532,7 +534,7 @@ OptOutputs <- function(Y, Z, mat, N, dt, Wpca, K1XQ, SSZ, LoadAs, LoadBs, r0, se
       JLLoutcomesOrtho$Ye <- NULL
     }
 
-    #Add the zeros to the variance-covariance matrix (to avoid rounding problems)
+    # Add the zeros to the variance-covariance matrix (to avoid rounding problems)
     ZeroIdxVarCov <- JLLoutcomesOrtho$Sigmas$ZeroIdxSigmaJLLOrtho$VarCovOrtho
     ZeroIdxSigma_Ye <- JLLoutcomesOrtho$Sigmas$ZeroIdxSigmaJLLOrtho$Sigma_Ye
     JLLoutcomesOrtho$Sigmas$VarCov_Ortho[ZeroIdxVarCov] <- 0
@@ -540,35 +542,31 @@ OptOutputs <- function(Y, Z, mat, N, dt, Wpca, K1XQ, SSZ, LoadAs, LoadBs, r0, se
 
     PI <- JLLoutcomesOrtho$PI
     JLLoutcomesOrtho$Sigmas$Sigma_Y <- PI %*% JLLoutcomesOrtho$Sigmas$Sigma_Ye
-
-    ests$JLLoutcomes <- JLLoutcomesOrtho
+    ModEst$P$JLLoutcomes <- JLLoutcomesOrtho
   }
 
-  # a.3) List "llk"
-  llk <- list(-t(y))
 
-  # a.4) List of rotated parameters:
-  rot <- list()
-  rot$X <- list(B = LoadBs$BnX, A = LoadAs$AnX, SS = LoadBs$SSX)
+  # a.3) List of pricing loadings
+  ModEst$Q$Load$X <- list(B = LoadBs$BnX, A = LoadAs$AnX, SS = LoadBs$SSX)
 
   # Q dynamics: Pt as risk factors: % PCN = U0 + U1*X, where U0 = W*AnX and U1 = W*BnX
   U1 <- Wpca %*% LoadBs$BnX
   U0 <- Wpca %*% LoadAs$AnX
 
-  rot$P <- Rotate_Lat_Obs(rot$X, U1, U0)
+  ModEst$Q$Load$P <- Rotate_Lat_Obs(ModEst$Q$Load$X, U1, U0)
 
-  row.names(rot$P$A) <- row.names(Y)
-  row.names(rot$P$B) <- row.names(Y)
+  row.names(ModEst$Q$Load$P$A) <- row.names(Y)
+  row.names(ModEst$Q$Load$P$B) <- row.names(Y)
   idxSpanned <- LoadBs$idxSpa
-  colnames(rot$P$B) <- row.names(Z)[idxSpanned]
+  colnames(ModEst$Q$Load$P$B) <- row.names(Z)[idxSpanned]
 
   if (BS_out) {
-    rot$X <- NULL # Delete the parameters related to the latent factors
-    #(Not needed for the Bootstrap, save some time and pc memory)
+    ModEst$Q$Load$X <- NULL # Delete the parameters related to the latent factors
+    # (Not needed for the Bootstrap, save some time and pc memory)
   }
 
   # Summary list to export
-  Out <- list(inputs = inputs, ests = ests, llk = llk, rot = rot)
+  Out <- list(Inputs = Inputs, ModEst = ModEst)
   return(Out)
 }
 ###################################################################################################
@@ -581,7 +579,6 @@ OptOutputs <- function(Y, Z, mat, N, dt, Wpca, K1XQ, SSZ, LoadAs, LoadBs, r0, se
 #' @keywords internal
 
 Rotate_Lat_Obs <- function(X_List, U1, U0) {
-
   N <- dim(U1)[1]
   U1_inv <- solve(U1)
   Obs_List <- list()
@@ -597,4 +594,118 @@ Rotate_Lat_Obs <- function(X_List, U1, U0) {
   Obs_List$A <- X_List$A - Obs_List$B %*% U0 # AX = AZ + BZ*U0 --> AZ = AX - BZ*U0
 
   return(Obs_List)
+}
+
+##########################################################################################################
+#' Safe matrix inversion with conditioning check
+#'
+#' @param A matrix
+#' @param B matrix
+#' @param reg  Numeric scalar (default: \code{1e-12}). Small ridge term added to the diagonal of \code{A} when the system is ill-conditioned.
+#' @param rcond_tol Numeric, default = 1e-12. Tolerance threshold for the reciprocal condition number.
+#' @param verbose Logical flag controlling function messaging.
+#'
+#' @keywords internal
+
+safe_solve <- function(A, B = NULL, reg = 1e-12, rcond_tol = 1e-12, verbose = FALSE) {
+  A <- as.matrix(A)
+  n <- ncol(A)
+
+  # 0) Quick check: size/NA
+  if (any(is.na(A))) {
+    if (verbose) message("safe_solve: matrix contains NA")
+    return(NULL)
+  }
+
+  # 1) Try direct solve first
+  direct <- tryCatch(
+    {
+      if (is.null(B)) solve(A) else solve(A, B)
+    },
+    error = function(e) NULL,
+    warning = function(w) NULL
+  )
+
+  if (!is.null(direct) && all(is.finite(direct))) {
+    return(direct)
+  }
+
+  # 2) Compute SVD to estimate conditioning
+  sv <- svd(A)
+  if (length(sv$d) == 0) {
+    return(NULL)
+  }
+  rcond_est <- sv$d[length(sv$d)] / sv$d[1]
+
+  if (verbose) message(sprintf("safe_solve: rcond_est = %.3e", rcond_est))
+
+  # If well conditioned enough, attempt direct solve again
+  if (!is.na(rcond_est) && rcond_est > rcond_tol) {
+    out <- tryCatch(
+      {
+        if (is.null(B)) solve(A) else solve(A, B)
+      },
+      error = function(e) NULL
+    )
+    if (!is.null(out)) {
+      return(out)
+    }
+  }
+
+  # 3) Try tiny regularization: (A + reg*I)^{-1}
+  regA <- A + reg * diag(n)
+  reg_try <- tryCatch(
+    {
+      if (is.null(B)) solve(regA) else solve(regA, B)
+    },
+    error = function(e) NULL
+  )
+
+  if (!is.null(reg_try) && all(is.finite(reg_try))) {
+    if (verbose) message("safe_solve: used regularized solve")
+    return(reg_try)
+  }
+
+  # 4) Fallback: SVD pseudo-inverse
+  tol_svd <- max(dim(A)) * max(sv$d) * .Machine$double.eps
+  d_inv <- ifelse(sv$d > tol_svd, 1 / sv$d, 0)
+  A_pinv <- sv$v %*% diag(d_inv, length(d_inv)) %*% t(sv$u)
+
+  if (is.null(B)) {
+    return(A_pinv)
+  } else {
+    return(A_pinv %*% B)
+  }
+}
+###########################################################################################
+#' Robust method for matrix inversion
+#'
+#' @param M squared matrix
+#'
+#' @keywords internal
+
+InvMat_Robust <- function(M) {
+  rc <- tryCatch(rcond(M), error = function(e) 0)
+  if (any(!is.finite(M)) || rc < 1e-12) {
+    # Fallback: add tiny ridge before inversion
+    eps <- 1e-10 * mean(diag(M))
+    invM <- solve(M + eps * diag(ncol(M)))
+  } else {
+    invM <- solve(M)
+  }
+
+  return(invM)
+}
+############################################################################################
+#' Check for presence of NAs and infinite in numeric variables
+#'
+#' @param x variable to be tested (numeric)
+#' @param name variable labels
+#'
+#' @keywords internal
+
+check_numeric <- function(x, name) {
+  if (any(!is.finite(x))) {
+    stop(sprintf("Non-finite values detected in '%s'.", name))
+  }
 }

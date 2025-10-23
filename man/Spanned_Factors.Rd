@@ -7,20 +7,30 @@
 Spanned_Factors(Yields, Economies, N)
 }
 \arguments{
-\item{Yields}{A matrix  (J x T), where J is the number of maturities and T is the length of the time series.}
+\item{Yields}{matrix (\code{J x Td}). Bond yields for all countries.}
 
-\item{Economies}{A character vector containing the names of the economies included in the system.}
+\item{Economies}{character vector. Names of the \code{C} economies included in the system.}
 
-\item{N}{Scalar representing the desired number of country-specific spanned factors (maximum allowed is N = J).}
+\item{N}{integer. Desired number of country-specific spanned factors (maximum allowed is \code{N = J}).}
 }
 \value{
-Matrix containing the N spanned factors for all the countries of the system  (CJ x T)
+matrix. Contains the \code{N} spanned factors for all countries in the system (\code{CJ x Td}).
 }
 \description{
 Computes the country-specific spanned factors
 }
+\section{General Notation}{
+
+\itemize{
+  \item \code{Td}: model time series dimension
+  \item \code{C}: number of countries in the system
+  \item \code{N}: number of country-specific spanned factors
+  \item \code{J}: number of bond yields per country used in estimation
+}
+}
+
 \examples{
-data(CM_Yields)
+data(Yields)
 Economies <- c("China", "Brazil", "Mexico", "Uruguay")
 N <- 3
 SpaFact_TS <- Spanned_Factors(Yields, Economies, N)

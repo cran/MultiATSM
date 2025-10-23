@@ -6,22 +6,28 @@
 \usage{
 RiskFactorsGraphs(
   ModelType,
+  WishRFgraphs,
   ModelOutputs,
   Economies,
   FactorLabels,
-  Folder2save
+  Folder2save,
+  verbose
 )
 }
 \arguments{
-\item{ModelType}{A character vector indicating the  estimated model type}
+\item{ModelType}{character. Estimated model type. Permissible choices: "JPS original", "JPS global", "GVAR single", "JPS multi", "GVAR multi", "JLL original", "JLL No DomUnit", "JLL joint Sigma".}
 
-\item{ModelOutputs}{list of model parameter estimates (see the \code{\link{Optimization}} function)}
+\item{WishRFgraphs}{logical. Set TRUE to generate graphs, FALSE otherwise.}
 
-\item{Economies}{A character vector containing the names of the economies included in the system.}
+\item{ModelOutputs}{list. Model parameter estimates (see \code{\link{Optimization}}).}
 
-\item{FactorLabels}{A character vector indicating the model type to be estimated.}
+\item{Economies}{character vector. Names of the \code{C} economies included in the system.}
 
-\item{Folder2save}{Folder path where the outputs will be stored.}
+\item{FactorLabels}{list. Labels for all variables in the model.}
+
+\item{Folder2save}{character. Folder path where the outputs will be stored.}
+
+\item{verbose}{logical. Flag controlling function messaging.}
 }
 \description{
 Spanned and unspanned factors plot
@@ -36,8 +42,11 @@ data("ParaSetEx")
 # Adapt factor labels according to the example
 ModelType <- "JPS original"
 Economy <- "Brazil"
-FacLab <- LabFac(N = 1, DomVar ="Eco_Act" , GlobalVar = "Gl_Eco_Act", Economy, ModelType)
+FacLab <- LabFac(N = 1, DomVar = "Eco_Act", GlobalVar = "Gl_Eco_Act", Economy, ModelType)
 
-RiskFactorsGraphs(ModelType, ModelParaEx, Economy, FacLab, Folder2save = NULL)
+RiskFactorsGraphs(ModelType,
+  WishRFgraphs = FALSE, ParaSetEx, Economy, FacLab,
+  Folder2save = NULL, verbose = FALSE
+)
 
 }

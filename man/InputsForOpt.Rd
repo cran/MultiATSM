@@ -29,35 +29,35 @@ InputsForOpt(
 
 \item{FinalSampleDate}{End date of the sample period in the format "dd-mm-yyyy"}
 
-\item{ModelType}{A character vector indicating the model type to be estimated. Available options: "JPS original", "JPS global", "GVAR single", "JPS multi", "GVAR multi", "JLL original", "JLL No DomUnit", "JLL joint Sigma".}
+\item{ModelType}{character. Model type to be estimated. Permissible choices: "JPS original", "JPS global", "GVAR single", "JPS multi", "GVAR multi", "JLL original", "JLL No DomUnit", "JLL joint Sigma".}
 
-\item{Yields}{A numerical matrix with time series of yields (JxT or CJ x T)}
+\item{Yields}{numerical matrix with time series of yields (\code{J x Td} or \code{CJ x Td})}
 
-\item{GlobalMacro}{A numerical matrix with time series of the global risk factors (G x T)}
+\item{GlobalMacro}{numerical matrix with time series of the global risk factors (\code{G x Td})}
 
-\item{DomMacro}{A numerical matrix with time series of the country-specific risk factors for all C countries (CM x T)}
+\item{DomMacro}{numerical matrix with time series of the country-specific risk factors for all \code{C} countries ( \code{C X Td} or  \code{CM x Td})}
 
-\item{FactorLabels}{A list of character vectors with labels for all variables in the model.}
+\item{FactorLabels}{list. Labels for all variables present in the model, as returned by \code{\link{LabFac}}.}
 
-\item{Economies}{A character vector containing the names of the economies included in the system.}
+\item{Economies}{character vector. Names of the \code{C} economies included in the system.}
 
-\item{DataFrequency}{A character vector specifying the frequency of the data. Available options are: "Daily All Days", "Daily Business Days", "Weekly", "Monthly", "Quarterly", or "Annually".}
+\item{DataFrequency}{character. Data frequency. Permissible choices: "Daily All Days", "Daily Business Days", "Weekly", "Monthly", "Quarterly", "Annually".}
 
-\item{GVARlist}{A list containing the necessary inputs for the estimation of GVAR-based models}
+\item{GVARlist}{list. Inputs for GVAR model estimation. See details below.}
 
-\item{JLLlist}{A list of necessary inputs for the estimation of JLL-based models. If the chosen model is "JLL original" or "JLL joint Sigma", then a dominant unit economy must be chosen. Otherwise, this list must be set as 'None'.}
+\item{JLLlist}{list. Inputs for JLL model estimation. See details below.}
 
-\item{WishBRW}{Logical. Whether to estimate the physical parameter model with bias correction, based on the method by Bauer, Rudebusch and Wu (2012). Default is FALSE.}
+\item{WishBRW}{logical. Whether to estimate the physical parameter model with bias correction (see \code{\link{Bias_Correc_VAR}}). Default is FALSE.}
 
-\item{BRWlist}{List of necessary inputs for performing the bias-corrected estimation.}
+\item{BRWlist}{list. Inputs for bias-corrected estimation.}
 
-\item{UnitYields}{A character string indicating the maturity unit of yields. Options are: "Month" for yields expressed in months, or "Year" for yields expressed in years. Default is "Month".}
+\item{UnitYields}{character. Maturity unit of yields. Permissible choices: "Month" or "Year". Default is "Month".}
 
-\item{CheckInputs}{Logical. Whether to perform a prior check on the consistency of the provided input list. Default is TRUE.}
+\item{CheckInputs}{logical. Whether to perform a prior check on the consistency of the provided input list. Default is TRUE.}
 
-\item{BS_Adj}{Logical. Whether to adjust the global series for the sepQ models in the Bootstrap setting. Default is FALSE.}
+\item{BS_Adj}{logical. Whether to adjust the global series for the sepQ models in the Bootstrap setting. Default is FALSE.}
 
-\item{verbose}{Logical flag controlling function messaging. Default is TRUE.}
+\item{verbose}{logical. Print progress messages. Default is TRUE.}
 }
 \value{
 An object of class 'ATSMModelInputs' containing the necessary inputs for performing the model optimization.
@@ -65,6 +65,50 @@ An object of class 'ATSMModelInputs' containing the necessary inputs for perform
 \description{
 Generates inputs necessary to build the likelihood function for the ATSM model
 }
+\section{Permissible options for GVARlist}{
+
+\itemize{
+  \item \code{VARXtype}: "unconstrained" or "constrained"
+  \item \code{W_type}: "Time-varying" or "Sample Mean"
+  \item \code{t_First_Wgvar}, \code{t_Last_Wgvar}: year as character
+}
+}
+
+\section{Permissible options for JLLlist}{
+
+\itemize{
+  \item \code{DomUnit}: name of the dominant economy or \code{None}
+  \item \code{WishSigmas}: TRUE (estimate variance-covariance matrices) or FALSE
+  \item \code{SigmaNonOrtho}: NULL or \code{K x K} matrix
+}
+}
+
+\section{Permissible options for BRWlist}{
+
+\itemize{
+  \item \code{BiasCorrection}: TRUE (bias-corrected) or FALSE
+  \item \code{flag_mean}: TRUE (mean) or FALSE (median)
+  \item \code{gamma}: numeric adjustment parameter
+  \item \code{N_iter}: number of iterations
+  \item \code{N_burn}: number of burn-in iterations
+  \item \code{B}: number of bootstrap samples
+  \item \code{checkBRW}: TRUE or FALSE
+  \item \code{B_check}: number of bootstrap samples for closeness check
+}
+}
+
+\section{General Notation}{
+
+\itemize{
+  \item \code{Td} model time series dimension.
+  \item \code{C} number of countries in the system.
+  \item \code{G} number of global unspanned factors.
+  \item \code{M} number of country-specific unspanned factors.
+  \item \code{K} total number of risk factors.
+  \item \code{J} number of bond yields per country used in estimation.
+}
+}
+
 \section{Available Methods}{
 
 - `print(object)`
@@ -74,9 +118,9 @@ Generates inputs necessary to build the likelihood function for the ATSM model
 \examples{
 \donttest{
 # Example 1:
-data(CM_GlobalMacroFactors)
-data(CM_DomMacroFactors)
-data(CM_Yields)
+data(GlobalMacro)
+data(DomMacro)
+data(Yields)
 
 ModelType <- "JPS original"
 Economies <- "Mexico"
@@ -89,8 +133,10 @@ FactorLabels <- LabFac(N, DomVar, GlobalVar, Economies, ModelType)
 
 DataFreq <- "Monthly"
 
-ATSMInputs <- InputsForOpt(t0, tF, ModelType, Yields, GlobalMacroVar, DomesticMacroVar,
-                             FactorLabels, Economies, DataFreq, CheckInputs = FALSE)
+ATSMInputs <- InputsForOpt(t0, tF, ModelType, Yields, GlobalMacro, DomMacro,
+  FactorLabels, Economies, DataFreq,
+  CheckInputs = FALSE, verbose = FALSE
+)
 
 # Example 2:
 LoadData("CM_2024")
@@ -106,14 +152,17 @@ DomVar <- c("Inflation") # Domestic Variables
 FactorLabels <- LabFac(N, DomVar, GlobalVar, Economies, ModelType)
 
 DataFreq <- "Monthly"
-GVARlist <- list(VARXtype = "unconstrained", W_type = "Sample Mean",
-                 t_First_Wgvar = "2007", t_Last_Wgvar = "2019")
+GVARlist <- list(
+  VARXtype = "unconstrained", W_type = "Sample Mean",
+  t_First_Wgvar = "2007", t_Last_Wgvar = "2019", DataConnectedness = TradeFlows
+)
 
-ATSMInputs <- InputsForOpt(t0, tF, ModelType, Yields, GlobalMacroVar, DomesticMacroVar,
-                           FactorLabels, Economies, DataFreq, GVARlist, CheckInputs = FALSE)
+ATSMInputs <- InputsForOpt(t0, tF, ModelType, Yields, GlobalMacro, DomMacro,
+  FactorLabels, Economies, DataFreq, GVARlist,
+  CheckInputs = FALSE, verbose = FALSE
+)
 
 # Example 3:
-if (requireNamespace('neldermead', quietly = TRUE)) {
 LoadData("CM_2024")
 
 ModelType <- "JLL original"
@@ -130,11 +179,10 @@ JLLinputs <- list(DomUnit = "China")
 
 DataFrequency <- "Monthly"
 
-ATSMInputs <- InputsForOpt(t0, tF, ModelType, Yields, GlobalMacroVar, DomesticMacroVar,
-                           FactorLabels, Economies, DataFreq, JLLlist = JLLinputs,
-                           CheckInputs = FALSE)
-} else {
- message("skipping functionality due to missing Suggested dependency")
-}
+ATSMInputs <- InputsForOpt(t0, tF, ModelType, Yields, GlobalMacro, DomMacro,
+  FactorLabels, Economies, DataFreq,
+  JLLlist = JLLinputs,
+  CheckInputs = FALSE, verbose = FALSE
+)
 }
 }

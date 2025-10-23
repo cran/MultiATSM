@@ -9,38 +9,12 @@ ParaLabelsOpt(ModelType, WishStationarityQ, MLEinputs, BS_outputs = FALSE)
 \arguments{
 \item{ModelType}{a string-vector containing the label of the model to be estimated}
 
-\item{WishStationarityQ}{User must set "1" is she wishes to impose the largest eigenvalue under the Q to be strictly
-smaller than 1. Otherwise set "0"}
+\item{WishStationarityQ}{User must set TRUE is she wishes to impose the largest eigenvalue under the Q to be strictly
+smaller than 1. Otherwise set FALSE}
 
 \item{MLEinputs}{Set of inputs that are necessary to the log-likelihood function}
 
 \item{BS_outputs}{Generates simplified output list in the bootstrap setting. Default is set to FALSE.}
-}
-\value{
-list containing starting values and constraints:
-                       for each input argument K (of f), we need four inputs that look like:
-   \enumerate{
-       \item a starting value: K0
-       \item a variable label ('K0') followed by a ':' followed by a type of constraint. The constraint can be:
-                 \itemize{
-                     \item 'bounded': bounded matrix;
-                     \item 'Jordan' or 'Jordan MultiCountry': a matrix of Jordan type;
-                     \item 'psd': psd matrix;
-                     \item 'stationary': largest eigenvalue of the risk-neutral feedback matrix is strictly smaller than 1;
-                     \item 'diag' or 'BlockDiag': a diagonal or block diagonal matrix.
-                     \item 'JLLstructure': to impose the zero-restrictions on the variance-voriance matrix along
-                             the lines of the JLL models
-                         }
-       \item a lower bound lb (lb <- NULL -> no lower bound)
-       \item an upper bound ub (ub <- NULL -> no upper bound)
-       \item Specification of the optimization settings:
-       \itemize{
-                 \item 'iter off': hide the printouts of the numerical optimization routines;
-                 \item 'fminunc only': only uses fminunc for the optimization;
-                 \item ''fminsearch only': only uses fminsearch for the optimization.
-
-  }
-  }
 }
 \description{
 Create the variable labels used in the estimation

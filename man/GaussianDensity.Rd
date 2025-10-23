@@ -4,12 +4,12 @@
 \alias{GaussianDensity}
 \title{computes the density function of a gaussian process}
 \usage{
-GaussianDensity(res, SS)
+GaussianDensity(res, SSZ)
 }
 \arguments{
 \item{res}{matrix of residuals (N x T)}
 
-\item{SS}{covariance matrices or array of covariance matrices (N x N)}
+\item{SSZ}{covariance matrices or array of covariance matrices (N x N)}
 }
 \value{
 y vector of density (1 x T)

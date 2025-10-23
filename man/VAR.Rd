@@ -7,28 +7,41 @@
 VAR(RiskFactors, VARtype, Bcon_Mat = NULL)
 }
 \arguments{
-\item{RiskFactors}{A numeric matrix (F x T) representing the time series of risk factors.}
+\item{RiskFactors}{numeric matrix (\code{K x Td}). Time series of risk factors.}
 
-\item{VARtype}{String vector with two possible values: 'unconstrained' or 'constrained'.}
+\item{VARtype}{character. Permissible choices: "unconstrained" or "constrained".}
 
-\item{Bcon_Mat}{Constraints matrix (F+1 x N), which includes an intercept. Entries containing NAs are treated as free parameters. \cr
-Default is set to NULL.}
+\item{Bcon_Mat}{matrix (\code{K x K + 1}). Constraints matrix (includes intercept). Entries containing NAs are treated as free parameters. Default is NULL.}
 }
 \value{
-intercept, feedback matrix and the variance-covariance matrix of a VAR(1)
+list. Contains:
+  \itemize{
+  \item intercept (K x 1)
+  \item feedback matrix (K x K)
+  \item variance-covariance matrix (K x K) of a VAR(1)
+}
 }
 \description{
 Estimates a standard VAR(1)
 }
+\section{General Notation}{
+
+\itemize{
+  \item \code{Td}: model time series dimension
+  \item \code{N}: number of country-specific spanned factors
+  \item \code{K}: total number of risk factors
+}
+}
+
 \examples{
-data("CM_Factors")
+data(RiskFacFull)
 # Example 1: unconstrained case
-VAR(RiskFactors, VARtype= 'unconstrained')
+VAR_para1 <- VAR(RiskFacFull, VARtype = "unconstrained")
 
 # Example 2: constrained case
-K <- nrow(RiskFactors)
-Bcon_Mat <- matrix(0, nrow = K, ncol = K+1)
-Bcon_Mat[ , 1:3] <- NaN
-VAR(RiskFactors, VARtype= 'constrained', Bcon_Mat)
+K <- nrow(RiskFacFull)
+Bcon_Mat <- matrix(0, nrow = K, ncol = K + 1)
+Bcon_Mat[, 1:3] <- NaN
+VAR_para2 <- VAR(RiskFacFull, VARtype = "constrained", Bcon_Mat)
 
 }

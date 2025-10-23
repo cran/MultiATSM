@@ -11,49 +11,80 @@ DatabasePrep(
   N,
   FactorLabels,
   ModelType,
-  Wgvar = NULL,
-  DataPathMacro = NULL,
-  DataPathYields = NULL
+  Macro_FullData,
+  Yields_FullData,
+  Wgvar = NULL
 )
 }
 \arguments{
-\item{t_First}{Start date of the sample period in the format yyyy-mm-dd.}
+\item{t_First}{character. Start date of the sample period in the format yyyy-mm-dd.}
 
-\item{t_Last}{End date of the sample period in the format yyyy-mm-dd.}
+\item{t_Last}{character. End date of the sample period in the format yyyy-mm-dd.}
 
-\item{Economies}{A character vector containing the names of the economies included in the system.}
+\item{Economies}{character vector. Names of the \code{C} economies included in the system.}
 
-\item{N}{Integer. Number of country-specific spanned factors.}
+\item{N}{positive integer. Number of country-specific spanned factors per country.}
 
-\item{FactorLabels}{A list of character vectors with labels for all variables in the model.}
+\item{FactorLabels}{list. Labels for all variables present in the model, as returned by \code{\link{LabFac}}.}
 
-\item{ModelType}{A character vector indicating the model type to be estimated.}
+\item{ModelType}{character. Model type to be estimated. Permissible choices: "JPS original", "JPS global", "GVAR single", "JPS multi", "GVAR multi", "JLL original", "JLL No DomUnit", "JLL joint Sigma".}
 
-\item{Wgvar}{GVAR transition matrix of size C x C, applicable if a GVAR-type model is selected. Default is NULL.}
+\item{Macro_FullData}{list. Full set of macroeconomic data, as returned by \code{\link{Load_Excel_Data}}.}
 
-\item{DataPathMacro}{File path to the Excel file containing macroeconomic data, if provided. The default path points to the Excel file available within the package.}
+\item{Yields_FullData}{list. Full set of bond yield data, as returned by \code{\link{Load_Excel_Data}}.}
 
-\item{DataPathYields}{File path to the Excel file containing yields data, if provided. The default path points to the Excel file available within the package}
+\item{Wgvar}{GVAR transition matrix. For GVAR models, either a matrix (\code{C x C}) for fixed weights, or a named list of matrices for time-varying weights. Default is NULL. Required for GVAR models.}
 }
 \value{
-List containing the risk factor set used in the estimation of the GVAR-based models
+List containing the risk factor set for all countries and global factors. Particularly useful for GVAR-based models.
 }
 \description{
 Gather data of several countries in a list. Particularly useful for GVAR-based setups (Compute "GVARFactors")
 }
+\section{General Notation}{
+
+  \itemize{
+    \item \code{C}: number of countries in the system.
+    \item \code{N}: number of country-specific spanned factors.
+  }
+}
+
 \examples{
-DomVar <- c("Eco_Act", "Inflation")
-GlobalVar <- c("GBC", "CPI_OECD")
-t0 <- "2006-09-01"
-tF <-  "2019-01-01"
-Economies <- c("China", "Brazil", "Mexico", "Uruguay", "Russia")
-N <- 3
+
+# Load data from excel
+macro_data <- Load_Excel_Data(system.file("extdata", "MacroData.xlsx", package = "MultiATSM"))
+yields_data <- Load_Excel_Data(system.file("extdata", "YieldsData.xlsx", package = "MultiATSM"))
+trade_data <- Load_Excel_Data(system.file("extdata", "TradeData.xlsx", package = "MultiATSM"))
+
+# Adjust trade data
+trade_data <- lapply(trade_data, function(df) {
+  countries <- df[[1]]
+  df <- as.data.frame(df[-1])
+  rownames(df) <- countries
+  df
+})
+
+# Define features of interest
 ModelType <- "GVAR multi"
-FactorLabels <-  LabFac(N, DomVar, GlobalVar, Economies, ModelType)
-Wgvar <- Transition_Matrix(t_First = "2006", t_Last= "2019", Economies, type = "Sample Mean")
+Economies <- c("China", "Uruguay", "Russia")
+GlobalVar <- c("GBC", "CPI_OECD")
+DomVar <- c("Eco_Act", "Inflation")
+N <- 3
+t0 <- "2006-09-01"
+tF <- "2019-01-01"
 
 
-GVARFactors <- DatabasePrep(t0, tF, Economies, N, FactorLabels, ModelType, Wgvar)
+# Compute some inputs
+FactorLabels <- LabFac(N, DomVar, GlobalVar, Economies, ModelType)
+Wgvar <- Transition_Matrix(
+  t_First = "2006", t_Last = "2019", Economies,
+  type = "Sample Mean", trade_data
+)
 
+# Compute GVARFactors
+GVARFactors <- DatabasePrep(
+  t0, tF, Economies, N, FactorLabels, ModelType, macro_data,
+  yields_data, Wgvar
+)
 
 }
