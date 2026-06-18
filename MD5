@@ -1,4 +1,4 @@
-cb9bcc126598b1f1849d880c8d19cc70 *DESCRIPTION
+927858efb8e73f3a8a1cf22e43bd14d2 *DESCRIPTION
 a37f9d0e50208b903c0f4581a680ff67 *NAMESPACE
 0f9e4491c4656addf5c0a2c338298c02 *R/A0N__BnAn.R
 685ddf334974068babc8714c87d4d4d4 *R/BR_jps_out.R
@@ -34,7 +34,7 @@ dfbcd0e8049ee80dc9e6fd3407bf7890 *R/JLL.R
 da9fc1c0f0b76774642843d4ead4b55c *R/LabFac.R
 3faff415ee15fbb9f4b35762f467a1de *R/MLEdensity.R
 3e5f633bbd382323eb1bed0772843e85 *R/MultiATSM.R
-8b84ec565779c062be1da0cf88053e76 *R/NumOutputs.R
+d05a083f5b8acedfecfb2da42c0555f5 *R/NumOutputs.R
 3862f141f757b32ac0f2b845b013e459 *R/NumOutputsBootstrap.R
 6f44a5139efaae98941ea0a7f094df60 *R/Optimization.R
 273c2019efccff33695019ce4c66e4d7 *R/RiskFactorsPrep.R
@@ -62,10 +62,10 @@ bfe54f90c238426ded03e9289e96a279 *data/Yields.rda
 712077277b9db3a700954902f97892cd *data/Yields_covid.rda
 dae1402e0c66ed9d16e171f4640f8b84 *inst/doc/MultiATSM.R
 db528dfb9f4c0e91e3f5b49cf6bc315b *inst/doc/MultiATSM.Rmd
-4e5b18005d137a45b32041aabc94e474 *inst/doc/MultiATSM.html
+850ae798eebc3ebc8dea90848ab4ee0f *inst/doc/MultiATSM.html
 033a1f9a8e14b2f60507505c55b97351 *inst/doc/Paper-Replications.R
 fc75c8c1efc86d7ba721294b715fe842 *inst/doc/Paper-Replications.Rmd
-06a866a0fa026fe6ecc4f8c2749a50aa *inst/doc/Paper-Replications.html
+b793b7c92e9f7c6138d7b15868ab810b *inst/doc/Paper-Replications.html
 b33b95acec1c6e855a2256a6a1dd504f *inst/extdata/Dataset_CM_2023.xlsx
 142fd1368f8ee261563fa725b126aaad *inst/extdata/Dataset_CM_2024.xlsx
 e099d2c58101a204aef7e45c57b41a7c *inst/extdata/MacroData.xlsx
@@ -307,7 +307,7 @@ a6c6239dc3291f031aebe5ff8fa636f0 *man/rhoParas.Rd
 4cc911946e5e1d2b319eb2ff6158b384 *man/summary.ATSMModelOutputs.Rd
 71521da1026209c98d0e6d9457244586 *man/withDefault.Rd
 c4b6e6f444ba8e852f5364d70e268b13 *tests/testthat.R
-bd1cdb6928c71d9da0244ed778b81823 *tests/testthat/Rplots.pdf
+01e9857f79d84192841bcbee68e8329c *tests/testthat/Rplots.pdf
 870ef5e4fc1a293400b7b57728e42c5d *tests/testthat/test_Bias_Correc_VAR.R
 da75147c6da313e52a047d3a4472ed39 *tests/testthat/test_DataForEstimation.R
 26678782c55faef94c730f81e7b2deaa *tests/testthat/test_DatabasePrep.R
@@ -318,9 +318,9 @@ e67fa48ef18b1eadccce43f526d14cf9 *tests/testthat/test_JLL.R
 a5cd6d09f704fbe85d4f3b27695a7f71 *tests/testthat/test_LabFac.R
 eb6daa05e9898ef52d8dbf4b6ef35ad6 *tests/testthat/test_LoadData.R
 948cfce42f2d69dc374f03b84f6e86d7 *tests/testthat/test_Load_Excel_Data.R
-bba24a2045de40ba25869acb912f3793 *tests/testthat/test_Opt_NumOut_Boot_Graphs_Forecast_GVAR.R
-48fb8d61b798259246846ca1d97d0a1d *tests/testthat/test_Opt_NumOut_Boot_Graphs_Forecast_JLL.R
-090cad75d706a113b24797f133e94150 *tests/testthat/test_Opt_NumOut_Boot_Graphs_Forecast_JPS.R
+74b735bfcd3e0a9aa1d926728eb36ae2 *tests/testthat/test_Opt_NumOut_Boot_Graphs_Forecast_GVAR.R
+ade9bffcb98eb72912b73887a7ce9184 *tests/testthat/test_Opt_NumOut_Boot_Graphs_Forecast_JLL.R
+d50a1cd19bfd182ff9be11de06618dfb *tests/testthat/test_Opt_NumOut_Boot_Graphs_Forecast_JPS.R
 a99582bd8192fe19eaeee614969aaf43 *tests/testthat/test_Spanned_Factors.R
 d009327fb752d3f2b857bd38ca91246f *tests/testthat/test_Transition_Matrix.R
 745a406a5ab6c47030bd123b764b8d74 *tests/testthat/test_VAR.R
